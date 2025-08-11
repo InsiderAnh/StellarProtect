@@ -5,10 +5,7 @@ import io.github.insideranh.stellarprotect.config.WorldConfigType;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 @Getter
 public enum ActionType {
@@ -45,11 +42,11 @@ public enum ActionType {
     DEATH(23),
 
     MOUNT(24),
-    RAID(25), // HACER ESTE
+    RAID(25),
     HANGING(26),
     SMITH(27),
-    BREWING(28), // HACER ESTE
-    REPAIR(29), // HACER ESTE
+    BREWING(28),
+    REPAIR(29),
     SHOOT(30),
     TOTEM(31),
 
@@ -64,14 +61,6 @@ public enum ActionType {
 
     SHOP_GUI(80);
 
-    /*
-        XP,
-        LECTERN_BOOK,
-        SHEAR
-     */
-
-    // LAST ID: 26
-
     private final int id;
     private final HashMap<String, WorldConfigType> worldTypes = new HashMap<>();
     private final HashSet<String> worlds = new HashSet<>();
@@ -79,27 +68,36 @@ public enum ActionType {
     @Setter
     private boolean enabled = true;
 
+    private static final ActionType[] ID_TO_ACTION_CACHE;
+    private static final Map<String, ActionType> NAME_TO_ACTION_CACHE = new HashMap<>();
+
+    static {
+        int maxId = Arrays.stream(ActionType.values())
+            .mapToInt(ActionType::getId)
+            .max()
+            .orElse(0);
+
+        ID_TO_ACTION_CACHE = new ActionType[maxId + 1];
+
+        for (ActionType actionType : ActionType.values()) {
+            ID_TO_ACTION_CACHE[actionType.getId()] = actionType;
+            NAME_TO_ACTION_CACHE.put(actionType.name().toLowerCase(), actionType);
+        }
+    }
+
     ActionType(int id) {
         this.id = id;
     }
 
     public static ActionType getById(int id) {
-        for (ActionType actionType : ActionType.values()) {
-            if (actionType.getId() == id) {
-                return actionType;
-            }
+        if (id >= 0 && id < ID_TO_ACTION_CACHE.length) {
+            return ID_TO_ACTION_CACHE[id];
         }
-
         return null;
     }
 
     public static ActionType getByName(String name) {
-        for (ActionType actionType : ActionType.values()) {
-            if (actionType.name().equalsIgnoreCase(name)) {
-                return actionType;
-            }
-        }
-        return null;
+        return NAME_TO_ACTION_CACHE.get(name.toLowerCase());
     }
 
     public static List<String> getAllNamesNoPrefix(@Nullable String filter) {

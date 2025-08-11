@@ -107,6 +107,8 @@ messages:
       &7<time> &8| &d<player>&f money &8| &a$+<amount>
     vault_outcome: |-
       &7<time> &8| &d<player>&f money &8| &c$-<amount>
+    shop_gui: |-
+      &7<time> &8| &d<player>&f shop gui &8| &d(<data>)
   tooltips:
     logout_session: |-
       &fLogged time: &d<time>

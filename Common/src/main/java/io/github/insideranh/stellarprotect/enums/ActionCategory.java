@@ -21,8 +21,9 @@ public enum ActionCategory {
     }),
     ENTITY_ACTIONS(2, "entity_actions", new ActionType[]{
         ActionType.KILL_ENTITY, ActionType.DEATH, ActionType.INTERACT, ActionType.USE, ActionType.TAME, ActionType.BREED,
+        ActionType.MOUNT,
         // NOT IMPLEMENTED
-        ActionType.MOUNT, ActionType.RAID
+        ActionType.RAID
     }),
     SYSTEM_ACTIONS(3, "system_actions", new ActionType[]{
         ActionType.CROP_GROW, ActionType.CRAFT

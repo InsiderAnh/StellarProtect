@@ -1,9 +1,11 @@
 package io.github.insideranh.stellarprotect.database.entries.hooks;
 
 import com.google.gson.JsonObject;
+import io.github.insideranh.stellarprotect.StellarProtect;
 import io.github.insideranh.stellarprotect.database.entries.LogEntry;
 import io.github.insideranh.stellarprotect.enums.ActionType;
 import io.github.insideranh.stellarprotect.items.ItemReference;
+import io.github.insideranh.stellarprotect.items.ItemTemplate;
 import lombok.Getter;
 import org.bson.Document;
 import org.bukkit.Location;
@@ -42,6 +44,12 @@ public class PlayerShopGUIEntry extends LogEntry {
         this.amount = amount;
         this.price = price;
         this.shopAction = shopAction;
+    }
+
+    @Override
+    public String getDataString() {
+        ItemTemplate itemTemplate = StellarProtect.getInstance().getItemsManager().getItemTemplate(itemId);
+        return itemTemplate.getBukkitItem().getType().name();
     }
 
 }

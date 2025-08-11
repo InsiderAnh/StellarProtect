@@ -7,6 +7,7 @@ import io.github.insideranh.stellarprotect.arguments.DatabaseFilters;
 import io.github.insideranh.stellarprotect.arguments.RadiusArg;
 import io.github.insideranh.stellarprotect.arguments.TimeArg;
 import io.github.insideranh.stellarprotect.arguments.UsersArg;
+import io.github.insideranh.stellarprotect.cache.counters.CategoryCounter;
 import io.github.insideranh.stellarprotect.cache.keys.LocationCache;
 import io.github.insideranh.stellarprotect.database.entries.LogEntry;
 import io.github.insideranh.stellarprotect.database.entries.items.ItemLogEntry;
@@ -52,11 +53,21 @@ public class LoggerCache {
     private static final Cache<String, Long> countCache = CacheBuilder.newBuilder()
         .expireAfterWrite(5, TimeUnit.MINUTES).build();
 
+    private static final Map<ActionCategory, CategoryCounter> categoryCounters = new EnumMap<>(ActionCategory.class);
+    private static final ActionCategory[] ACTION_TO_CATEGORY_CACHE;
+
     private static final AtomicLong totalLogsProcessed = new AtomicLong(0);
     private static final AtomicInteger cacheHits = new AtomicInteger(0);
     private static final AtomicInteger cacheMisses = new AtomicInteger(0);
 
     static {
+        int maxActionId = Arrays.stream(ActionType.values())
+            .mapToInt(ActionType::getId)
+            .max()
+            .orElse(0);
+
+        ACTION_TO_CATEGORY_CACHE = new ActionCategory[maxActionId + 1];
+
         initializeCaches();
         startCleanupScheduler();
     }
@@ -83,8 +94,14 @@ public class LoggerCache {
 
     private static void initializeCaches() {
         for (ActionCategory category : ActionCategory.values()) {
+            for (ActionType actionType : category.getActionSet()) {
+                ACTION_TO_CATEGORY_CACHE[actionType.getId()] = category;
+            }
+            CacheConfig config = CATEGORY_CONFIGS.get(category);
+
             unSavedLogsByCategory.put(category, new ConcurrentLinkedQueue<>());
             cachedLogsByCategory.put(category, new ConcurrentHashMap<>());
+            categoryCounters.put(category, new CategoryCounter(config.batchSize));
         }
     }
 
@@ -96,23 +113,31 @@ public class LoggerCache {
     }
 
     public static void addLog(LogEntry logEntry) {
-        ActionCategory category = ActionCategory.fromActionTypes(ActionType.getById(logEntry.getActionType()));
+        ActionCategory category = getCategoryByActionId(logEntry.getActionType());
         LocationCache location = logEntry.asLocation();
 
         unSavedLogsByCategory.get(category).add(logEntry);
-
         cachedLogsByCategory.get(category).computeIfAbsent(location, k -> new ConcurrentLinkedQueue<>()).add(logEntry);
 
-        if (logEntry instanceof PlayerBlockLogEntry && logEntry.getActionType() == 1) {
+        if (logEntry instanceof PlayerBlockLogEntry && logEntry.getActionType() == ActionType.BLOCK_PLACE.getId()) {
             placedBlockLogs.put(location, (PlayerBlockLogEntry) logEntry);
         }
 
         totalLogsProcessed.incrementAndGet();
 
-        CacheConfig config = CATEGORY_CONFIGS.get(category);
-        if (unSavedLogsByCategory.get(category).size() >= config.batchSize) {
+        CategoryCounter counter = categoryCounters.get(category);
+        if (counter.incrementAndCheckThreshold()) {
             StellarProtect.getInstance().getCacheManager().forceSave(category);
+            counter.reset();
         }
+    }
+
+    private static ActionCategory getCategoryByActionId(int actionTypeId) {
+        if (actionTypeId >= 0 && actionTypeId < ACTION_TO_CATEGORY_CACHE.length) {
+            ActionCategory category = ACTION_TO_CATEGORY_CACHE[actionTypeId];
+            return category != null ? category : ActionCategory.SYSTEM_ACTIONS;
+        }
+        return ActionCategory.SYSTEM_ACTIONS;
     }
 
     public static void loadLog(LogEntry logEntry) {
