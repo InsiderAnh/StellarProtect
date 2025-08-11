@@ -103,7 +103,7 @@ public class LoggerCache {
 
         cachedLogsByCategory.get(category).computeIfAbsent(location, k -> new ConcurrentLinkedQueue<>()).add(logEntry);
 
-        if (logEntry instanceof PlayerBlockLogEntry && ActionType.getById(logEntry.getActionType()) == ActionType.BLOCK_PLACE) {
+        if (logEntry instanceof PlayerBlockLogEntry && logEntry.getActionType() == 1) {
             placedBlockLogs.put(location, (PlayerBlockLogEntry) logEntry);
         }
 

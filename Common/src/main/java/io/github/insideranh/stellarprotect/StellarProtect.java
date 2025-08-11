@@ -12,6 +12,7 @@ import io.github.insideranh.stellarprotect.bstats.MetricsLite;
 import io.github.insideranh.stellarprotect.commands.StellarProtectCMD;
 import io.github.insideranh.stellarprotect.database.ProtectDatabase;
 import io.github.insideranh.stellarprotect.enums.MinecraftVersion;
+import io.github.insideranh.stellarprotect.hooks.ShopGUIHook;
 import io.github.insideranh.stellarprotect.hooks.StellarTaskHook;
 import io.github.insideranh.stellarprotect.hooks.tasks.BukkitTaskHook;
 import io.github.insideranh.stellarprotect.hooks.tasks.FoliaTaskHook;
@@ -113,6 +114,8 @@ public class StellarProtect extends JavaPlugin {
 
         bStats = new MetricsLite(this, 26624);
 
+        loadLastHooks();
+
         if (!configManager.isCheckUpdates()) return;
         updateChecker = new UpdateChecker();
     }
@@ -130,6 +133,14 @@ public class StellarProtect extends JavaPlugin {
     public void onDisable() {
         this.protectDatabase.close();
         this.bStats.shutdown();
+    }
+
+    void loadLastHooks() {
+        getStellarTaskHook(() -> {
+            if (getServer().getPluginManager().isPluginEnabled("ShopGUIPlus")) {
+                Bukkit.getPluginManager().registerEvents(new ShopGUIHook(), this);
+            }
+        }).runTask(10);
     }
 
     HashSet<Listener> getListeners() {

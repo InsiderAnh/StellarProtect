@@ -4,6 +4,8 @@ version: 0.5.0
 author: InsiderAnh
 folia-supported: true
 api-version: 1.13
+softdepend:
+  - ShopGUIPlus
 commands:
   stellarprotect:
     aliases:
