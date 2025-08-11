@@ -1,0 +1,35 @@
+name: StellarProtect
+main: io.github.insideranh.stellarprotect.StellarProtect
+version: 0.5.0
+author: InsiderAnh
+folia-supported: true
+api-version: 1.13
+commands:
+  stellarprotect:
+    aliases:
+      - sprotect
+      - sp
+      - spt
+    description: Main command
+permissions:
+  stellarprotect.admin:
+    default: op
+    description: Allows to use all commands
+  stellarprotect.inspect:
+    default: op
+    description: Allows to use inspect command
+  stellarprotect.lookup:
+    default: op
+    description: Allows to use lookup command
+  stellarprotect.purge:
+    default: op
+    description: Allows to use purge command
+  stellarprotect.rollback:
+    default: op
+    description: Allows to use rollback command
+  stellarprotect.memory:
+    default: op
+    description: Allows to use memory command
+  stellarprotect.default:
+    default: op
+    description: Allows to use default command

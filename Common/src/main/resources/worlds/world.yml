@@ -1,0 +1,165 @@
+enabled: false
+logs:
+  block_break:
+    enabled: true
+    # You can use 'none' no disable block types
+    disable_types:
+      - none
+  block_place:
+    enabled: true
+    # You can use 'none' no disable block types
+    disable_types:
+      - none
+  block_use:
+    enabled: true
+    # You can use 'none' no disable block types
+    disable_types:
+      - none
+  drop_item:
+    enabled: true
+    # You can use 'none' no disable block types
+    disable_types:
+      - none
+  pickup_item:
+    enabled: true
+    # You can use 'none' no disable block types
+    disable_types:
+      - none
+  furnace_extract:
+    enabled: true
+    # You can use 'none' no disable block types
+    disable_types:
+      - none
+  furnace_place:
+    enabled: true
+    # You can use 'none' no disable block types
+    disable_types:
+      - none
+  craft:
+    enabled: true
+    # You can use 'none' no disable block types
+    disable_types:
+      - none
+  crop_grow:
+    enabled: true
+    # You can use 'none' no disable block types
+    disable_types:
+      - none
+  kill_entity:
+    enabled: true
+    # You can use 'none' no disable block types
+    disable_types:
+      - none
+  interact:
+    enabled: true
+    # You can use 'none' no disable block types
+    disable_types:
+      - none
+  tame:
+    enabled: true
+    # You can use 'none' no disable block types
+    disable_types:
+      - none
+  breed:
+    enabled: true
+    # You can use 'none' no disable block types
+    disable_types:
+      - none
+  chat:
+    enabled: true
+    # You can use 'none' no disable block types
+    disable_types:
+      - none
+  command:
+    enabled: true
+    # You can use 'none' no disable block types
+    disable_types:
+      - /login
+      - /register
+  bucket_empty:
+    enabled: true
+    # You can use 'none' no disable block types
+    disable_types:
+      - none
+  bucket_fill:
+    enabled: true
+    # You can use 'none' no disable block types
+    disable_types:
+      - none
+  inventory_transaction:
+    enabled: true
+    # You can use 'none' no disable block types
+    disable_types:
+      - none
+
+  enchant:
+    enabled: true
+    # You can use 'all' to log all worlds
+    worlds:
+      - all
+    # You can use 'none' no disable block types
+    disable_types:
+      - none
+  sign_change:
+    enabled: true
+    # You can use 'all' to log all worlds
+    worlds:
+      - all
+    # You can use 'none' no disable block types
+    disable_types:
+      - none
+  death:
+    enabled: true
+    # You can use 'all' to log all worlds
+    worlds:
+      - all
+    # You can use 'none' no disable block types
+    disable_types:
+      - none
+  mount:
+    enabled: true
+    # You can use 'all' to log all worlds
+    worlds:
+      - all
+    # You can use 'none' no disable block types
+    disable_types:
+      - none
+  shoot:
+    enabled: true
+    # You can use 'all' to log all worlds
+    worlds:
+      - all
+    # You can use 'none' no disable block types
+    disable_types:
+      - none
+  hanging:
+    enabled: true
+    # You can use 'all' to log all worlds
+    worlds:
+      - all
+    # You can use 'none' no disable block types
+    disable_types:
+      - none
+  consume:
+    enabled: true
+    # You can use 'all' to log all worlds
+    worlds:
+      - all
+    # You can use 'none' no disable block types
+    disable_types:
+      - none
+  game_mode:
+    enabled: true
+    # You can use 'none' no disable block types
+    disable_types:
+      - none
+  teleport:
+    enabled: true
+    # You can use 'none' no disable block types
+    disable_types:
+      - none
+  smith:
+    enabled: true
+    # You can use 'none' no disable block types
+    disable_types:
+      - none

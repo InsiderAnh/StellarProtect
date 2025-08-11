@@ -1,0 +1,132 @@
+messages:
+  noPermission: "&cYou don't have permission to do this."
+  reloaded: "&aPlugin reloaded correctly."
+  onlyPlayer: "&cThis command can only be used by players."
+  noLogs: "&cNo logs found."
+  noPlayer: "&cYour data is not loaded yet."
+  loadingLookup: "&aLoading logs..."
+  pagesNav: "&dPages "
+  clickPage: "&7Click to go page &f(<page>)"
+  purged: "&aPurged logs correctly."
+  waitingForLookup: "&cPlease wait for the lookup to finish."
+  noInspectLogs: "&6StellarProtect &cNo logs found for &7(<location>)&c."
+  debugSave: "&aDebug save mode set to &7<state>"
+  debugLog: "&aDebug log mode set to &7<state>"
+  debugExtras: "&aDebug extras mode set to &7<state>"
+  memory:
+    title: "&7----- &6StellarProtect &8| &dMemory Analysis &7-----"
+    footprint: "&7Memory footprint:"
+    total: "&7Size:"
+    summary:
+      title: "&7===== &6Total summary &7====="
+      totalMemory: "&7Total memory used: &f"
+      objectsAnalyzed: "&7Objects analyzed: &f"
+    itemTemplates: "&d▸ &cItemsManager Templates"
+    cachedLogsByCategory: "&d▸ &cLoggerCache &7- &fCachedLogsByCategory"
+    unSavedLogsByCategory: "&d▸ &cLoggerCache &7- &fUnSavedLogsByCategory"
+    placedBlockLogs: "&d▸ &cLoggerCache &7- &fPlacedBlockLogs"
+    playerRecentActions: "&d▸ &cLoggerCache &7- &fPlayerRecentActions"
+    queryCache: "&d▸ &cLoggerCache &7- &fQueryCache"
+  actions:
+    lookup: "&7----- &6StellarProtect &8| &6Lookup &7-----"
+    location: "&7&l      ˄   &7(<location>) &7&l   ˄"
+    transactions_title: "&7+ &6StellarProtect &8| &7(<location>) &8| &6Items &7+"
+    added_item: "&7<time> &8| &a<player>&f added &8| &d<data> &7(x<amount>)"
+    removed_item: "&7<time> &8| &c<player>&f removed &8| &d<data> &7(x<amount>)"
+    block_break: |-
+      &7<time> &8| &d<player>&f break &8| &d(<data>)
+    block_place: |-
+      &7<time> &8| &d<player>&f place &8| &d(<data>)
+    block_use: |-
+      &7<time> &8| &d<player>&f use &8| &d(<data>)
+    drop_item: |-
+      &7<time> &8| &d<player>&f drop &8| &d(<data>)
+    pickup_item: |-
+      &7<time> &8| &d<player>&f pickup &8| &d(<data>)
+    furnace_place: |-
+      &7<time> &8| &d<player>&f furnace place &8| &d(<data>)
+    furnace_extract: |-
+      &7<time> &8| &d<player>&f furnace extract &8| &d(<data>)
+    craft: |-
+      &7<time> &8| &d<player>&f craft &8| &d(<data>)
+    crop_grow: |-
+      &7<time> &8| &d<player>&f grow &8| &d(<data>)
+    kill_entity: |-
+      &7<time> &8| &d<player>&f kill &8| &d(<data>)
+    interact: |-
+      &7<time> &8| &d<player>&f interact &8| &d(<data>)
+    tame: |-
+      &7<time> &8| &d<player>&f tame &8| &d(<data>)
+    breed: |-
+      &7<time> &8| &d<player>&f breed &8| &d(<data>)
+    chat: |-
+      &7<time> &8| &d<player>&f chat &8| &d(<data>)
+    command: |-
+      &7<time> &8| &d<player>&f command &8| &d(<data>)
+    bucket_empty: |-
+      &7<time> &8| &d<player>&f bucket empty &8| &d(<data>)
+    bucket_fill: |-
+      &7<time> &8| &d<player>&f bucket fill &8| &d(<data>)
+    use: |-
+      &7<time> &8| &d<player>&f use &8| &d(<data>)
+    sign_change: |-
+      &7<time> &8| &d<player>&f sign change &8| &d[View]
+    login_session: |-
+      &7<time> &8| &d<player>&f logged.
+    logout_session: |-
+      &7<time> &8| &d<player>&f logout. &8| &a[View]
+    inventory_transaction: |-
+      &7<time> &8| &d<player>&f inventory transaction &8| &a[View]
+    shoot: |-
+      &7<time> &8| &d<player>&f shoot &8| &d(<data>)
+    success_shoot: |-
+      &7<time> &8| &d<player>&f success shoot to &d<shoot> &8| &d(<data>)
+    mount: |-
+      &7<time> &8| &d<player>&f mount &8| &d(<data>)
+    dismount: |-
+      &7<time> &8| &d<player>&f dismount &8| &d(<data>)
+    hanging: |-
+      &7<time> &8| &d<player>&f remove &8| &d(<data>)
+    teleport: |-
+      &7<time> &8| &d<player>&f teleport &8| &d(<data>)
+    consume: |-
+      &7<time> &8| &d<player>&f consume &8| &d(<data>)
+    game_mode: |-
+      &7<time> &8| &d<player>&f game mode &8| &a[View]
+    smith: |-
+      &7<time> &8| &d<player>&f smith &8| &d(<data>)
+    totem: |-
+      &7<time> &8| &d<player>&f totem &8| &d(<data>)
+    death: |-
+      &7<time> &8| &d<player>&f died &8| &d(<data>)
+    add_xp: |-
+      &7<time> &8| &d<player>&f xp &8| &a+<amount>
+    remove_xp: |-
+      &7<time> &8| &d<player>&f xp &8| &c-<amount>
+    vault_income: |-
+      &7<time> &8| &d<player>&f money &8| &a$+<amount>
+    vault_outcome: |-
+      &7<time> &8| &d<player>&f money &8| &c$-<amount>
+  tooltips:
+    logout_session: |-
+      &fLogged time: &d<time>
+    sign_change: |-
+      &7Changed lines:
+      &d1.- &f<line1>
+      &d2.- &f<line2>
+      &d3.- &f<line3>
+      &d4.- &f<line4>
+    inventory_transaction: |-
+      &7Added:
+      <added>
+      &7Removed:
+      <removed>
+    game_mode: |-
+      &fLast game mode: &d<lastGameMode>
+      &fNew game mode: &d<newGameMode>
+    no_changes: "&cNo item changes."
+    added_item: "&d<data> &7(x<amount>)"
+    removed_item: "&d<data> &7(x<amount>)"
+  inspect:
+    enable: "&aYou have enabled inspect mode."
+    disable: "&cYou have disabled inspect mode."

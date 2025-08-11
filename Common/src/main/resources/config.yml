@@ -1,0 +1,317 @@
+check-updates: true
+debugs:
+  log: false
+  save: false
+  extras: false
+features:
+  suspicious-patterns:
+    enabled: true
+    suspicious-tpa-kill:
+      enabled: true
+      # Permission to receive notifications when a possible tpa kill is detected.
+      permission: "stellarprotect.pattern.tpakill"
+      # Message to send to staffs when a possible tpa kill is detected.
+      message: "&c&lWARNING! &8» &cA possible TPA kill was detected! &e(Details tooltip)"
+      tooltip: |-
+        &ePlayer: &f<player>
+        &fLast actions:
+        &7- &fCommand &d(<command>)
+        &7- &fDeath &d(<death>)
+        &7
+        &b¡Click to teleport to the player!
+      # Expire time of command to not detect tpa kills.
+      expire-command-tpa: 300
+      # Check commands to detect tpa kills.
+      check-commands:
+        - "/tpaccept"
+        - "/tp"
+optimizations:
+  # Max cores for thread pool, save default: 4
+  maxCores: 4
+  # Seconds to save logs, save default: 15
+  save-period: 15
+  # Auto save logs when batch size is reached, save default: 200
+  batch-size: 200
+  # Max logs per location, save default: 10, not recommended to change
+  max-logs-per-location: 10
+  # Time to clear cache, save default: 15 minutes, not recommended to change
+  time-for-cache-clear: 15
+  # Days to keep logs, save default: 15
+  # Change this considering your machine disk space
+  days-to-keep-logs: 15
+  # Period to delete old logs, save default: 15 minutes
+  delete-old-period: 15
+  # Period to clean placed block cache, save default: 30 seconds
+  clean-placed-cache-period: 30
+  # Item save period, save default: 30 seconds
+  item-save-period: 30
+  # Economy disabled, save default: false
+  # If you don't need logs for economy, you can disable it
+  # to optimize the plugin.
+  economy-disabled: false
+  # Economy check interval, save default: 1 second
+  economy-check-interval: 1
+databases:
+  # Database type: h2 or mysql or mongodb
+  type: "h2"
+  h2:
+    database: StellarProtect
+  mysql:
+    host: localhost
+    port: 3306
+    database: StellarProtect
+    user: admin
+    password: 123456
+  mongodb:
+    host: localhost
+    port: 27017
+    database: StellarProtect
+    user: admin
+    password: 123456
+tablesOrCollections:
+  prefix: ""
+  players: players
+  log_entries: log_entries
+  id_counter: id_counter
+  item_templates: item_templates
+  worlds: worlds
+  entity_ids: entity_ids
+advanced:
+  # Enables tracking of liquids
+  liquid-tracking: true
+logs:
+  block_break:
+    enabled: true
+    # You can use 'all' to log all worlds
+    worlds:
+      - all
+    # You can use 'none' no disable block types
+    disable_types:
+      - none
+  block_place:
+    enabled: true
+    # You can use 'all' to log all worlds
+    worlds:
+      - all
+    # You can use 'none' no disable block types
+    disable_types:
+      - none
+  block_use:
+    enabled: true
+    # You can use 'all' to log all worlds
+    worlds:
+      - all
+    # You can use 'none' no disable block types
+    disable_types:
+      - none
+  drop_item:
+    enabled: true
+    # You can use 'all' to log all worlds
+    worlds:
+      - all
+    # You can use 'none' no disable block types
+    disable_types:
+      - none
+  pickup_item:
+    enabled: true
+    # You can use 'all' to log all worlds
+    worlds:
+      - all
+    # You can use 'none' no disable block types
+    disable_types:
+      - none
+  furnace_extract:
+    enabled: true
+    # You can use 'all' to log all worlds
+    worlds:
+      - all
+    # You can use 'none' no disable block types
+    disable_types:
+      - none
+  furnace_place:
+    enabled: true
+    # You can use 'all' to log all worlds
+    worlds:
+      - all
+    # You can use 'none' no disable block types
+    disable_types:
+      - none
+  craft:
+    enabled: true
+    # You can use 'all' to log all worlds
+    worlds:
+      - all
+    # You can use 'none' no disable block types
+    disable_types:
+      - none
+  crop_grow:
+    enabled: true
+    # You can use 'all' to log all worlds
+    worlds:
+      - all
+    # You can use 'none' no disable block types
+    disable_types:
+      - none
+  kill_entity:
+    enabled: true
+    # You can use 'all' to log all worlds
+    worlds:
+      - all
+    # You can use 'none' no disable block types
+    disable_types:
+      - none
+  interact:
+    enabled: true
+    # You can use 'all' to log all worlds
+    worlds:
+      - all
+    # You can use 'none' no disable block types
+    disable_types:
+      - none
+  tame:
+    enabled: true
+    # You can use 'all' to log all worlds
+    worlds:
+      - all
+    # You can use 'none' no disable block types
+    disable_types:
+      - none
+  breed:
+    enabled: true
+    # You can use 'all' to log all worlds
+    worlds:
+      - all
+    # You can use 'none' no disable block types
+    disable_types:
+      - none
+  chat:
+    enabled: true
+    # You can use 'all' to log all worlds
+    worlds:
+      - all
+    # You can use 'none' no disable block types
+    disable_types:
+      - none
+  command:
+    enabled: true
+    # You can use 'all' to log all worlds
+    worlds:
+      - all
+    # You can use 'none' no disable block types
+    disable_types:
+      - /login
+      - /register
+  bucket_empty:
+    enabled: true
+    # You can use 'all' to log all worlds
+    worlds:
+      - all
+    # You can use 'none' no disable block types
+    disable_types:
+      - none
+  bucket_fill:
+    enabled: true
+    # You can use 'all' to log all worlds
+    worlds:
+      - all
+    # You can use 'none' no disable block types
+    disable_types:
+      - none
+  inventory_transaction:
+    enabled: true
+    # You can use 'all' to log all worlds
+    worlds:
+      - all
+    # You can use 'none' no disable block types
+    disable_types:
+      - none
+  enchant:
+    enabled: true
+    # You can use 'all' to log all worlds
+    worlds:
+      - all
+    # You can use 'none' no disable block types
+    disable_types:
+      - none
+  sign_change:
+    enabled: true
+    # You can use 'all' to log all worlds
+    worlds:
+      - all
+    # You can use 'none' no disable block types
+    disable_types:
+      - none
+  death:
+    enabled: true
+    # You can use 'all' to log all worlds
+    worlds:
+      - all
+    # You can use 'none' no disable block types
+    disable_types:
+      - none
+  mount:
+    enabled: true
+    # You can use 'all' to log all worlds
+    worlds:
+      - all
+    # You can use 'none' no disable block types
+    disable_types:
+      - none
+  shoot:
+    enabled: true
+    # You can use 'all' to log all worlds
+    worlds:
+      - all
+    # You can use 'none' no disable block types
+    disable_types:
+      - none
+  hanging:
+    enabled: true
+    # You can use 'all' to log all worlds
+    worlds:
+      - all
+    # You can use 'none' no disable block types
+    disable_types:
+      - none
+  consume:
+    enabled: true
+    # You can use 'all' to log all worlds
+    worlds:
+      - all
+    # You can use 'none' no disable block types
+    disable_types:
+      - none
+  game_mode:
+    enabled: true
+    # You can use 'all' to log all worlds
+    worlds:
+      - all
+    # You can use 'none' no disable block types
+    disable_types:
+      - none
+  teleport:
+    enabled: true
+    # You can use 'all' to log all worlds
+    worlds:
+      - all
+    # You can use 'none' no disable block types
+    disable_types:
+      - none
+  smith:
+    enabled: true
+    # You can use 'all' to log all worlds
+    worlds:
+      - all
+    # You can use 'none' no disable block types
+    disable_types:
+      - none
+  economy:
+    enabled: true
+    # You can use 'all' to log all worlds
+    worlds:
+      - all
+    # You can use 'none' no disable block types
+    # VAULT = Balance changes
+    # PAY = /pay commands
+    disable_types:
+      - none
