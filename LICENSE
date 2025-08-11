@@ -1,0 +1,38 @@
+Non-Commercial Artistic License 1.0
+Copyright (c) 2025, InsiderAnh - StellarProtect
+
+Preamble
+This license establishes the terms under which this software package may be viewed, compiled, modified, and contributed to.
+The intent is to keep the source code available for personal, educational, and collaborative purposes, while prohibiting any 
+commercial use without explicit written permission from the Copyright Holder.
+
+Definitions
+1. "Copyright Holder" means the individual(s) or organization(s) named in the copyright notice.
+2. "You" (or "Your") means any person or entity exercising rights under this license.
+3. "Package" means the collection of files distributed by the Copyright Holder, including modifications and derivative works.
+4. "Commercial Use" means use of the Package, in whole or in part, in any product, service, or activity 
+intended for commercial advantage or monetary compensation.
+5. "Non-Commercial Use" means personal, educational, or research use with no direct or indirect monetary gain.
+
+Permissions
+1. You may view, compile, and run the Package for Non-Commercial Use.
+2. You may create and distribute modified versions of the Package only for Non-Commercial Use, provided you:
+   - Clearly state changes made.
+   - Keep this license intact.
+   - Credit the original author(s).
+3. You may contribute code to the Package, and any contributions will be licensed under the same terms.
+
+Restrictions
+1. You may not use, copy, modify, sublicense, or distribute the Package for Commercial Use without prior 
+written consent from the Copyright Holder.
+2. You may not relicense the Package under terms that allow Commercial Use.
+3. You may not remove or alter any copyright, trademark, or attribution notices from the Package.
+
+Disclaimer of Warranty
+THE PACKAGE IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO 
+THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY ARISING FROM, 
+OUT OF, OR IN CONNECTION WITH THE PACKAGE OR THE USE OR OTHER DEALINGS IN THE PACKAGE.
+
+Termination
+Any violation of these terms will automatically terminate your rights under this license.
