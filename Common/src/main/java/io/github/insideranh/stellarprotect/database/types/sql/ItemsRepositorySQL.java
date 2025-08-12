@@ -7,7 +7,6 @@ import io.github.insideranh.stellarprotect.database.repositories.ItemsRepository
 import io.github.insideranh.stellarprotect.items.ItemTemplate;
 import io.github.insideranh.stellarprotect.utils.Debugger;
 import io.github.insideranh.stellarprotect.utils.InventorySerializable;
-import io.github.insideranh.stellarprotect.utils.StringCleanerUtils;
 import org.bukkit.inventory.ItemStack;
 
 import java.sql.Connection;
@@ -40,10 +39,11 @@ public class ItemsRepositorySQL implements ItemsRepository {
                 int batchSize = 0;
                 int maxBatchSize = 1000;
 
+                statement.setByte(3, (byte) 0);
+
                 for (ItemTemplate template : itemTemplates) {
                     statement.setLong(1, template.getId());
                     statement.setString(2, template.getBase64());
-                    statement.setByte(3, template.getShorted());
                     statement.addBatch();
 
                     batchSize++;
@@ -105,15 +105,12 @@ public class ItemsRepositorySQL implements ItemsRepository {
                 while (resultSet.next()) {
                     long id = resultSet.getLong("id");
                     String base64 = resultSet.getString("base64");
-                    byte shorted = resultSet.getByte("s");
 
-                    String fullBase64 = (shorted == 1) ? StringCleanerUtils.COMMON_BASE64 + base64 : base64;
+                    ItemStack bukkitItem = InventorySerializable.itemStackFromBase64(base64);
 
-                    ItemStack bukkitItem = InventorySerializable.itemStackFromBase64(fullBase64);
+                    ItemTemplate template = new ItemTemplate(id, bukkitItem, base64);
 
-                    ItemTemplate template = new ItemTemplate(id, bukkitItem, fullBase64);
-
-                    stellarProtect.getItemsManager().loadItemReference(template, fullBase64);
+                    stellarProtect.getItemsManager().loadItemReference(template, base64);
                 }
 
                 stellarProtect.getLogger().info("Loaded " + stellarProtect.getItemsManager().getItemReferenceCount() + " item references.");

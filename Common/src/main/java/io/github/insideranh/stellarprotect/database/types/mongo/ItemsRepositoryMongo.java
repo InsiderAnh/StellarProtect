@@ -10,7 +10,6 @@ import io.github.insideranh.stellarprotect.database.repositories.ItemsRepository
 import io.github.insideranh.stellarprotect.items.ItemTemplate;
 import io.github.insideranh.stellarprotect.utils.Debugger;
 import io.github.insideranh.stellarprotect.utils.InventorySerializable;
-import io.github.insideranh.stellarprotect.utils.StringCleanerUtils;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bukkit.inventory.ItemStack;
@@ -41,7 +40,7 @@ public class ItemsRepositoryMongo implements ItemsRepository {
                     Document doc = new Document()
                         .append("_id", template.getId())
                         .append("base64", template.getBase64())
-                        .append("s", template.getShorted())
+                        .append("s", 0)
                         .append("access_count", 0)
                         .append("last_accessed", new Date())
                         .append("total_quantity_used", 0)
@@ -112,14 +111,11 @@ public class ItemsRepositoryMongo implements ItemsRepository {
 
                     long id = doc.getLong("_id");
                     String base64 = doc.getString("base64");
-                    byte shorted = (byte) doc.getInteger("s", 0);
 
-                    String fullBase64 = (shorted == 1) ? StringCleanerUtils.COMMON_BASE64 + base64 : base64;
+                    ItemStack bukkitItem = InventorySerializable.itemStackFromBase64(base64);
 
-                    ItemStack bukkitItem = InventorySerializable.itemStackFromBase64(fullBase64);
-
-                    ItemTemplate template = new ItemTemplate(id, bukkitItem, fullBase64);
-                    stellarProtect.getItemsManager().loadItemReference(template, fullBase64);
+                    ItemTemplate template = new ItemTemplate(id, bukkitItem, base64);
+                    stellarProtect.getItemsManager().loadItemReference(template, base64);
                 }
             }
 
