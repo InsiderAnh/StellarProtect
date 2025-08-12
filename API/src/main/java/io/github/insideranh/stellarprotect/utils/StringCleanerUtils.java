@@ -12,16 +12,9 @@ import java.util.regex.Pattern;
 
 public class StringCleanerUtils {
 
-    public static final String COMMON_BASE64 = "rO0ABXNyABpvcmcuYnVra2l0LnV0aWwuaW8uV3JhcHBlcvJQR+zxEm8FAgABTAADbWFwdAAPTGph" +
-        "dmEvdXRpbC9NYXA7eHBzcgA1Y29tLmdvb2dsZS5jb21tb24uY29sbGVjdC5JbW11dGFibGVNYXAk" +
-        "U2VyaWFsaXplZEZvcm0AAAAAAAAAAAIAAkwABGtleXN0ABJMamF2YS9sYW5nL09iamVjdDtMAAZ2" +
-        "YWx1ZXNxAH4ABHhwdXIAE1tMamF2YS5sYW5nLk9iamVjdDuQzlifEHMpbAIAAHhwAAAABXQAAj09" +
-        "dAALRGF0YVZlcnNpb250AAJpZHQABWNvdW50dAAOc2NoZW1hX3ZlcnNpb251cQB+AAYAAAAFdAAe" +
-        "b3JnLmJ1a2tpdC5pbnZlbnRvcnkuSXRlbVN0YWNrc3IAEWphdmEubGFuZy5JbnRlZ2VyEuKgpPeB";
     private static final DecimalFormat format = new DecimalFormat("###,###,###.##");
     private static final NavigableMap<Long, String> SUFFIXES = new TreeMap<>();
-    // This is the base64 of the item "public static bukkit item bla bla bla"
-    static Pattern pattern = Pattern.compile("\"m\":\"([^\"]+)\"");
+    private static final Pattern pattern = Pattern.compile("\"m\":\"([^\"]+)\"");
 
     static {
         SUFFIXES.put(1_000L, "k");
