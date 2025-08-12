@@ -39,12 +39,7 @@ public class PlayerDeathEntry extends LogEntry {
 
     @Override
     public String toSaveJson() {
-        JsonObject obj = new JsonObject();
-
-        PlayerDeathEntry entry = this;
-        obj.addProperty("c", entry.getCause());
-
-        return obj.toString();
+        return "{\"c\":" + cause + "}";
     }
 
 }

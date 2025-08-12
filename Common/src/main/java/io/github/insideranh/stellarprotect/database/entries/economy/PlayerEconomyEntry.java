@@ -39,13 +39,7 @@ public class PlayerEconomyEntry extends LogEntry {
 
     @Override
     public String toSaveJson() {
-        JsonObject obj = new JsonObject();
-
-        PlayerEconomyEntry entry = this;
-        obj.addProperty("v", entry.getVariationType().getId());
-        obj.addProperty("d", entry.getDifference());
-
-        return obj.toString();
+        return "{\"v\":" + variationType.getId() + ",\"d\":" + difference + "}";
     }
 
 }

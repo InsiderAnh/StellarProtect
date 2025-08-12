@@ -46,13 +46,7 @@ public class PlayerItemLogEntry extends LogEntry {
 
     @Override
     public String toSaveJson() {
-        JsonObject obj = new JsonObject();
-
-        PlayerItemLogEntry entry = this;
-        obj.addProperty("id", entry.getItemReferenceId());
-        obj.addProperty("a", entry.getAmount());
-
-        return obj.toString();
+        return "{\"id\":" + itemReferenceId + ",\"a\":" + amount + "}";
     }
 
 }

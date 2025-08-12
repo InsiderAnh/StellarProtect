@@ -35,13 +35,7 @@ public class PlayerBreedEntry extends LogEntry {
 
     @Override
     public String toSaveJson() {
-        JsonObject obj = new JsonObject();
-
-        PlayerBreedEntry entry = this;
-        obj.addProperty("eu", entry.getEntityUUID());
-        obj.addProperty("et", entry.getEntityType());
-
-        return obj.toString();
+        return "{\"eu\":\"" + entityUUID + "\",\"et\":\"" + entityType + "\"}";
     }
 
 }

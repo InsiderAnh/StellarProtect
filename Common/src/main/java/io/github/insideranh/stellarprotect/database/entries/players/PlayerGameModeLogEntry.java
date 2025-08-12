@@ -42,13 +42,7 @@ public class PlayerGameModeLogEntry extends LogEntry {
 
     @Override
     public String toSaveJson() {
-        JsonObject obj = new JsonObject();
-
-        PlayerGameModeLogEntry entry = this;
-        obj.addProperty("l", entry.getLastGameMode());
-        obj.addProperty("n", entry.getNewGameMode());
-
-        return obj.toString();
+        return "{\"l\":" + lastGameMode + ",\"n\":" + newGameMode + "}";
     }
 
 }

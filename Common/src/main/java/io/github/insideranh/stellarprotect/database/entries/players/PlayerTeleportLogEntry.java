@@ -47,13 +47,7 @@ public class PlayerTeleportLogEntry extends LogEntry {
 
     @Override
     public String toSaveJson() {
-        JsonObject obj = new JsonObject();
-
-        PlayerTeleportLogEntry entry = this;
-        obj.addProperty("y", entry.getYaw());
-        obj.addProperty("p", entry.getPitch());
-
-        return obj.toString();
+        return "{\"y\":" + yaw + ",\"p\":" + pitch + ",\"t\":" + teleportType + "}";
     }
 
 }

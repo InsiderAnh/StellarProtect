@@ -38,16 +38,11 @@ public class CropGrowLogEntry extends LogEntry {
 
     @Override
     public String toSaveJson() {
-        if (getAge() == 0) {
+        if (age == 0) {
             return "";
         }
 
-        JsonObject obj = new JsonObject();
-
-        CropGrowLogEntry entry = this;
-        obj.addProperty("a", entry.getAge());
-
-        return obj.toString();
+        return "{\"a\":" + age + "}";
     }
 
 }

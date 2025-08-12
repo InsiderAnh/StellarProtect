@@ -33,12 +33,7 @@ public class PlayerXPEntry extends LogEntry {
 
     @Override
     public String toSaveJson() {
-        JsonObject obj = new JsonObject();
-
-        PlayerXPEntry entry = this;
-        obj.addProperty("d", entry.getDifference());
-
-        return obj.toString();
+        return "{\"d\":" + difference + "}";
     }
 
 }

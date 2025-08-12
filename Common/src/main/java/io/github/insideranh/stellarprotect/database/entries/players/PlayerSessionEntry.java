@@ -42,15 +42,11 @@ public class PlayerSessionEntry extends LogEntry {
 
     @Override
     public String toSaveJson() {
-        JsonObject obj = new JsonObject();
-
-        PlayerSessionEntry entry = this;
-        obj.addProperty("s", entry.getLogin());
-        if (entry.getSessionTime() != 0) {
-            obj.addProperty("t", entry.getSessionTime());
+        if (sessionTime != 0) {
+            return "{\"s\":" + login + ",\"t\":" + sessionTime + "}";
+        } else {
+            return "{\"s\":" + login + "}";
         }
-
-        return obj.toString();
     }
 
 }
