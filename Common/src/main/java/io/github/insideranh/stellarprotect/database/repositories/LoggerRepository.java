@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Consumer;
 
 public interface LoggerRepository {
 
@@ -21,7 +22,7 @@ public interface LoggerRepository {
 
     void save(List<LogEntry> logEntries);
 
-    void purgeLogs(@NonNull DatabaseFilters databaseFilters);
+    void purgeLogs(@NonNull DatabaseFilters databaseFilters, Consumer<Long> onFinished);
 
     CompletableFuture<CallbackLookup<List<ItemLogEntry>, Long>> getChestTransactions(@NonNull Location location, int skip, int limit);
 

@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Consumer;
 
 public class ProtectDatabase {
 
@@ -59,8 +60,8 @@ public class ProtectDatabase {
         this.databaseConnection.getLoggerRepository().clearOldLogs();
     }
 
-    public void purgeLogs(@NonNull DatabaseFilters databaseFilters) {
-        this.databaseConnection.getLoggerRepository().purgeLogs(databaseFilters);
+    public void purgeLogs(@NonNull DatabaseFilters databaseFilters, Consumer<Long> onFinished) {
+        this.databaseConnection.getLoggerRepository().purgeLogs(databaseFilters, onFinished);
     }
 
     public CompletableFuture<CallbackLookup<List<ItemLogEntry>, Long>> getChestTransactions(@NonNull Location location, int skip, int limit) {
