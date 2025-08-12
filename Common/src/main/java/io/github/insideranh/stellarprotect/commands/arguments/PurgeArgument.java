@@ -36,6 +36,8 @@ public class PurgeArgument extends StellarArgument {
         TimeArg timeArg = ArgumentsParser.parseTime(arguments);
         RadiusArg radiusArg = ArgumentsParser.parseRadiusOrNull(arguments, player.getLocation());
         List<ActionType> actionTypesArg = ArgumentsParser.parseActionTypes(arguments);
+        plugin.getLangManager().sendMessage(sender, "messages.purging");
+
         ArgumentsParser.parseUsers(arguments).thenAccept(usersArg -> {
             DatabaseFilters databaseFilters = new DatabaseFilters();
             databaseFilters.setTimeFilter(timeArg);
@@ -43,9 +45,7 @@ public class PurgeArgument extends StellarArgument {
             databaseFilters.setUserFilters(usersArg);
             databaseFilters.setActionTypesFilter(actionTypesArg.stream().map(ActionType::getId).collect(Collectors.toCollection(ArrayList::new)));
 
-            plugin.getProtectDatabase().purgeLogs(databaseFilters);
-
-            plugin.getLangManager().sendMessage(sender, "messages.purged");
+            plugin.getProtectDatabase().purgeLogs(databaseFilters, inMs -> sender.sendMessage(plugin.getLangManager().get("messages.purgedFinish").replace("<time>", String.valueOf(inMs))));
         });
     }
 
