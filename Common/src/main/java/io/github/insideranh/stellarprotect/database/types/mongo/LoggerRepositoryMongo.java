@@ -39,6 +39,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
@@ -137,7 +138,7 @@ public class LoggerRepositoryMongo implements LoggerRepository {
     }
 
     @Override
-    public void purgeLogs(@NonNull DatabaseFilters databaseFilters) {
+    public void purgeLogs(@NonNull DatabaseFilters databaseFilters, Consumer<Long> onFinished) {
         long start = System.currentTimeMillis();
         Debugger.debugSave("Purging logs...");
 
@@ -184,11 +185,14 @@ public class LoggerRepositoryMongo implements LoggerRepository {
 
             DeleteResult result = this.logEntries.deleteMany(filter);
 
+            long ms = System.currentTimeMillis() - start;
             if (result.getDeletedCount() > 0) {
-                Debugger.debugSave("Purged " + result.getDeletedCount() + " logs in " + (System.currentTimeMillis() - start) + "ms");
+                Debugger.debugSave("Purged " + result.getDeletedCount() + " logs in " + ms + "ms");
             } else {
                 Debugger.debugSave("No logs found to delete.");
             }
+
+            onFinished.accept(ms);
         });
         executor.shutdown();
     }

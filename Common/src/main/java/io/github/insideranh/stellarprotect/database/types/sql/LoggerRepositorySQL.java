@@ -34,6 +34,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
@@ -108,7 +109,7 @@ public class LoggerRepositorySQL implements LoggerRepository {
     }
 
     @Override
-    public void purgeLogs(@NonNull DatabaseFilters databaseFilters) {
+    public void purgeLogs(@NonNull DatabaseFilters databaseFilters, Consumer<Long> onFinished) {
         long start = System.currentTimeMillis();
         Debugger.debugSave("Purging logs...");
 
@@ -127,15 +128,15 @@ public class LoggerRepositorySQL implements LoggerRepository {
                 List<Object> parameters = new ArrayList<>();
 
                 if (timeArg != null) {
-                    whereConditions.add("ple.created_at BETWEEN ? AND ?");
+                    whereConditions.add("created_at BETWEEN ? AND ?");
                     parameters.add(timeArg.getStart());
                     parameters.add(timeArg.getEnd());
                 }
 
                 if (radiusArg != null) {
-                    whereConditions.add("ple.x BETWEEN ? AND ?");
-                    whereConditions.add("ple.y BETWEEN ? AND ?");
-                    whereConditions.add("ple.z BETWEEN ? AND ?");
+                    whereConditions.add("x BETWEEN ? AND ?");
+                    whereConditions.add("y BETWEEN ? AND ?");
+                    whereConditions.add("z BETWEEN ? AND ?");
                     parameters.add(radiusArg.getMinX());
                     parameters.add(radiusArg.getMaxX());
                     parameters.add(radiusArg.getMinY());
@@ -148,7 +149,7 @@ public class LoggerRepositorySQL implements LoggerRepository {
                     String placeholders = usersArg.getUserIds().stream()
                         .map(id -> "?")
                         .collect(Collectors.joining(","));
-                    whereConditions.add("ple.player_id IN (" + placeholders + ")");
+                    whereConditions.add("player_id IN (" + placeholders + ")");
                     parameters.addAll(usersArg.getUserIds());
                 }
 
@@ -156,13 +157,13 @@ public class LoggerRepositorySQL implements LoggerRepository {
                     String placeholders = actionTypes.stream()
                         .map(type -> "?")
                         .collect(Collectors.joining(","));
-                    whereConditions.add("ple.action_type IN (" + placeholders + ")");
+                    whereConditions.add("action_type IN (" + placeholders + ")");
                     parameters.addAll(actionTypes);
                 }
 
                 String whereClause = whereConditions.isEmpty() ? "" : "WHERE " + String.join(" AND ", whereConditions);
 
-                String sql = "DELETE FROM " + stellarProtect.getConfigManager().getTablesLogEntries() + " ple " + whereClause;
+                String sql = "DELETE FROM " + stellarProtect.getConfigManager().getTablesLogEntries() + " " + whereClause;
 
                 try (PreparedStatement stmt = connection.prepareStatement(sql)) {
                     for (int i = 0; i < parameters.size(); i++) {
@@ -179,12 +180,15 @@ public class LoggerRepositorySQL implements LoggerRepository {
                     }
 
                     int deleted = stmt.executeUpdate();
+                    long ms = System.currentTimeMillis() - start;
 
                     if (deleted > 0) {
-                        Debugger.debugSave("Purged " + deleted + " logs in " + (System.currentTimeMillis() - start) + "ms");
+                        Debugger.debugSave("Purged " + deleted + " logs in " + ms + "ms");
                     } else {
                         Debugger.debugSave("No logs found to delete.");
                     }
+
+                    onFinished.accept(ms);
                 }
             } catch (SQLException e) {
                 stellarProtect.getLogger().log(Level.SEVERE, "Failed to purge logs.", e);
