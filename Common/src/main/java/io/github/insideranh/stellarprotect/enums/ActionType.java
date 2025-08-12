@@ -61,13 +61,6 @@ public enum ActionType {
 
     SHOP_GUI(80);
 
-    private final int id;
-    private final HashMap<String, WorldConfigType> worldTypes = new HashMap<>();
-    private final HashSet<String> worlds = new HashSet<>();
-    private final HashSet<String> disabledTypes = new HashSet<>();
-    @Setter
-    private boolean enabled = true;
-
     private static final ActionType[] ID_TO_ACTION_CACHE;
     private static final Map<String, ActionType> NAME_TO_ACTION_CACHE = new HashMap<>();
 
@@ -84,6 +77,13 @@ public enum ActionType {
             NAME_TO_ACTION_CACHE.put(actionType.name().toLowerCase(), actionType);
         }
     }
+
+    private final int id;
+    private final HashMap<String, WorldConfigType> worldTypes = new HashMap<>();
+    private final HashSet<String> worlds = new HashSet<>();
+    private final HashSet<String> disabledTypes = new HashSet<>();
+    @Setter
+    private boolean enabled = true;
 
     ActionType(int id) {
         this.id = id;
