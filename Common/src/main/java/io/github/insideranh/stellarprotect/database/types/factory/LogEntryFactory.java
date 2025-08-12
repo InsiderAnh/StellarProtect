@@ -23,53 +23,6 @@ import java.util.stream.Collectors;
 
 public class LogEntryFactory {
 
-    @Getter
-    public enum ActionLogType {
-        BLOCK_BREAK(0, PlayerBlockLogEntry.class),
-        BLOCK_PLACE(1, PlayerBlockLogEntry.class),
-        BLOCK_INTERACT(10, PlayerBlockLogEntry.class),
-        BLOCK_BURN(15, PlayerBlockLogEntry.class),
-        BLOCK_EXPLODE(16, PlayerBlockLogEntry.class),
-
-        ITEM_DROP(3, PlayerItemLogEntry.class),
-        ITEM_PICKUP(4, PlayerItemLogEntry.class),
-        ITEM_CRAFT(5, PlayerItemLogEntry.class),
-        ITEM_ENCHANT(7, PlayerItemLogEntry.class),
-        ITEM_CONSUME(21, PlayerItemLogEntry.class),
-        ITEM_REPAIR(22, PlayerItemLogEntry.class),
-        ITEM_BOOK_EDIT(33, PlayerItemLogEntry.class),
-
-        PLAYER_TRANSACTION(17, PlayerTransactionEntry.class),
-        PLAYER_USE(18, PlayerUseEntry.class),
-        PLAYER_SESSION(19, PlayerSessionEntry.class),
-        PLAYER_SIGN_CHANGE(20, PlayerSignChangeEntry.class),
-        CROP_GROW(8, CropGrowLogEntry.class),
-        PLAYER_KILL(9, PlayerKillLogEntry.class),
-        PLAYER_DEATH(23, PlayerDeathEntry.class),
-        PLAYER_TAME(11, PlayerTameEntry.class),
-        PLAYER_BREED(12, PlayerBreedEntry.class),
-        PLAYER_CHAT(13, PlayerChatEntry.class),
-        PLAYER_COMMAND(14, PlayerCommandEntry.class),
-        PLAYER_MOUNT(24, PlayerMountEntry.class),
-        PLAYER_HANGING(26, PlayerHangingEntry.class),
-        PLAYER_SHOOT(30, PlayerShootEntry.class),
-        ENTITY_RESURRECT(31, EntityResurrectEntry.class),
-        PLAYER_TELEPORT(32, PlayerTeleportLogEntry.class),
-        PLAYER_GAMEMODE(34, PlayerGameModeLogEntry.class),
-        PLAYER_XP(35, PlayerXPEntry.class),
-        PLAYER_ECONOMY(36, PlayerEconomyEntry.class),
-        PLAYER_SHOP_GUI(80, PlayerShopGUIEntry.class);
-
-        private final int actionId;
-        private final Class<? extends LogEntry> entryClass;
-
-        ActionLogType(int actionId, Class<? extends LogEntry> entryClass) {
-            this.actionId = actionId;
-            this.entryClass = entryClass;
-        }
-
-    }
-
     private static final Map<Integer, ActionLogType> ACTION_TYPE_MAP =
         Arrays.stream(ActionLogType.values())
             .collect(Collectors.toMap(ActionLogType::getActionId, Function.identity()));
@@ -117,6 +70,53 @@ public class LogEntryFactory {
         } catch (Exception e) {
             return new JsonObject();
         }
+    }
+
+    @Getter
+    public enum ActionLogType {
+        BLOCK_BREAK(0, PlayerBlockLogEntry.class),
+        BLOCK_PLACE(1, PlayerBlockLogEntry.class),
+        BLOCK_INTERACT(10, PlayerBlockLogEntry.class),
+        BLOCK_BURN(15, PlayerBlockLogEntry.class),
+        BLOCK_EXPLODE(16, PlayerBlockLogEntry.class),
+
+        ITEM_DROP(3, PlayerItemLogEntry.class),
+        ITEM_PICKUP(4, PlayerItemLogEntry.class),
+        ITEM_CRAFT(5, PlayerItemLogEntry.class),
+        ITEM_ENCHANT(7, PlayerItemLogEntry.class),
+        ITEM_CONSUME(21, PlayerItemLogEntry.class),
+        ITEM_REPAIR(22, PlayerItemLogEntry.class),
+        ITEM_BOOK_EDIT(33, PlayerItemLogEntry.class),
+
+        PLAYER_TRANSACTION(17, PlayerTransactionEntry.class),
+        PLAYER_USE(18, PlayerUseEntry.class),
+        PLAYER_SESSION(19, PlayerSessionEntry.class),
+        PLAYER_SIGN_CHANGE(20, PlayerSignChangeEntry.class),
+        CROP_GROW(8, CropGrowLogEntry.class),
+        PLAYER_KILL(9, PlayerKillLogEntry.class),
+        PLAYER_DEATH(23, PlayerDeathEntry.class),
+        PLAYER_TAME(11, PlayerTameEntry.class),
+        PLAYER_BREED(12, PlayerBreedEntry.class),
+        PLAYER_CHAT(13, PlayerChatEntry.class),
+        PLAYER_COMMAND(14, PlayerCommandEntry.class),
+        PLAYER_MOUNT(24, PlayerMountEntry.class),
+        PLAYER_HANGING(26, PlayerHangingEntry.class),
+        PLAYER_SHOOT(30, PlayerShootEntry.class),
+        ENTITY_RESURRECT(31, EntityResurrectEntry.class),
+        PLAYER_TELEPORT(32, PlayerTeleportLogEntry.class),
+        PLAYER_GAMEMODE(34, PlayerGameModeLogEntry.class),
+        PLAYER_XP(35, PlayerXPEntry.class),
+        PLAYER_ECONOMY(36, PlayerEconomyEntry.class),
+        PLAYER_SHOP_GUI(80, PlayerShopGUIEntry.class);
+
+        private final int actionId;
+        private final Class<? extends LogEntry> entryClass;
+
+        ActionLogType(int actionId, Class<? extends LogEntry> entryClass) {
+            this.actionId = actionId;
+            this.entryClass = entryClass;
+        }
+
     }
 
 }
