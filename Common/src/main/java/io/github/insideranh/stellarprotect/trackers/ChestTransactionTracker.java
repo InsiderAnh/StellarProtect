@@ -216,7 +216,7 @@ public class ChestTransactionTracker implements Listener {
         if (holder instanceof BlockState) {
             BlockState state = (BlockState) holder;
             Material type = state.getType();
-            return type == Material.CHEST || type == Material.TRAPPED_CHEST;
+            return WorldUtils.isValidChestBlock(type);
         }
 
         return holder instanceof DoubleChest;
