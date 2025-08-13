@@ -73,7 +73,7 @@ public class LoggerCache {
     }
 
     private static Map<ActionCategory, CacheConfig> createCategoryConfigs() {
-        Map<ActionCategory, CacheConfig> configs = new HashMap<>();
+        Map<ActionCategory, CacheConfig> configs = new EnumMap<>(ActionCategory.class);
         configs.put(ActionCategory.BLOCK_ACTIONS, new CacheConfig(500, 20, 5 * 60 * 1000L));
         configs.put(ActionCategory.ITEM_ACTIONS, new CacheConfig(500, 15, 10 * 60 * 1000L));
         configs.put(ActionCategory.ENTITY_ACTIONS, new CacheConfig(200, 10, 15 * 60 * 1000L));
@@ -84,6 +84,7 @@ public class LoggerCache {
         configs.put(ActionCategory.INVENTORY_ACTIONS, new CacheConfig(1000, 20, 5 * 60 * 1000L));
         configs.put(ActionCategory.SESSION_ACTIONS, new CacheConfig(100, 5, 30 * 60 * 1000L));
         configs.put(ActionCategory.SIGN_ACTIONS, new CacheConfig(100, 5, 30 * 60 * 1000L));
+        configs.put(ActionCategory.HOOK_ACTIONS, new CacheConfig(200, 5, 5 * 60 * 1000L));
         configs.put(ActionCategory.UNKNOWN_ACTIONS, new CacheConfig(500, 5, 5 * 60 * 1000L));
         return configs;
     }

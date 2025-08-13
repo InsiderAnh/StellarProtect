@@ -15,6 +15,7 @@ public class PlayerProtect {
     private final long playerId;
     private final UUID uuid;
     private String name;
+    private String realname;
     private boolean inspect;
     private long nextInspect;
     private LookupSession lookupSession;
@@ -29,6 +30,7 @@ public class PlayerProtect {
     public PlayerProtect(UUID uuid, String name, long playerId) {
         this.playerId = playerId;
         this.name = name.toLowerCase();
+        this.realname = name;
         this.uuid = uuid;
     }
 

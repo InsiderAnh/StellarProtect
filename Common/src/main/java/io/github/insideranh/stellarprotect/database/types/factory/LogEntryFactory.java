@@ -107,6 +107,8 @@ public class LogEntryFactory {
         PLAYER_GAMEMODE(34, PlayerGameModeLogEntry.class),
         PLAYER_XP(35, PlayerXPEntry.class),
         PLAYER_ECONOMY(36, PlayerEconomyEntry.class),
+        PLACE_ITEM(38, PlayerPlaceRemoveItemLogEntry.class),
+        REMOVE_ITEM(39, PlayerPlaceRemoveItemLogEntry.class),
         PLAYER_SHOP_GUI(80, PlayerShopGUIEntry.class);
 
         private final int actionId;
