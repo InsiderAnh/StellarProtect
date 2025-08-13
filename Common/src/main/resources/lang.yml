@@ -110,7 +110,15 @@ messages:
       &7<time> &8| &d<player>&f money &8| &c$-<amount>
     shop_gui: |-
       &7<time> &8| &d<player>&f shop gui &8| &d(<data>)
+    place_item: |-
+      &7<time> &8| &d<player>&f place item &8| &d(<data>) &a[View]
+    remove_item: |-
+      &7<time> &8| &d<player>&f remove item &8| &d(<data>)  &a[View]
   tooltips:
+    place_item: |-
+      &d<data> &7(x<amount>)
+    remove_item: |-
+      &d<data> &7(x<amount>)
     logout_session: |-
       &fLogged time: &d<time>
     sign_change: |-
@@ -133,3 +141,8 @@ messages:
   inspect:
     enable: "&aYou have enabled inspect mode."
     disable: "&cYou have disabled inspect mode."
+game_modes:
+  0: "Survival"
+  1: "Creative"
+  2: "Adventure"
+  3: "Spectator"
