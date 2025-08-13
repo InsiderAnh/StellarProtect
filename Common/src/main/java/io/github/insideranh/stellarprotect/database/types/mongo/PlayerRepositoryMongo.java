@@ -38,6 +38,7 @@ public class PlayerRepositoryMongo implements PlayerRepository {
 
         Document playerDoc = new Document("uuid", player.getUniqueId().toString())
             .append("name", player.getName().toLowerCase())
+            .append("realname", player.getName())
             .append("id", playerProtect.getPlayerId());
 
         players.insertOne(playerDoc);

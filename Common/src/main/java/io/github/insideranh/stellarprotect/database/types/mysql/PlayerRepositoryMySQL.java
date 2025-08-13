@@ -4,6 +4,7 @@ import com.zaxxer.hikari.HikariDataSource;
 import io.github.insideranh.stellarprotect.StellarProtect;
 import io.github.insideranh.stellarprotect.data.PlayerProtect;
 import io.github.insideranh.stellarprotect.database.repositories.PlayerRepository;
+import io.github.insideranh.stellarprotect.managers.ConfigManager;
 import lombok.SneakyThrows;
 import org.bukkit.entity.Player;
 
@@ -20,6 +21,7 @@ import java.util.logging.Level;
 public class PlayerRepositoryMySQL implements PlayerRepository {
 
     private final StellarProtect stellarProtect = StellarProtect.getInstance();
+    private final ConfigManager configManager = stellarProtect.getConfigManager();
     private final HikariDataSource dataSource;
 
     public PlayerRepositoryMySQL(HikariDataSource dataSource) {
@@ -30,7 +32,7 @@ public class PlayerRepositoryMySQL implements PlayerRepository {
     public PlayerProtect loadOrCreatePlayer(Player player) {
         try (Connection connection = getConnection()) {
             try (PreparedStatement select = connection.prepareStatement(
-                "SELECT id FROM " + stellarProtect.getConfigManager().getTablesPlayers() + " WHERE uuid = ?")) {
+                "SELECT id FROM " + configManager.getTablesPlayers() + " WHERE uuid = ?")) {
 
                 select.setString(1, player.getUniqueId().toString());
 
@@ -45,11 +47,12 @@ public class PlayerRepositoryMySQL implements PlayerRepository {
             long newId = generateNextId();
 
             try (PreparedStatement insert = connection.prepareStatement(
-                "INSERT INTO " + stellarProtect.getConfigManager().getTablesPlayers() + " (id, uuid, name) VALUES (?, ?, ?)")) {
+                "INSERT INTO " + configManager.getTablesPlayers() + " (id, uuid, name, realname) VALUES (?, ?, ?, ?)")) {
 
                 insert.setLong(1, newId);
                 insert.setString(2, player.getUniqueId().toString());
                 insert.setString(3, player.getName().toLowerCase());
+                insert.setString(4, player.getName());
                 insert.executeUpdate();
             }
 
@@ -65,7 +68,7 @@ public class PlayerRepositoryMySQL implements PlayerRepository {
     public List<Long> getIdsByNames(List<String> names) {
         if (names.isEmpty()) return new ArrayList<>();
 
-        StringBuilder query = new StringBuilder("SELECT id FROM players WHERE name IN (");
+        StringBuilder query = new StringBuilder("SELECT id, name FROM " + configManager.getTablesPlayers() + " WHERE name IN (");
         for (int i = 0; i < names.size(); i++) {
             query.append("?");
             if (i != names.size() - 1) query.append(", ");
@@ -84,8 +87,11 @@ public class PlayerRepositoryMySQL implements PlayerRepository {
             try (ResultSet result = select.executeQuery()) {
                 List<Long> ids = new LinkedList<>();
                 while (result.next()) {
-                    ids.add(result.getLong("id"));
-                    foundPlayers.put(result.getString("name").toLowerCase(), result.getLong("id"));
+                    long id = result.getLong("id");
+                    String name = result.getString("name");
+
+                    ids.add(id);
+                    foundPlayers.put(name.toLowerCase(), id);
                 }
                 for (String name : names) {
                     if (!foundPlayers.containsKey(name.toLowerCase())) {
@@ -104,7 +110,7 @@ public class PlayerRepositoryMySQL implements PlayerRepository {
     public long generateNextId() {
         try (Connection connection = getConnection();
              PreparedStatement getCurrentId = connection.prepareStatement(
-                 "SELECT current_id FROM " + stellarProtect.getConfigManager().getTablesIdCounter() + " WHERE table_name = '" + stellarProtect.getConfigManager().getTablesPlayers() + "'");
+                 "SELECT current_id FROM " + configManager.getTablesIdCounter() + " WHERE table_name = '" + configManager.getTablesPlayers() + "'");
              ResultSet result = getCurrentId.executeQuery()) {
 
             if (result.next()) {
@@ -112,7 +118,7 @@ public class PlayerRepositoryMySQL implements PlayerRepository {
                 long newId = currentId + 1;
 
                 try (PreparedStatement updateId = connection.prepareStatement(
-                    "UPDATE " + stellarProtect.getConfigManager().getTablesIdCounter() + " SET current_id = ? WHERE table_name = '" + stellarProtect.getConfigManager().getTablesPlayers() + "'")) {
+                    "UPDATE " + configManager.getTablesIdCounter() + " SET current_id = ? WHERE table_name = '" + configManager.getTablesPlayers() + "'")) {
                     updateId.setLong(1, newId);
                     updateId.executeUpdate();
                 }
@@ -120,7 +126,7 @@ public class PlayerRepositoryMySQL implements PlayerRepository {
                 return newId;
             } else {
                 try (PreparedStatement initId = connection.prepareStatement(
-                    "INSERT INTO " + stellarProtect.getConfigManager().getTablesIdCounter() + " (table_name, current_id) VALUES ('" + stellarProtect.getConfigManager().getTablesPlayers() + "', 1)")) {
+                    "INSERT INTO " + configManager.getTablesIdCounter() + " (table_name, current_id) VALUES ('" + configManager.getTablesPlayers() + "', 1)")) {
                     initId.executeUpdate();
                 }
                 return 1;

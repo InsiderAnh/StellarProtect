@@ -44,7 +44,8 @@ public class SQLConnection implements DatabaseConnection {
                 statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + playersTable + " (" +
                     "id BIGINT PRIMARY KEY," +
                     "uuid VARCHAR(36) NOT NULL," +
-                    "name VARCHAR(36)" +
+                    "name VARCHAR(36)," +
+                    "realname VARCHAR(36)" +
                     ")");
 
                 statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + worldsTable + " (" +
@@ -78,6 +79,7 @@ public class SQLConnection implements DatabaseConnection {
                 statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + itemTemplatesTable + " (" +
                     "id INTEGER PRIMARY KEY," +
                     "base64 TEXT," +
+                    "hash INTEGER," +
                     "s TINYINT," +
                     "access_count INTEGER DEFAULT 0," +
                     "last_accessed TIMESTAMP DEFAULT CURRENT_TIMESTAMP," +
@@ -140,6 +142,23 @@ public class SQLConnection implements DatabaseConnection {
             stmt.execute("CREATE INDEX IF NOT EXISTS idx_item_total_used ON " + itemTemplates + " (total_quantity_used DESC)");
         } catch (SQLException e) {
             stellarProtect.getLogger().info("Failed to create indexes");
+        }
+
+        updateTables();
+    }
+
+    public void updateTables() {
+        String players = stellarProtect.getConfigManager().getTablesPlayers();
+        String itemTemplates = stellarProtect.getConfigManager().getTablesItemTemplates();
+        try (Statement stmt = connection.createStatement()) {
+            stmt.execute("ALTER TABLE " + players + " ADD COLUMN realname VARCHAR(36);");
+        } catch (SQLException ex) {
+            stellarProtect.getLogger().info("The realname column already exists, ignoring...");
+        }
+        try (Statement stmt = connection.createStatement()) {
+            stmt.execute("ALTER TABLE " + itemTemplates + " ADD COLUMN hash INTEGER;");
+        } catch (SQLException ex) {
+            stellarProtect.getLogger().info("The hash column already exists, ignoring...");
         }
     }
 

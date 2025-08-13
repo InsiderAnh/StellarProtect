@@ -150,7 +150,25 @@ public class MySQLConnection implements DatabaseConnection {
         } catch (SQLException e) {
             stellarProtect.getLogger().info("Failed to create indexes " + e.getMessage());
         }
+
+        updateTables();
     }
+
+    public void updateTables() {
+        String players = stellarProtect.getConfigManager().getTablesPlayers();
+        String itemTemplates = stellarProtect.getConfigManager().getTablesItemTemplates();
+        try (Connection connection = dataSource.getConnection()) {
+            try (Statement stmt = connection.createStatement()) {
+                stmt.execute("ALTER TABLE " + players + " ADD COLUMN realname VARCHAR(36);");
+            }
+            try (Statement stmt = connection.createStatement()) {
+                stmt.execute("ALTER TABLE " + itemTemplates + " ADD COLUMN hash BIGINT;");
+            }
+        } catch (SQLException ex) {
+            stellarProtect.getLogger().info("The realname and hash column already exists, ignoring...");
+        }
+    }
+
 
     @Override
     public void close() {
