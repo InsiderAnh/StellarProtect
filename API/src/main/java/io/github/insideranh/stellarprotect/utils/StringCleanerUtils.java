@@ -14,7 +14,9 @@ public class StringCleanerUtils {
 
     private static final DecimalFormat format = new DecimalFormat("###,###,###.##");
     private static final NavigableMap<Long, String> SUFFIXES = new TreeMap<>();
+    private static final HashMap<String, String> MATERIAL_TRANSLATIONS = new HashMap<>();
     private static final Pattern pattern = Pattern.compile("\"m\":\"([^\"]+)\"");
+    private static boolean HAS_TRANSLATION = false;
 
     static {
         SUFFIXES.put(1_000L, "k");
@@ -23,6 +25,15 @@ public class StringCleanerUtils {
         SUFFIXES.put(1_000_000_000_000L, "T");
         SUFFIXES.put(1_000_000_000_000_000L, "Q");
         SUFFIXES.put(1_000_000_000_000_000_000L, "Qi");
+    }
+
+    public static void setHasTranslation(boolean hasTranslation) {
+        MATERIAL_TRANSLATIONS.clear();
+        HAS_TRANSLATION = hasTranslation;
+    }
+
+    public static void addMaterialTranslation(String material, String translation) {
+        MATERIAL_TRANSLATIONS.put(material.toLowerCase(), translation);
     }
 
     public static double limitTo2Decimals(double value) {
@@ -49,6 +60,13 @@ public class StringCleanerUtils {
         if (name == null || name.length() < 2) return name;
 
         String cleanedData = cleanMinecraft(name);
+
+        if (HAS_TRANSLATION) {
+            String translation = MATERIAL_TRANSLATIONS.get(cleanedData.toLowerCase());
+            if (translation != null) {
+                return translation;
+            }
+        }
 
         int bracketIndex = cleanedData.indexOf('[');
         if (bracketIndex != -1) {

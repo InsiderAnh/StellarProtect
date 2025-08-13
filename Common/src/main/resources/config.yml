@@ -4,6 +4,9 @@ debugs:
   save: false
   extras: false
 features:
+  translations:
+    # Language to use for translations, available languages: es, zh
+    items_lang: "en"
   suspicious-patterns:
     enabled: true
     suspicious-tpa-kill:
