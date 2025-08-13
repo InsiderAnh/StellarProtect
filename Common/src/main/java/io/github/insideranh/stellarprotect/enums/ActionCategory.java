@@ -35,7 +35,7 @@ public enum ActionCategory {
         ActionType.BUCKET_EMPTY, ActionType.BUCKET_FILL
     }),
     INVENTORY_ACTIONS(6, "inventory_actions", new ActionType[]{
-        ActionType.INVENTORY_TRANSACTION
+        ActionType.INVENTORY_TRANSACTION, ActionType.PLACE_ITEM, ActionType.REMOVE_ITEM
     }),
     SESSION_ACTIONS(7, "session_actions", new ActionType[]{
         ActionType.SESSION
@@ -46,6 +46,9 @@ public enum ActionCategory {
     PLAYER_ACTIONS(9, "player_actions", new ActionType[]{
         ActionType.SHOOT, ActionType.TOTEM, ActionType.CONSUME, ActionType.GAME_MODE,
         ActionType.TELEPORT, ActionType.XP, ActionType.MONEY
+    }),
+    HOOK_ACTIONS(10, "hook_actions", new ActionType[]{
+        ActionType.SHOP_GUI
     }),
     UNKNOWN_ACTIONS(50, "unknown_actions", ActionType.values());
 

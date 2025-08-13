@@ -59,6 +59,9 @@ public enum ActionType {
 
     DECORATIVE_ITEM_CHANGE(37),
 
+    PLACE_ITEM(38),
+    REMOVE_ITEM(39),
+
     SHOP_GUI(80);
 
     private static final ActionType[] ID_TO_ACTION_CACHE;
