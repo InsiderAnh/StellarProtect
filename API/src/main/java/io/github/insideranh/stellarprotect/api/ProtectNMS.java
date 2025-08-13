@@ -7,6 +7,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.function.Function;
 
@@ -33,5 +34,7 @@ public abstract class ProtectNMS {
     public abstract void sendPageButtons(Player player, String pageString, String clickPage, int page, int perPage, int maxPages);
 
     public abstract CallbackBucket<Block, String, Material> getBucketData(Block block, BlockFace blockFace, Material bucket);
+
+    public abstract ItemStack getItemInHand(Player player);
 
 }
