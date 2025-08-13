@@ -18,6 +18,7 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Waterlogged;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.function.Function;
 
@@ -117,6 +118,11 @@ public class ProtectNMS_v1_20_R3 extends ProtectNMS {
 
         Block relativeBlock = block.getRelative(blockFace);
         return new CallbackBucket<>(relativeBlock, block.getBlockData().getAsString(), Material.WATER);
+    }
+
+    @Override
+    public ItemStack getItemInHand(Player player) {
+        return player.getInventory().getItemInMainHand();
     }
 
 }

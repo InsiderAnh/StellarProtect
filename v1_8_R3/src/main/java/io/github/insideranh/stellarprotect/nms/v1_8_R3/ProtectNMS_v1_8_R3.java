@@ -17,6 +17,7 @@ import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
 
 import java.util.ArrayList;
@@ -115,6 +116,11 @@ public class ProtectNMS_v1_8_R3 extends ProtectNMS {
     public CallbackBucket<Block, String, Material> getBucketData(Block block, BlockFace blockFace, Material bucket) {
         Block relativeBlock = block.getRelative(blockFace);
         return new CallbackBucket<>(relativeBlock, String.valueOf(relativeBlock.getData()), relativeBlock.getType());
+    }
+
+    @Override
+    public ItemStack getItemInHand(Player player) {
+        return player.getInventory().getItemInHand();
     }
 
 }
