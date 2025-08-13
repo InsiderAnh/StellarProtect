@@ -8,6 +8,7 @@ import io.github.insideranh.stellarprotect.database.entries.economy.PlayerXPEntr
 import io.github.insideranh.stellarprotect.database.entries.items.ItemLogEntry;
 import io.github.insideranh.stellarprotect.database.entries.players.*;
 import io.github.insideranh.stellarprotect.enums.ActionType;
+import io.github.insideranh.stellarprotect.items.ItemTemplate;
 import io.github.insideranh.stellarprotect.items.MinecraftItem;
 import io.github.insideranh.stellarprotect.utils.LocationUtils;
 import io.github.insideranh.stellarprotect.utils.StringCleanerUtils;
@@ -136,6 +137,10 @@ public class InspectHandler {
             handlers.put(ActionType.GAME_MODE, new GameModeActionHandler());
             handlers.put(ActionType.XP, new XPActionHandler());
             handlers.put(ActionType.MONEY, new EconomyActionHandler());
+
+            PlaceRemoveItemActionHandler placeRemoveActionHandler = new PlaceRemoveItemActionHandler();
+            handlers.put(ActionType.PLACE_ITEM, placeRemoveActionHandler);
+            handlers.put(ActionType.REMOVE_ITEM, placeRemoveActionHandler);
         }
 
         public static ActionHandler getHandler(ActionType actionType) {
@@ -221,6 +226,31 @@ public class InspectHandler {
 
     }
 
+    public static class PlaceRemoveItemActionHandler implements ActionHandler {
+
+        @Override
+        public void handle(Player player, LogEntry logEntry, StellarProtect plugin) {
+            PlayerPlaceRemoveItemLogEntry itemEntry = (PlayerPlaceRemoveItemLogEntry) logEntry;
+            MinecraftItem minecraftItem = StringCleanerUtils.parseMinecraftData(itemEntry.getDataString());
+            ItemTemplate itemTemplate = plugin.getItemsManager().getItemTemplate(itemEntry.getItemReferenceId());
+            MinecraftItem explainedItem = StringCleanerUtils.parseMinecraftData(itemTemplate.getBukkitItem().getType().name());
+            String actionKey = "messages.actions." + (itemEntry.isPlaced() ? "place_item" : "remove_item");
+            String tooltipKey = "messages.tooltips." + (itemEntry.isPlaced() ? "place_item" : "remove_item");
+
+            plugin.getProtectNMS().sendActionTitle(player,
+                plugin.getLangManager().get(actionKey),
+                plugin.getLangManager().get(tooltipKey, text -> text
+                    .replace("<data>", explainedItem.getCleanName())
+                    .replace("<amount>", String.valueOf(itemEntry.getAmount()))),
+                "",
+                text -> text
+                    .replace("<time>", TimeUtils.formatMillisAsAgo(logEntry.getCreatedAt()))
+                    .replace("<player>", PlayerCache.getName(logEntry.getPlayerId()))
+                    .replace("<data>", minecraftItem.getCleanName())
+            );
+        }
+    }
+
     public static class ShootActionHandler implements ActionHandler {
 
         @Override
@@ -263,6 +293,10 @@ public class InspectHandler {
         @Override
         public void handle(Player player, LogEntry logEntry, StellarProtect plugin) {
             PlayerGameModeLogEntry gameModeEntry = (PlayerGameModeLogEntry) logEntry;
+
+            String newGameMode = plugin.getLangManager().get("game_modes." + gameModeEntry.getNewGameMode());
+            String lastGameMode = plugin.getLangManager().get("game_modes." + gameModeEntry.getLastGameMode());
+
             plugin.getProtectNMS().sendActionTitle(player,
                 plugin.getLangManager().get("messages.actions.game_mode"),
                 plugin.getLangManager().get("messages.tooltips.game_mode"),
@@ -270,10 +304,11 @@ public class InspectHandler {
                 text -> text
                     .replace("<time>", TimeUtils.formatMillisAsAgo(logEntry.getCreatedAt()))
                     .replace("<player>", PlayerCache.getName(logEntry.getPlayerId()))
-                    .replace("<lastGameMode>", String.valueOf(gameModeEntry.getLastGameMode()))
-                    .replace("<newGameMode>", String.valueOf(gameModeEntry.getNewGameMode()))
+                    .replace("<lastGameMode>", lastGameMode)
+                    .replace("<newGameMode>", newGameMode)
             );
         }
+
     }
 
     public static class SignChangeActionHandler implements ActionHandler {
