@@ -7,11 +7,20 @@ import org.bukkit.inventory.ItemStack;
 public class ItemTemplate {
 
     private final long id;
+    private final long hashCode;
     private final ItemStack bukkitItem;
     private final String base64;
 
     public ItemTemplate(long id, ItemStack bukkitItem, String base64) {
         this.id = id;
+        this.hashCode = -1;
+        this.bukkitItem = bukkitItem;
+        this.base64 = base64;
+    }
+
+    public ItemTemplate(long id, long hashCode, ItemStack bukkitItem, String base64) {
+        this.id = id;
+        this.hashCode = hashCode;
         this.bukkitItem = bukkitItem;
         this.base64 = base64;
     }
