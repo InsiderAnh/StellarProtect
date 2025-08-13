@@ -140,39 +140,40 @@ public class StellarProtectCMD implements TabExecutor {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
-        if (args.length >= 1) {
-            String arg = args[0].toLowerCase();
-            switch (arg) {
-                case "inspect":
-                case "i": {
-                    return arguments.get("inspect").onTabComplete(sender, Arrays.copyOfRange(args, 1, args.length));
-                }
-                case "search":
-                case "lookup":
-                case "s":
-                case "l": {
-                    return completes.get("lookup").onTabComplete(sender, Arrays.copyOfRange(args, 1, args.length));
-                }
-                case "purge": {
-                    return arguments.get("purge").onTabComplete(sender, Arrays.copyOfRange(args, 1, args.length));
-                }
-                case "debug": {
-                    return arguments.get("debug").onTabComplete(sender, Arrays.copyOfRange(args, 1, args.length));
-                }
-                case "mem":
-                case "memory": {
-                    return arguments.get("memory").onTabComplete(sender, Arrays.copyOfRange(args, 1, args.length));
-                }
-                case "restore":
-                case "rollback": {
-                    return arguments.get("restore").onTabComplete(sender, Arrays.copyOfRange(args, 1, args.length));
-                }
-                default: {
-                    return Stream.of("reload", "version", "help", "lookup", "inspect", "purge", "memory", "debug", "restore").filter(s -> s.startsWith(arg)).collect(Collectors.toList());
-                }
+        if (args.length <= 1) {
+            String arg = args.length == 1 ? args[0].toLowerCase() : "";
+            return Stream.of("reload", "version", "help", "lookup", "inspect", "purge", "memory", "debug", "restore").filter(s -> arg.isEmpty() || s.startsWith(arg)).collect(Collectors.toList());
+        }
+        String arg = args[0].toLowerCase();
+        switch (arg) {
+            case "inspect":
+            case "i": {
+                return arguments.get("inspect").onTabComplete(sender, Arrays.copyOfRange(args, 1, args.length));
+            }
+            case "search":
+            case "lookup":
+            case "s":
+            case "l": {
+                return completes.get("lookup").onTabComplete(sender, Arrays.copyOfRange(args, 1, args.length));
+            }
+            case "purge": {
+                return arguments.get("purge").onTabComplete(sender, Arrays.copyOfRange(args, 1, args.length));
+            }
+            case "debug": {
+                return arguments.get("debug").onTabComplete(sender, Arrays.copyOfRange(args, 1, args.length));
+            }
+            case "mem":
+            case "memory": {
+                return arguments.get("memory").onTabComplete(sender, Arrays.copyOfRange(args, 1, args.length));
+            }
+            case "restore":
+            case "rollback": {
+                return arguments.get("restore").onTabComplete(sender, Arrays.copyOfRange(args, 1, args.length));
+            }
+            default: {
+                return Stream.of("reload", "version", "help", "lookup", "inspect", "purge", "memory", "debug", "restore").filter(s -> s.startsWith(arg)).collect(Collectors.toList());
             }
         }
-        return Arrays.asList("reload", "version", "help", "lookup", "inspect", "purge", "memory", "debug", "restore");
     }
 
     void sendHelp(CommandSender sender) {
