@@ -49,6 +49,8 @@ public class ConfigManager {
     private String tablesWorlds;
     private String tablesEntityIds;
 
+    private String itemsLang;
+
     public void load() {
         this.checkUpdates = plugin.getConfig().getBoolean("check-updates");
 
@@ -59,6 +61,8 @@ public class ConfigManager {
         this.liquidTracking = plugin.getConfig().getBoolean("advanced.liquid-tracking");
 
         this.suspiciousPatterns = plugin.getConfig().getBoolean("features.suspicious-patterns.enabled");
+
+        this.itemsLang = plugin.getConfig().getString("features.translations.items_lang");
 
         this.patternConfigs.put(SuspiciousType.TPA_KILL, new TpaSuspiciousConfig(plugin.getConfig(), "features.suspicious-patterns.suspicious-tpa-kill"));
 

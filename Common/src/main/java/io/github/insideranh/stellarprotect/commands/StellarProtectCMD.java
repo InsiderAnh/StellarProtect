@@ -179,15 +179,15 @@ public class StellarProtectCMD implements TabExecutor {
         sender.sendMessage(ChatColor.GRAY + "" + ChatColor.STRIKETHROUGH + "+---------------------------------------+");
         sender.sendMessage(ChatColor.DARK_GRAY + "[!] " + ChatColor.RED + "StellarProtect " + ChatColor.DARK_GRAY + "[!]");
         sender.sendMessage(ChatColor.GRAY + "" + ChatColor.STRIKETHROUGH + "+---------------------------------------+");
-        sender.sendMessage(ChatColor.YELLOW + "/sp reload " + ChatColor.GRAY + "- " + ChatColor.WHITE + "Reload the plugin.");
-        sender.sendMessage(ChatColor.YELLOW + "/sp help " + ChatColor.GRAY + "- " + ChatColor.WHITE + "Show this help.");
-        sender.sendMessage(ChatColor.YELLOW + "/sp version " + ChatColor.GRAY + "- " + ChatColor.WHITE + "Show the plugin version.");
-        sender.sendMessage(ChatColor.YELLOW + "/sp inspect " + ChatColor.GRAY + "- " + ChatColor.WHITE + "Enable/disable inspection mode.");
-        sender.sendMessage(ChatColor.YELLOW + "/sp lookup p:<page> t:<time> r:<radius> " + ChatColor.GRAY + "- " + ChatColor.WHITE + "Search for logs in a radius.");
-        sender.sendMessage(ChatColor.YELLOW + "/sp restore p:<page> t:<time> r:<radius> " + ChatColor.GRAY + "- " + ChatColor.WHITE + "Restore logs in a radius.");
-        sender.sendMessage(ChatColor.YELLOW + "/sp purge p:<page> t:<time> r:<radius> " + ChatColor.GRAY + "- " + ChatColor.WHITE + "Purge logs in a radius.");
-        sender.sendMessage(ChatColor.YELLOW + "/sp debug save|log|extras " + ChatColor.GRAY + "- " + ChatColor.WHITE + "Enable/disable debug mode.");
-        sender.sendMessage(ChatColor.YELLOW + "/sp memory " + ChatColor.GRAY + "- " + ChatColor.WHITE + "Show memory analysis.");
+        sender.sendMessage(ChatColor.YELLOW + "/spt reload " + ChatColor.GRAY + "- " + ChatColor.WHITE + "Reload the plugin.");
+        sender.sendMessage(ChatColor.YELLOW + "/spt help " + ChatColor.GRAY + "- " + ChatColor.WHITE + "Show this help.");
+        sender.sendMessage(ChatColor.YELLOW + "/spt version " + ChatColor.GRAY + "- " + ChatColor.WHITE + "Show the plugin version.");
+        sender.sendMessage(ChatColor.YELLOW + "/spt inspect " + ChatColor.GRAY + "- " + ChatColor.WHITE + "Enable/disable inspection mode.");
+        sender.sendMessage(ChatColor.YELLOW + "/spt lookup p:<page> t:<time> r:<radius> " + ChatColor.GRAY + "- " + ChatColor.WHITE + "Search for logs in a radius.");
+        sender.sendMessage(ChatColor.YELLOW + "/spt restore p:<page> t:<time> r:<radius> " + ChatColor.GRAY + "- " + ChatColor.WHITE + "Restore logs in a radius.");
+        sender.sendMessage(ChatColor.YELLOW + "/spt purge p:<page> t:<time> r:<radius> " + ChatColor.GRAY + "- " + ChatColor.WHITE + "Purge logs in a radius.");
+        sender.sendMessage(ChatColor.YELLOW + "/spt debug save|log|extras " + ChatColor.GRAY + "- " + ChatColor.WHITE + "Enable/disable debug mode.");
+        sender.sendMessage(ChatColor.YELLOW + "/spt memory " + ChatColor.GRAY + "- " + ChatColor.WHITE + "Show memory analysis.");
     }
 
     boolean hasBlockedPermission(CommandSender sender, String permission) {

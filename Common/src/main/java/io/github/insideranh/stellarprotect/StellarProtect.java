@@ -124,6 +124,7 @@ public class StellarProtect extends JavaPlugin {
         this.reloadConfig();
         this.configManager.load();
         this.langManager.load();
+        this.itemsManager.load();
         this.cacheManager.load();
         this.economyManager.load();
         this.trackManager.load();
