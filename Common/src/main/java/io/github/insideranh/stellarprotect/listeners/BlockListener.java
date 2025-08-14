@@ -27,8 +27,10 @@ public class BlockListener implements Listener {
 
     private final StellarProtect plugin = StellarProtect.getInstance();
 
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onBlockBreak(BlockBreakEvent event) {
+        if (event.isCancelled()) return;
+
         Block block = event.getBlock();
         if (block.getType().equals(Material.AIR) || ActionType.BLOCK_BREAK.shouldSkipLog(block.getWorld().getName(), block.getType().name()))
             return;
@@ -39,16 +41,20 @@ public class BlockListener implements Listener {
         LoggerCache.addLog(new PlayerBlockLogEntry(playerProtect.getPlayerId(), block, ActionType.BLOCK_BREAK));
     }
 
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onLeavesDecay(LeavesDecayEvent event) {
+        if (event.isCancelled()) return;
+
         Block block = event.getBlock();
         if (ActionType.BLOCK_BREAK.shouldSkipLog(block.getWorld().getName(), block.getType().name())) return;
 
         LoggerCache.addLog(new PlayerBlockLogEntry(PlayerUtils.getEntityByDirectId("=decay"), block, ActionType.BLOCK_BREAK));
     }
 
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onBlockPlace(BlockPlaceEvent event) {
+        if (event.isCancelled()) return;
+
         Block block = event.getBlock();
         if (ActionType.BLOCK_PLACE.shouldSkipLog(block.getWorld().getName(), block.getType().name())) return;
 

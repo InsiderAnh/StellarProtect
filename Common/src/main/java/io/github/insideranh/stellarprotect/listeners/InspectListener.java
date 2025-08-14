@@ -22,12 +22,15 @@ public class InspectListener implements Listener {
         Player player = event.getPlayer();
         if (event.getClickedBlock() == null) return;
 
+        //plugin.getProtectNMS().sendBlockHash(player, event.getClickedBlock());
+
         PlayerProtect playerProtect = PlayerProtect.getPlayer(player);
         if (playerProtect == null || !playerProtect.isInspect())
             return;
         event.setCancelled(true);
 
-        if (event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
+        if (!event.getAction().equals(Action.LEFT_CLICK_BLOCK) && !event.getAction().equals(Action.RIGHT_CLICK_BLOCK))
+            return;
 
         if (playerProtect.getNextInspect() > System.currentTimeMillis())
             return;
@@ -36,7 +39,7 @@ public class InspectListener implements Listener {
         Location blockLocation = event.getClickedBlock().getLocation();
         playerProtect.setInspectSession(new InspectSession(blockLocation, 0, 10, WorldUtils.isValidChestBlock(event.getClickedBlock().getType())));
 
-        if (WorldUtils.isValidChestBlock(event.getClickedBlock().getType())) {
+        if (WorldUtils.isValidChestBlock(event.getClickedBlock().getType()) && event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
             plugin.getInspectHandler().handleChestInspection(player, blockLocation, 1, 0, 10);
         } else {
             plugin.getInspectHandler().handleBlockInspection(player, blockLocation, 1, 0, 10);

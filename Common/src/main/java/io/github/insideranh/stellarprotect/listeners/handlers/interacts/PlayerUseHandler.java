@@ -9,7 +9,7 @@ import io.github.insideranh.stellarprotect.database.entries.players.PlayerUseEnt
 import io.github.insideranh.stellarprotect.enums.ActionType;
 import io.github.insideranh.stellarprotect.items.ItemReference;
 import io.github.insideranh.stellarprotect.listeners.handlers.GenericHandler;
-import io.github.insideranh.stellarprotect.utils.WorldUtils;
+import io.github.insideranh.stellarprotect.trackers.BlockTracker;
 import lombok.NonNull;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -20,7 +20,7 @@ public class PlayerUseHandler extends GenericHandler {
 
     @Override
     public GenericHandler canHandle(@NonNull Block block, @Nullable ItemStack itemStack) {
-        if (WorldUtils.isInteractable(block.getType().name())) {
+        if (BlockTracker.isInteractable(block.getType().name())) {
             return this;
         }
         return null;
@@ -37,12 +37,12 @@ public class PlayerUseHandler extends GenericHandler {
 
         ItemStack item = plugin.getProtectNMS().getItemInHand(player);
 
-        if (WorldUtils.isToggleableState(block.getType().name())) {
+        if (BlockTracker.isToggleableState(block.getType().name())) {
             LoggerCache.addLog(new PlayerBlockLogEntry(playerProtect.getPlayerId(), block, ActionType.INTERACT));
             return;
         }
 
-        if (WorldUtils.isPlaceableState(block.getType().name()) && item != null && !item.getType().equals(Material.AIR)) {
+        if (BlockTracker.isPlaceableState(block.getType().name()) && item != null && !item.getType().equals(Material.AIR)) {
             ItemReference itemReference = plugin.getItemsManager().getItemReference(item);
             LoggerCache.addLog(new PlayerPlaceRemoveItemLogEntry(playerProtect.getPlayerId(), itemReference, block, true, ActionType.PLACE_ITEM));
             return;
