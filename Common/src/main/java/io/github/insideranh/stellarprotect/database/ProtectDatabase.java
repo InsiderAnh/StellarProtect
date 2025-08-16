@@ -4,6 +4,7 @@ import io.github.insideranh.stellarprotect.StellarProtect;
 import io.github.insideranh.stellarprotect.arguments.DatabaseFilters;
 import io.github.insideranh.stellarprotect.arguments.RadiusArg;
 import io.github.insideranh.stellarprotect.arguments.TimeArg;
+import io.github.insideranh.stellarprotect.blocks.BlockTemplate;
 import io.github.insideranh.stellarprotect.cache.keys.LocationCache;
 import io.github.insideranh.stellarprotect.callback.CallbackLookup;
 import io.github.insideranh.stellarprotect.data.PlayerProtect;
@@ -44,12 +45,13 @@ public class ProtectDatabase {
     }
 
     public void load() {
-        this.databaseConnection.getLoggerRepository().loadTemporaryLogs();
+        this.databaseConnection.getItemsRepository().loadMostUsedItems();
+        this.databaseConnection.getBlocksRepository().loadBlockDatas();
 
         this.databaseConnection.getIdsRepository().loadWorlds();
         this.databaseConnection.getIdsRepository().loadEntityIds();
 
-        this.databaseConnection.getItemsRepository().loadMostUsedItems();
+        //this.databaseConnection.getLoggerRepository().loadTemporaryLogs();
     }
 
     public void close() {
@@ -108,6 +110,10 @@ public class ProtectDatabase {
 
     public void saveItems(List<ItemTemplate> itemTemplates) {
         this.databaseConnection.getItemsRepository().saveItems(itemTemplates);
+    }
+
+    public void saveBlocks(List<BlockTemplate> blockTemplates) {
+        this.databaseConnection.getBlocksRepository().saveBlocks(blockTemplates);
     }
 
 }

@@ -5,8 +5,6 @@ import io.github.insideranh.stellarprotect.utils.WorldUtils;
 import lombok.Getter;
 import org.bukkit.Location;
 
-import java.util.Objects;
-
 @Getter
 public class LocationCache {
 

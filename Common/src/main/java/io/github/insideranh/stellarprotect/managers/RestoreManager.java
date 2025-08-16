@@ -29,7 +29,7 @@ public class RestoreManager {
                     PlayerBlockLogEntry blockLogEntry = (PlayerBlockLogEntry) logEntry;
                     Location location = blockLogEntry.asBukkitLocation();
 
-                    BlockRestore blockRestore = plugin.getBlockRestore(blockLogEntry.getData());
+                    BlockRestore blockRestore = plugin.getBlockRestore(blockLogEntry.getDataString());
                     if (blockLogEntry.getActionType() == ActionType.BLOCK_PLACE.getId()) {
                         plugin.getStellarTaskHook(() -> blockRestore.remove(location)).runTask(location);
                     } else if (blockLogEntry.getActionType() == ActionType.BLOCK_BREAK.getId()) {

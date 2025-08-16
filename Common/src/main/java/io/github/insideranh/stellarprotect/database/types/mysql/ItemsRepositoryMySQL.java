@@ -103,8 +103,10 @@ public class ItemsRepositoryMySQL implements ItemsRepository {
 
                     stellarProtect.getItemsManager().loadItemReference(template, base64);
                 }
+                long count = stellarProtect.getItemsManager().getItemReferenceCount();
 
-                stellarProtect.getLogger().info("Loaded " + stellarProtect.getItemsManager().getItemReferenceCount() + " item references.");
+                stellarProtect.getItemsManager().getCurrentId().set(count + 1L);
+                stellarProtect.getLogger().info("Loaded " + count + " item references.");
             } catch (SQLException e) {
                 stellarProtect.getLogger().info("Error en loadMostUsedItems: " + e.getMessage());
             }

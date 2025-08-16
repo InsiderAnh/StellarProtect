@@ -48,6 +48,8 @@ optimizations:
   clean-placed-cache-period: 30
   # Item save period, save default: 30 seconds
   item-save-period: 30
+  # Block save period, save default: 30 seconds
+  block-save-period: 30
   # Economy disabled, save default: false
   # If you don't need logs for economy, you can disable it
   # to optimize the plugin.
@@ -77,6 +79,7 @@ tablesOrCollections:
   log_entries: log_entries
   id_counter: id_counter
   item_templates: item_templates
+  block_templates: block_templates
   worlds: worlds
   entity_ids: entity_ids
 advanced:

@@ -180,12 +180,8 @@ public class LoggerCache {
     public static List<ItemLogEntry> getChestTransactions(Location location, int skip, int limit) {
         LocationCache locationCache = LocationCache.of(location);
 
-        System.out.println("Getting log " + locationCache);
-
         ConcurrentLinkedQueue<LogEntry> logs = cachedLogsByCategory.get(ActionCategory.INVENTORY_ACTIONS).get(locationCache);
         if (logs == null) return Collections.emptyList();
-
-        System.out.println("Exists log " + logs.size());
 
         List<ItemLogEntry> allItems = new ArrayList<>();
 

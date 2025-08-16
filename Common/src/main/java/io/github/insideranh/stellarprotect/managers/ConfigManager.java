@@ -36,6 +36,7 @@ public class ConfigManager {
     private long cleanPlacedCachePeriod;
     private int daysToKeepLogs;
     private int saveItemPeriod;
+    private int saveBlockPeriod;
     private boolean suspiciousPatterns;
     private boolean checkUpdates;
     private boolean economyDisabled;
@@ -46,6 +47,7 @@ public class ConfigManager {
     private String tablesLogEntries;
     private String tablesIdCounter;
     private String tablesItemTemplates;
+    private String tablesBlockTemplates;
     private String tablesWorlds;
     private String tablesEntityIds;
 
@@ -75,6 +77,7 @@ public class ConfigManager {
         this.deleteOldPeriod = plugin.getConfig().getInt("optimizations.delete-old-period") * 60;
         this.cleanPlacedCachePeriod = plugin.getConfig().getLong("optimizations.clean-placed-cache-period") * 1000L;
         this.saveItemPeriod = plugin.getConfig().getInt("optimizations.item-save-period");
+        this.saveBlockPeriod = plugin.getConfig().getInt("optimizations.block-save-period");
         this.economyDisabled = plugin.getConfig().getBoolean("optimizations.economy-disabled");
         this.economyCheckInterval = plugin.getConfig().getInt("optimizations.economy-check-interval");
 
@@ -83,6 +86,7 @@ public class ConfigManager {
         this.tablesLogEntries = this.tablesPrefix + plugin.getConfig().getString("tablesOrCollections.log_entries", "log_entries");
         this.tablesIdCounter = this.tablesPrefix + plugin.getConfig().getString("tablesOrCollections.id_counter", "id_counter");
         this.tablesItemTemplates = this.tablesPrefix + plugin.getConfig().getString("tablesOrCollections.item_templates", "item_templates");
+        this.tablesBlockTemplates = this.tablesPrefix + plugin.getConfig().getString("tablesOrCollections.block_templates", "block_templates");
         this.tablesWorlds = this.tablesPrefix + plugin.getConfig().getString("tablesOrCollections.worlds", "worlds");
         this.tablesEntityIds = this.tablesPrefix + plugin.getConfig().getString("tablesOrCollections.entity_ids", "entity_ids");
 

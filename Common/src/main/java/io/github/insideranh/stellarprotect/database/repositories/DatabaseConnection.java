@@ -18,4 +18,6 @@ public interface DatabaseConnection {
 
     RestoreRepository getRestoreRepository();
 
+    BlocksRepository getBlocksRepository();
+
 }

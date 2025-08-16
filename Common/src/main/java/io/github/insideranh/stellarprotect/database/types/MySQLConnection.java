@@ -19,6 +19,7 @@ public class MySQLConnection implements DatabaseConnection {
     private LoggerRepository loggerRepository;
     private IdsRepository idsRepository;
     private ItemsRepository itemsRepository;
+    private BlocksRepository blocksRepository;
     private RestoreRepository restoreRepository;
     private HikariDataSource dataSource;
 
@@ -58,6 +59,7 @@ public class MySQLConnection implements DatabaseConnection {
                 String logEntriesTable = stellarProtect.getConfigManager().getTablesLogEntries();
                 String idCounterTable = stellarProtect.getConfigManager().getTablesIdCounter();
                 String itemTemplatesTable = stellarProtect.getConfigManager().getTablesItemTemplates();
+                String blockTemplatesTable = stellarProtect.getConfigManager().getTablesBlockTemplates();
 
                 try (Statement statement = connection.createStatement()) {
                     statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + playersTable + " (" +
@@ -102,6 +104,11 @@ public class MySQLConnection implements DatabaseConnection {
                         "created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP" +
                         ")");
 
+                    statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + blockTemplatesTable + " (" +
+                        "id INT PRIMARY KEY," +
+                        "block_data TEXT" +
+                        ")");
+
                     statement.execute("SET SESSION sql_log_bin = 0");
                     statement.execute("SET SESSION foreign_key_checks = 0");
                     statement.execute("SET SESSION unique_checks = 0");
@@ -112,6 +119,7 @@ public class MySQLConnection implements DatabaseConnection {
             this.loggerRepository = new LoggerRepositoryMySQL(dataSource);
             this.idsRepository = new IdsRepositoryMySQL(dataSource);
             this.itemsRepository = new ItemsRepositoryMySQL(dataSource);
+            this.blocksRepository = new BlocksRepositoryMySQL(dataSource);
             this.restoreRepository = new RestoreRepositoryMySQL(dataSource);
 
             stellarProtect.getLogger().info("Connected to MySQL database correctly.");

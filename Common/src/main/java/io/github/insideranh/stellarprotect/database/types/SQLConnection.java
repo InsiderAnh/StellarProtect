@@ -20,6 +20,7 @@ public class SQLConnection implements DatabaseConnection {
     private IdsRepository idsRepository;
     private ItemsRepository itemsRepository;
     private RestoreRepository restoreRepository;
+    private BlocksRepository blocksRepository;
     private Connection connection;
 
     @Override
@@ -40,6 +41,7 @@ public class SQLConnection implements DatabaseConnection {
                 String logEntriesTable = stellarProtect.getConfigManager().getTablesLogEntries();
                 String idCounterTable = stellarProtect.getConfigManager().getTablesIdCounter();
                 String itemTemplatesTable = stellarProtect.getConfigManager().getTablesItemTemplates();
+                String blockTemplatesTable = stellarProtect.getConfigManager().getTablesBlockTemplates();
 
                 statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + playersTable + " (" +
                     "id BIGINT PRIMARY KEY," +
@@ -87,6 +89,11 @@ public class SQLConnection implements DatabaseConnection {
                     "created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP" +
                     ")");
 
+                statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + blockTemplatesTable + " (" +
+                    "id INT PRIMARY KEY," +
+                    "block_data TEXT" +
+                    ")");
+
             } catch (Exception exception) {
                 stellarProtect.getLogger().warning("Error on connect to SQLite database " + exception.getMessage());
                 exception.printStackTrace();
@@ -107,6 +114,7 @@ public class SQLConnection implements DatabaseConnection {
             this.idsRepository = new IdsRepositorySQL(connection);
             this.itemsRepository = new ItemsRepositorySQL(connection);
             this.restoreRepository = new RestoreRepositorySQL(connection);
+            this.blocksRepository = new BlocksRepositorySQL(connection);
 
             stellarProtect.getLogger().info("Connected to SQLite database correctly.");
         } catch (Exception exception) {

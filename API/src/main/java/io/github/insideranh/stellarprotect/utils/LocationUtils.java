@@ -2,7 +2,6 @@ package io.github.insideranh.stellarprotect.utils;
 
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
-import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -11,22 +10,16 @@ import org.bukkit.World;
 public class LocationUtils {
 
     public static String getStringLocation(@NonNull Location location) {
-        Validate.notNull(location, "Location cannot be null");
-
         if (location.getWorld() == null) return null;
         return location.getWorld().getName() + ";" + location.getX() + ";" + location.getY() + ";" + location.getZ();
     }
 
     public static String getFormattedStringLocation(@NonNull Location location) {
-        Validate.notNull(location, "Location cannot be null");
-
         if (location.getWorld() == null) return "";
         return "x" + location.getBlockX() + "/y" + location.getBlockY() + "/z" + location.getBlockZ() + "/" + location.getWorld().getName();
     }
 
     public static Location getLocationString(@NonNull String location) {
-        Validate.notNull(location, "Location cannot be null");
-
         String[] split = location.split(";");
 
         World world = Bukkit.getWorld(split[0]);
