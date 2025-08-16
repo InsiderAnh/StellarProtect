@@ -45,7 +45,7 @@ public class LookupCompleter extends StellarCompleter {
     }
 
     private List<String> getDefaultSuggestions() {
-        return Arrays.asList("t:1h", "r:10", "p:1-10", "a:block_break", "u:player");
+        return Arrays.asList("t:1h", "r:10", "p:1-10", "a:block_break", "u:player", "i:grass", "e:stone");
     }
 
     private List<String> getAvailableArguments(ArgumentParser parser) {

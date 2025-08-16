@@ -47,7 +47,21 @@ public class LocationCache {
 
     @Override
     public int hashCode() {
-        return Objects.hash(worldId, x, y, z);
+        int result = worldId;
+        result = 31 * result + x;
+        result = 31 * result + y;
+        result = 31 * result + z;
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "LocationCache{" +
+            "worldId=" + worldId +
+            ", x=" + x +
+            ", y=" + y +
+            ", z=" + z +
+            '}';
     }
 
 }

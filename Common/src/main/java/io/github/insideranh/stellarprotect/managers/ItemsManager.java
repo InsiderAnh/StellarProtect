@@ -65,6 +65,8 @@ public class ItemsManager {
     public void loadItemReference(ItemTemplate template, String fullBase64) {
         itemHashToId.put(fullBase64, template.getId());
         idToTemplate.put(template.getId(), template);
+
+        currentId.set(idToTemplate.size() + 1L);
     }
 
     @NonNull

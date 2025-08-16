@@ -67,6 +67,32 @@ public class ArgumentsParser {
         return actionTypes;
     }
 
+    public static List<String> parseIncludesWord(String[] arguments) {
+        String joined = String.join(" ", arguments).toLowerCase(Locale.ROOT).replace("\\", "").replace("'", "").replace(",", "");
+
+        List<String> actionTypes = new ArrayList<>();
+        for (String part : joined.split("\\s+")) {
+            if (part.startsWith("i:") || part.startsWith("include:")) {
+                String actionType = part.replaceFirst("^(i:|include:)", "");
+                actionTypes.addAll(Arrays.asList(actionType.split(",")));
+            }
+        }
+        return actionTypes;
+    }
+
+    public static List<String> parseExcludesWord(String[] arguments) {
+        String joined = String.join(" ", arguments).toLowerCase(Locale.ROOT).replace("\\", "").replace("'", "").replace(",", "");
+
+        List<String> actionTypes = new ArrayList<>();
+        for (String part : joined.split("\\s+")) {
+            if (part.startsWith("e:") || part.startsWith("exclude:")) {
+                String actionType = part.replaceFirst("^(e:|exclude:)", "");
+                actionTypes.addAll(Arrays.asList(actionType.split(",")));
+            }
+        }
+        return actionTypes;
+    }
+
     public static @Nullable LocationArg parseLocation(String[] arguments) {
         String joined = String.join(" ", arguments).toLowerCase(Locale.ROOT).replace("\\", "").replace("'", "").replace(",", "");
 

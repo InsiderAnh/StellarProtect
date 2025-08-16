@@ -13,6 +13,9 @@ public class DatabaseFilters {
     private RadiusArg radiusFilter;
     private PageArg pageFilter;
     private List<Integer> actionTypesFilter = new ArrayList<>();
+    private List<Integer> actionTypesExcludeFilter = new ArrayList<>();
+    private List<String> worldsFilter = new ArrayList<>();
+    private List<String> worldsExcludeFilter = new ArrayList<>();
     private UsersArg userFilters;
 
 }

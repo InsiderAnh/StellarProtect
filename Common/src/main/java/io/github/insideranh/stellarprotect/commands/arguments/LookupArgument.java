@@ -38,6 +38,8 @@ public class LookupArgument extends StellarArgument {
         TimeArg timeArg = ArgumentsParser.parseTime(arguments);
         RadiusArg radiusArg = ArgumentsParser.parseRadiusOrNull(arguments, player.getLocation());
         List<ActionType> actionTypesArg = ArgumentsParser.parseActionTypes(arguments);
+        List<String> includesArg = ArgumentsParser.parseIncludesWord(arguments);
+        List<String> excludesArg = ArgumentsParser.parseExcludesWord(arguments);
 
         if (playerProtect.getNextLookup() > System.currentTimeMillis()) {
             plugin.getLangManager().sendMessage(sender, "messages.waitingForLookup");

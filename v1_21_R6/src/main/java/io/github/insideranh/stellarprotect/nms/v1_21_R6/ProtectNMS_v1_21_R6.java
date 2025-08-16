@@ -25,6 +25,15 @@ import java.util.function.Function;
 public class ProtectNMS_v1_21_R6 extends ProtectNMS {
 
     @Override
+    public void sendBlockHash(Player player, Block block) {
+        BlockData blockData = block.getBlockData();
+        String blockDataFalse = blockData.getAsString(false);
+        String blockDataTrue = blockData.getAsString(true);
+
+        player.sendMessage("BlockData: " + blockData.hashCode() + " | " + blockDataFalse.hashCode() + " | " + blockDataTrue.hashCode());
+    }
+
+    @Override
     public boolean canGrow(Block block) {
         if (block.getBlockData() instanceof Ageable) {
             Ageable ageable = (Ageable) block.getBlockData();

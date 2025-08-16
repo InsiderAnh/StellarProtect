@@ -116,6 +116,9 @@ public class LoggerCache {
     public static void addLog(LogEntry logEntry) {
         ActionCategory category = getCategoryByActionId(logEntry.getActionType());
         LocationCache location = logEntry.asLocation();
+        if (logEntry instanceof PlayerTransactionEntry) {
+            plugin.getLogger().info("Adding log " + location);
+        }
 
         unSavedLogsByCategory.get(category).add(logEntry);
         cachedLogsByCategory.get(category).computeIfAbsent(location, k -> new ConcurrentLinkedQueue<>()).add(logEntry);
@@ -176,37 +179,57 @@ public class LoggerCache {
 
     public static List<ItemLogEntry> getChestTransactions(Location location, int skip, int limit) {
         LocationCache locationCache = LocationCache.of(location);
-        ConcurrentHashMap<LocationCache, ConcurrentLinkedQueue<LogEntry>> cached = cachedLogsByCategory.get(ActionCategory.INVENTORY_ACTIONS);
+
+        System.out.println("Getting log " + locationCache);
+
+        ConcurrentLinkedQueue<LogEntry> logs = cachedLogsByCategory.get(ActionCategory.INVENTORY_ACTIONS).get(locationCache);
+        if (logs == null) return Collections.emptyList();
+
+        System.out.println("Exists log " + logs.size());
 
         List<ItemLogEntry> allItems = new ArrayList<>();
 
-        if (cached.containsKey(locationCache)) {
-            ConcurrentLinkedQueue<LogEntry> logs = cached.get(locationCache);
+        for (LogEntry log : logs) {
+            if (!(log instanceof PlayerTransactionEntry)) continue;
+            PlayerTransactionEntry transaction = (PlayerTransactionEntry) log;
 
-            for (LogEntry log : logs) {
-                if (!(log instanceof PlayerTransactionEntry)) continue;
-                PlayerTransactionEntry transaction = (PlayerTransactionEntry) log;
+            for (Map.Entry<Long, Integer> addedEntry : transaction.getAdded().entrySet()) {
+                ItemTemplate itemTemplate = plugin.getItemsManager().getItemTemplate(addedEntry.getKey());
+                ItemStack item = itemTemplate.getBukkitItem();
+                if (item == null) continue;
 
-                for (Map.Entry<Long, Integer> addedEntry : transaction.getAdded().entrySet()) {
-                    ItemTemplate itemTemplate = plugin.getItemsManager().getItemTemplate(addedEntry.getKey());
-                    ItemStack item = itemTemplate.getBukkitItem();
-                    if (item == null) continue;
+                allItems.add(new ItemLogEntry(item, log.getPlayerId(), addedEntry.getValue(), true, log.getCreatedAt()));
+            }
 
-                    allItems.add(new ItemLogEntry(item, log.getPlayerId(), addedEntry.getValue(), true, log.getCreatedAt()));
-                }
+            for (Map.Entry<Long, Integer> removedEntry : transaction.getRemoved().entrySet()) {
+                ItemTemplate itemTemplate = plugin.getItemsManager().getItemTemplate(removedEntry.getKey());
+                ItemStack item = itemTemplate.getBukkitItem();
+                if (item == null) continue;
 
-                for (Map.Entry<Long, Integer> removedEntry : transaction.getRemoved().entrySet()) {
-                    ItemTemplate itemTemplate = plugin.getItemsManager().getItemTemplate(removedEntry.getKey());
-                    ItemStack item = itemTemplate.getBukkitItem();
-                    if (item == null) continue;
-
-                    allItems.add(new ItemLogEntry(item, log.getPlayerId(), removedEntry.getValue(), false, log.getCreatedAt()));
-                }
+                allItems.add(new ItemLogEntry(item, log.getPlayerId(), removedEntry.getValue(), false, log.getCreatedAt()));
             }
         }
 
         return allItems.stream()
             .sorted(Comparator.comparingLong(ItemLogEntry::getCreatedAt).reversed())
+            .skip(skip)
+            .limit(limit)
+            .collect(Collectors.toList());
+    }
+
+    public static List<LogEntry> getLogs(LocationCache location, int skip, int limit) {
+        List<LogEntry> allLogs = new ArrayList<>();
+
+        for (ActionCategory category : ActionCategory.values()) {
+            ConcurrentLinkedQueue<LogEntry> categoryLogs = cachedLogsByCategory.get(category).get(location);
+            if (categoryLogs != null) {
+                allLogs.addAll(categoryLogs);
+            }
+        }
+
+        allLogs.sort((a, b) -> Long.compare(b.getCreatedAt(), a.getCreatedAt()));
+
+        return allLogs.stream()
             .skip(skip)
             .limit(limit)
             .collect(Collectors.toList());
@@ -398,50 +421,8 @@ public class LoggerCache {
         return getLogs(locationCache, skip, limit);
     }
 
-    public static List<LogEntry> getLogs(LocationCache location, int skip, int limit) {
-        List<LogEntry> allLogs = new ArrayList<>();
-
-        for (ActionCategory category : ActionCategory.values()) {
-            ConcurrentLinkedQueue<LogEntry> categoryLogs = cachedLogsByCategory.get(category).get(location);
-            if (categoryLogs != null) {
-                allLogs.addAll(categoryLogs);
-            }
-        }
-
-        allLogs.sort((a, b) -> Long.compare(b.getCreatedAt(), a.getCreatedAt()));
-
-        return allLogs.stream()
-            .skip(skip)
-            .limit(limit)
-            .collect(Collectors.toList());
-    }
-
-    public static boolean hasLogs(LocationCache location) {
-        for (ActionCategory category : ActionCategory.values()) {
-            if (cachedLogsByCategory.get(category).containsKey(location)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     public static LogEntry getPlacedBlockLog(Location location) {
         return placedBlockLogs.get(LocationCache.of(location));
-    }
-
-    public static List<LogEntry> getPlayerRecentActions(String playerName, ActionCategory category, int limit) {
-        LRUCache<String, LogEntry> playerCache = playerRecentActions.get(playerName);
-        if (playerCache == null) return new ArrayList<>();
-
-        List<LogEntry> result = new ArrayList<>();
-        for (Map.Entry<String, LogEntry> entry : playerCache.entrySet()) {
-            if (entry.getKey().startsWith(category.name())) {
-                result.add(entry.getValue());
-                if (result.size() >= limit) break;
-            }
-        }
-
-        return result;
     }
 
     public static void clearRamCache() {

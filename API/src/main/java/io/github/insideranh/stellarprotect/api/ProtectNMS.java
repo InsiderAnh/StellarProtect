@@ -37,4 +37,8 @@ public abstract class ProtectNMS {
 
     public abstract ItemStack getItemInHand(Player player);
 
+    public void sendBlockHash(Player player, Block block) {
+
+    }
+
 }
