@@ -54,8 +54,8 @@ optimizations:
   # If you don't need logs for economy, you can disable it
   # to optimize the plugin.
   economy-disabled: false
-  # Economy check interval, save default: 1 second
-  economy-check-interval: 1
+  # Economy check interval, save default: 10 second
+  economy-check-interval: 10
 databases:
   # Database type: h2 or mysql or mongodb
   type: "h2"
@@ -319,5 +319,29 @@ logs:
     # You can use 'none' no disable block types
     # VAULT = Balance changes
     # PAY = /pay commands
+    disable_types:
+      - none
+  use:
+    enabled: true
+    # You can use 'all' to log all worlds
+    worlds:
+      - all
+    # You can use 'none' no disable block types
+    disable_types:
+      - none
+  session:
+    enabled: true
+    # You can use 'all' to log all worlds
+    worlds:
+      - all
+    # You can use 'none' no disable block types
+    disable_types:
+      - none
+  xp:
+    enabled: true
+    # You can use 'all' to log all worlds
+    worlds:
+      - all
+    # You can use 'none' no disable block types
     disable_types:
       - none

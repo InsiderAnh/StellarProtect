@@ -58,7 +58,7 @@ public class BlocksRepositoryMongo implements BlocksRepository {
                 List<Document> documents = blockTemplates.stream()
                     .map(template -> new Document()
                         .append("id", template.getId())
-                        .append("block_data", template.getBlockDataString()))
+                        .append("block_data", template.getDataBlock().getBlockDataString()))
                     .collect(Collectors.toList());
 
                 int batchSize = 1000;

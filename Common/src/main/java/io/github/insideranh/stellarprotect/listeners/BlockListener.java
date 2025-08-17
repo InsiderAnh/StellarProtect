@@ -46,7 +46,7 @@ public class BlockListener implements Listener {
         if (event.isCancelled()) return;
 
         Block block = event.getBlock();
-        if (ActionType.BLOCK_BREAK.shouldSkipLog(block.getWorld().getName(), block.getType().name())) return;
+        if (ActionType.BLOCK_BREAK.shouldSkipLog(block.getWorld().getName(), "=decay")) return;
 
         LoggerCache.addLog(new PlayerBlockLogEntry(PlayerUtils.getEntityByDirectId("=decay"), block, ActionType.BLOCK_BREAK));
     }

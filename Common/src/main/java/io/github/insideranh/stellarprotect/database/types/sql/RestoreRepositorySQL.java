@@ -117,7 +117,7 @@ public class RestoreRepositorySQL implements RestoreRepository {
             countStmt.setDouble(paramIndex++, radiusArg.getMaxZ());
 
             for (ActionType actionType : actionTypes) {
-                countStmt.setString(paramIndex++, actionType.name());
+                countStmt.setInt(paramIndex++, actionType.getId());
             }
 
             try (ResultSet resultSet = countStmt.executeQuery()) {
@@ -174,7 +174,7 @@ public class RestoreRepositorySQL implements RestoreRepository {
             countStmt.setDouble(paramIndex++, radiusArg.getMaxZ());
 
             for (ActionType actionType : actionTypes) {
-                countStmt.setString(paramIndex++, actionType.name());
+                countStmt.setInt(paramIndex++, actionType.getId());
             }
 
             try (ResultSet resultSet = countStmt.executeQuery()) {

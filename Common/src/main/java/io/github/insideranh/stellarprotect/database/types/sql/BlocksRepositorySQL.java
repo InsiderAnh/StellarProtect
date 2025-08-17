@@ -32,7 +32,7 @@ public class BlocksRepositorySQL implements BlocksRepository {
 
                 for (BlockTemplate template : blockTemplates) {
                     statement.setLong(1, template.getId());
-                    statement.setString(2, template.getBlockDataString());
+                    statement.setString(2, template.getDataBlock().getBlockDataString());
                     statement.addBatch();
 
                     batchSize++;

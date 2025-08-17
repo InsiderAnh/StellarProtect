@@ -2,10 +2,10 @@ package io.github.insideranh.stellarprotect.managers;
 
 import io.github.insideranh.stellarprotect.StellarProtect;
 import io.github.insideranh.stellarprotect.blocks.BlockTemplate;
+import io.github.insideranh.stellarprotect.blocks.DataBlock;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import lombok.Getter;
-import org.bukkit.Bukkit;
-import org.bukkit.block.data.BlockData;
+import org.bukkit.block.Block;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -31,37 +31,36 @@ public class BlocksManager {
     }
 
     public void loadBlockData(int id, String blockDataString) {
-        BlockData blockData = Bukkit.createBlockData(blockDataString);
-        int hashCode = blockData.hashCode();
-
-        BlockTemplate template = new BlockTemplate(id, blockData, blockDataString);
-        blockHashToId.put(hashCode, template.getId());
+        DataBlock dataBlock = plugin.getDataBlock(blockDataString);
+        BlockTemplate template = new BlockTemplate(id, dataBlock);
+        blockHashToId.put(dataBlock.hashCode(), template.getId());
         idToBlockTemplate.put(template.getId(), template);
     }
 
     public BlockTemplate getBlockTemplate(String blockDataString) {
-        BlockData blockData = Bukkit.createBlockData(blockDataString);
-        int hashCode = blockData.hashCode();
+        DataBlock dataBlock = plugin.getDataBlock(blockDataString);
+        int hashCode = dataBlock.hashCode();
         Integer id = blockHashToId.get(hashCode);
         if (id != null) {
             return idToBlockTemplate.get(id);
         }
-        return createItemTemplate(blockData, hashCode);
+        return createBlockTemplate(dataBlock, hashCode);
     }
 
-    public BlockTemplate getBlockTemplate(BlockData blockData) {
-        int hashCode = blockData.hashCode();
+    public BlockTemplate getBlockTemplate(Block block) {
+        int hashCode = plugin.getProtectNMS().getHashBlockData(block);
         Integer id = blockHashToId.get(hashCode);
         if (id != null) {
             return idToBlockTemplate.get(id);
         }
-        return createItemTemplate(blockData, hashCode);
+        DataBlock dataBlock = plugin.getDataBlock(block);
+        return createBlockTemplate(dataBlock, hashCode);
     }
 
-    public BlockTemplate createItemTemplate(BlockData blockData, int hashCode) {
+    public BlockTemplate createBlockTemplate(DataBlock dataBlock, int hashCode) {
         int id = currentId.getAndIncrement();
 
-        BlockTemplate template = new BlockTemplate(id, blockData, blockData.getAsString());
+        BlockTemplate template = new BlockTemplate(id, dataBlock);
         unsavedBlocks.add(id);
         blockHashToId.put(hashCode, id);
         idToBlockTemplate.put(id, template);

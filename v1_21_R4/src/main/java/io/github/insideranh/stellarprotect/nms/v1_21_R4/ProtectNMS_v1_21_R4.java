@@ -25,6 +25,11 @@ import java.util.function.Function;
 public class ProtectNMS_v1_21_R4 extends ProtectNMS {
 
     @Override
+    public int getHashBlockData(Block block) {
+        return block.getBlockData().hashCode();
+    }
+
+    @Override
     public boolean canGrow(Block block) {
         if (block.getBlockData() instanceof Ageable) {
             Ageable ageable = (Ageable) block.getBlockData();

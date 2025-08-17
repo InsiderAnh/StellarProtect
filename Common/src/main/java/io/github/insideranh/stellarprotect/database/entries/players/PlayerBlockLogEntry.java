@@ -5,6 +5,7 @@ import io.github.insideranh.stellarprotect.StellarProtect;
 import io.github.insideranh.stellarprotect.blocks.BlockTemplate;
 import io.github.insideranh.stellarprotect.database.entries.LogEntry;
 import io.github.insideranh.stellarprotect.enums.ActionType;
+import io.github.insideranh.stellarprotect.managers.BlocksManager;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import org.bson.Document;
@@ -15,6 +16,7 @@ import java.sql.ResultSet;
 @Getter
 public class PlayerBlockLogEntry extends LogEntry {
 
+    private static final BlocksManager blocksManager = StellarProtect.getInstance().getBlocksManager();
     private final int blockId;
 
     public PlayerBlockLogEntry(Document document, JsonObject jsonObject) {
@@ -32,8 +34,7 @@ public class PlayerBlockLogEntry extends LogEntry {
 
     public PlayerBlockLogEntry(long playerId, Block block, ActionType actionType) {
         super(playerId, actionType.getId(), block.getLocation(), System.currentTimeMillis());
-        //this.data = StellarProtect.getInstance().getProtectNMS().getBlockData(block);
-        BlockTemplate itemTemplate = StellarProtect.getInstance().getBlocksManager().getBlockTemplate(block.getBlockData());
+        BlockTemplate itemTemplate = blocksManager.getBlockTemplate(block);
         this.blockId = itemTemplate.getId();
     }
 
@@ -42,14 +43,14 @@ public class PlayerBlockLogEntry extends LogEntry {
         if (!jsonObject.has("d")) return -1;
 
         String data = jsonObject.get("d").getAsString();
-        BlockTemplate blockTemplate = StellarProtect.getInstance().getBlocksManager().getBlockTemplate(data);
+        BlockTemplate blockTemplate = blocksManager.getBlockTemplate(data);
         return blockTemplate.getId();
     }
 
     @Override
     public String getDataString() {
-        BlockTemplate itemTemplate = StellarProtect.getInstance().getBlocksManager().getBlockTemplate(blockId);
-        return itemTemplate.getBlockDataString();
+        BlockTemplate itemTemplate = blocksManager.getBlockTemplate(blockId);
+        return itemTemplate.getDataBlock().getBlockDataString();
     }
 
     @Override

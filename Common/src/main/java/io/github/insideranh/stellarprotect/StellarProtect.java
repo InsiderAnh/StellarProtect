@@ -8,6 +8,7 @@ import io.github.insideranh.stellarprotect.api.ColorUtils;
 import io.github.insideranh.stellarprotect.api.ProtectNMS;
 import io.github.insideranh.stellarprotect.api.events.DecorativeLogicHandler;
 import io.github.insideranh.stellarprotect.api.events.EventLogicHandler;
+import io.github.insideranh.stellarprotect.blocks.DataBlock;
 import io.github.insideranh.stellarprotect.bstats.MetricsLite;
 import io.github.insideranh.stellarprotect.commands.StellarProtectCMD;
 import io.github.insideranh.stellarprotect.database.ProtectDatabase;
@@ -29,6 +30,7 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
+import org.bukkit.block.Block;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -222,6 +224,22 @@ public class StellarProtect extends JavaPlugin {
             loadNMS();
         }
         return Class.forName("io.github.insideranh.stellarprotect.nms." + completer + ".BlockRestore_" + completer).asSubclass(BlockRestore.class).getConstructor(String.class).newInstance(data);
+    }
+
+    @SneakyThrows
+    public DataBlock getDataBlock(Block block) {
+        if (completer == null) {
+            loadNMS();
+        }
+        return Class.forName("io.github.insideranh.stellarprotect.nms." + completer + ".DataBlock_" + completer).asSubclass(DataBlock.class).getConstructor(Block.class).newInstance(block);
+    }
+
+    @SneakyThrows
+    public DataBlock getDataBlock(String blockDataString) {
+        if (completer == null) {
+            loadNMS();
+        }
+        return Class.forName("io.github.insideranh.stellarprotect.nms." + completer + ".DataBlock_" + completer).asSubclass(DataBlock.class).getConstructor(String.class).newInstance(blockDataString);
     }
 
     public StellarTaskHook getStellarTaskHook(Runnable runnable) {

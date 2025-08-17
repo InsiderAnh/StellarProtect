@@ -6,7 +6,6 @@ import io.github.insideranh.stellarprotect.blocks.BlockTemplate;
 import io.github.insideranh.stellarprotect.database.entries.LogEntry;
 import io.github.insideranh.stellarprotect.enums.ActionType;
 import io.github.insideranh.stellarprotect.items.ItemReference;
-import io.github.insideranh.stellarprotect.utils.SerializerUtils;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import org.bson.Document;
@@ -43,8 +42,7 @@ public class PlayerPlaceRemoveItemLogEntry extends LogEntry {
 
     public PlayerPlaceRemoveItemLogEntry(long playerId, ItemReference itemReference, Block block, boolean placed, ActionType actionType) {
         super(playerId, actionType.getId(), block.getLocation(), System.currentTimeMillis());
-        //this.data = StellarProtect.getInstance().getProtectNMS().getBlockData(block);
-        BlockTemplate itemTemplate = StellarProtect.getInstance().getBlocksManager().getBlockTemplate(block.getBlockData());
+        BlockTemplate itemTemplate = StellarProtect.getInstance().getBlocksManager().getBlockTemplate(block);
         this.blockId = itemTemplate.getId();
         this.itemReferenceId = itemReference.getTemplateId();
         this.amount = itemReference.getAmount();
@@ -63,7 +61,7 @@ public class PlayerPlaceRemoveItemLogEntry extends LogEntry {
     @Override
     public String getDataString() {
         BlockTemplate itemTemplate = StellarProtect.getInstance().getBlocksManager().getBlockTemplate(blockId);
-        return itemTemplate.getBlockDataString();
+        return itemTemplate.getDataBlock().getBlockDataString();
     }
 
     public boolean isPlaced() {

@@ -34,7 +34,7 @@ public class PlayerEconomyEntry extends LogEntry {
     public PlayerEconomyEntry(long playerId, Location location, MoneyVarType variationType, double difference) {
         super(playerId, ActionType.MONEY.getId(), location, System.currentTimeMillis());
         this.variationType = variationType;
-        this.difference = difference;
+        this.difference = StringCleanerUtils.limitTo2Decimals(difference);
     }
 
     @Override

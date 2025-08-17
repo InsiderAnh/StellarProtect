@@ -116,9 +116,6 @@ public class LoggerCache {
     public static void addLog(LogEntry logEntry) {
         ActionCategory category = getCategoryByActionId(logEntry.getActionType());
         LocationCache location = logEntry.asLocation();
-        if (logEntry instanceof PlayerTransactionEntry) {
-            plugin.getLogger().info("Adding log " + location);
-        }
 
         unSavedLogsByCategory.get(category).add(logEntry);
         cachedLogsByCategory.get(category).computeIfAbsent(location, k -> new ConcurrentLinkedQueue<>()).add(logEntry);
