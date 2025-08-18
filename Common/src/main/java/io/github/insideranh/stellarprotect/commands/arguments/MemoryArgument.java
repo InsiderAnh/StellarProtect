@@ -3,6 +3,7 @@ package io.github.insideranh.stellarprotect.commands.arguments;
 import io.github.insideranh.stellarprotect.StellarProtect;
 import io.github.insideranh.stellarprotect.cache.LoggerCache;
 import io.github.insideranh.stellarprotect.commands.StellarArgument;
+import io.github.insideranh.stellarprotect.items.ItemTemplate;
 import io.github.insideranh.stellarprotect.items.MemoryAnalysisItem;
 import io.github.insideranh.stellarprotect.items.memory.ItemTemplateLight;
 import org.bukkit.command.CommandSender;
@@ -23,14 +24,11 @@ public class MemoryArgument extends StellarArgument {
         plugin.getLookupExecutor().execute(() -> {
             Map<String, MemoryAnalysisItem> memoryObjects = new LinkedHashMap<>();
 
-            HashMap<String, ItemTemplateLight> idToTemplate = plugin.getItemsManager()
-                .getIdToTemplate()
-                .entrySet()
-                .stream()
-                .collect(HashMap::new,
-                    (map, entry) -> map.put(entry.getKey().toString(),
-                        new ItemTemplateLight(entry.getKey(), entry.getValue().getBase64())),
-                    HashMap::putAll);
+            HashMap<Long, ItemTemplateLight> idToTemplate = new HashMap<>();
+            for (ItemTemplate item : plugin.getItemsManager().getItemCache().items()) {
+                ItemTemplateLight light = new ItemTemplateLight(item.getId(), item.getBase64(), item.getDisplayName(), item.getLore(), item.getTypeName(), item.getDisplayNameLower(), item.getLoreLower(), item.getTypeNameLower());
+                idToTemplate.put(item.getId(), light);
+            }
 
             memoryObjects.put("messages.memory.itemTemplates", new MemoryAnalysisItem(idToTemplate));
             memoryObjects.put("messages.memory.cachedLogsByCategory", new MemoryAnalysisItem(LoggerCache.getCachedLogsByCategory()));

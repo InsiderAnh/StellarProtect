@@ -24,7 +24,6 @@ import java.util.concurrent.atomic.AtomicLong;
 public class ItemsManager {
 
     private final ConcurrentHashMap<String, Long> itemHashToId = new ConcurrentHashMap<>();
-    //private final ConcurrentHashMap<Long, ItemTemplate> idToTemplate = new ConcurrentHashMap<>();
     private final ItemsCache itemCache = new ItemsCache();
     private final HashSet<Long> unsavedTemplates = new HashSet<>();
     private final StellarProtect plugin = StellarProtect.getInstance();
@@ -66,7 +65,6 @@ public class ItemsManager {
 
     public void loadItemReference(ItemTemplate template, String fullBase64) {
         itemHashToId.put(fullBase64, template.getId());
-        //idToTemplate.put(template.getId(), template);
         itemCache.put(template);
     }
 
@@ -95,7 +93,7 @@ public class ItemsManager {
     }
 
     public ItemTemplate getItemTemplate(long id) {
-        return idToTemplate.get(id);
+        return itemCache.getById(id);
     }
 
     public long createItemTemplate(ItemStack itemStack, String base64) {
@@ -103,7 +101,7 @@ public class ItemsManager {
 
         ItemTemplate template = new ItemTemplate(id, itemStack, base64);
         unsavedTemplates.add(id);
-        idToTemplate.put(id, template);
+        itemCache.put(template);
         itemHashToId.put(base64, id);
         return id;
     }
@@ -112,13 +110,13 @@ public class ItemsManager {
         if (unsavedTemplates.isEmpty()) return;
 
         List<ItemTemplate> templates = new ArrayList<>();
-        unsavedTemplates.forEach(id -> templates.add(idToTemplate.get(id)));
+        unsavedTemplates.forEach(id -> templates.add(itemCache.getById(id)));
         unsavedTemplates.clear();
         plugin.getProtectDatabase().saveItems(templates);
     }
 
     public long getItemReferenceCount() {
-        return idToTemplate.size();
+        return itemCache.size();
     }
 
 }

@@ -389,6 +389,10 @@ public class ItemsCache {
         return findContains(searchText, typeNameTokens, FieldType.LOWER_TYPE_NAME);
     }
 
+    public ItemTemplate[] items() {
+        return items;
+    }
+
     public int size() { return size; }
 
 }
