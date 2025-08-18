@@ -40,7 +40,6 @@ public class EntityResurrectEntry extends LogEntry {
     public String toSaveJson() {
         JsonObject obj = new JsonObject();
 
-        EntityResurrectEntry entry = this;
         obj.addProperty("h", hand);
 
         return obj.toString();

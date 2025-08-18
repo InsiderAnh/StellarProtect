@@ -101,8 +101,8 @@ public class SQLConnection implements DatabaseConnection {
             }
 
             try (Statement stmt = connection.createStatement()) {
-                stmt.execute("PRAGMA journal_mode = WAL");
-                stmt.execute("PRAGMA synchronous = NORMAL");
+                stmt.execute("PRAGMA journal_mode = OFF");
+                stmt.execute("PRAGMA synchronous = OFF");
                 stmt.execute("PRAGMA cache_size = 10000");
                 stmt.execute("PRAGMA temp_store = MEMORY");
             } catch (SQLException e) {

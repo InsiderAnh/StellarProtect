@@ -73,17 +73,16 @@ public class PlayerShootEntry extends LogEntry {
 
     @Override
     public String toSaveJson() {
-        JsonObject obj = new JsonObject();
-
-        PlayerShootEntry entry = this;
-        obj.addProperty("et", entry.getEntityType());
+        StringBuilder sb = new StringBuilder();
+        sb.append("{\"et\":\"").append(entityType);
         if (success != 0) {
-            obj.addProperty("s", entry.getSuccess());
+            sb.append("\",\"s\":\"").append(success);
         }
         if (!shootEntityType.isEmpty()) {
-            obj.addProperty("st", entry.getShootEntityType());
+            sb.append("\",\"st\":\"").append(shootEntityType);
         }
-        return obj.toString();
+        sb.append("\"}");
+        return sb.toString();
     }
 
 }

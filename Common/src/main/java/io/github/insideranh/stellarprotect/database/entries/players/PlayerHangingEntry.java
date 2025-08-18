@@ -14,7 +14,6 @@ import java.sql.ResultSet;
 @Getter
 public class PlayerHangingEntry extends LogEntry {
 
-    // mount = 0 (0 = mount, 1 = dismount)
     private final String entityType;
 
     public PlayerHangingEntry(Document document, JsonObject jsonObject) {
@@ -42,12 +41,7 @@ public class PlayerHangingEntry extends LogEntry {
 
     @Override
     public String toSaveJson() {
-        JsonObject obj = new JsonObject();
-
-        PlayerHangingEntry entry = this;
-        obj.addProperty("et", entry.getEntityType());
-
-        return obj.toString();
+        return "{\"et\":\"" + entityType + "\"}";
     }
 
 }

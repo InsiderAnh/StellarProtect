@@ -38,12 +38,7 @@ public class PlayerUseEntry extends LogEntry {
 
     @Override
     public String toSaveJson() {
-        JsonObject obj = new JsonObject();
-
-        PlayerUseEntry entry = this;
-        obj.addProperty("m", entry.getMaterial());
-
-        return obj.toString();
+        return "{\"m\":\"" + material + "\"}";
     }
 
 }
