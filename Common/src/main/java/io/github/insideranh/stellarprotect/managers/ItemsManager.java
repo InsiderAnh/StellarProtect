@@ -1,6 +1,7 @@
 package io.github.insideranh.stellarprotect.managers;
 
 import io.github.insideranh.stellarprotect.StellarProtect;
+import io.github.insideranh.stellarprotect.cache.ItemsCache;
 import io.github.insideranh.stellarprotect.items.ItemReference;
 import io.github.insideranh.stellarprotect.items.ItemTemplate;
 import io.github.insideranh.stellarprotect.utils.InventorySerializable;
@@ -23,7 +24,8 @@ import java.util.concurrent.atomic.AtomicLong;
 public class ItemsManager {
 
     private final ConcurrentHashMap<String, Long> itemHashToId = new ConcurrentHashMap<>();
-    private final ConcurrentHashMap<Long, ItemTemplate> idToTemplate = new ConcurrentHashMap<>();
+    //private final ConcurrentHashMap<Long, ItemTemplate> idToTemplate = new ConcurrentHashMap<>();
+    private final ItemsCache itemCache = new ItemsCache();
     private final HashSet<Long> unsavedTemplates = new HashSet<>();
     private final StellarProtect plugin = StellarProtect.getInstance();
     private final AtomicLong currentId = new AtomicLong(0);
@@ -64,7 +66,8 @@ public class ItemsManager {
 
     public void loadItemReference(ItemTemplate template, String fullBase64) {
         itemHashToId.put(fullBase64, template.getId());
-        idToTemplate.put(template.getId(), template);
+        //idToTemplate.put(template.getId(), template);
+        itemCache.put(template);
     }
 
     @NonNull

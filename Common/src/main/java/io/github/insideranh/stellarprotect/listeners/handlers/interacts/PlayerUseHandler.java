@@ -13,16 +13,12 @@ import lombok.NonNull;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
 public class PlayerUseHandler extends GenericHandler {
 
     @Override
     public GenericHandler canHandle(@NonNull Block block, @Nullable ItemStack itemStack) {
-        if (block.getState() instanceof InventoryHolder) {
-            return this;
-        }
         if (BlockTracker.isInteractable(block.getType().name())) {
             return this;
         }
