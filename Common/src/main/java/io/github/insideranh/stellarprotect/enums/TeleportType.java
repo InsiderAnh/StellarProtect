@@ -20,8 +20,6 @@ public enum TeleportType {
     EXIT_BED(9),
     UNKNOWN(10);
 
-    private final int id;
-
     private static final TeleportType[] ID_CACHE = new TeleportType[11];
     private static final Map<String, TeleportType> NAME_CACHE;
 
@@ -46,6 +44,8 @@ public enum TeleportType {
             }
         }
     }
+
+    private final int id;
 
     TeleportType(int id) {
         this.id = id;

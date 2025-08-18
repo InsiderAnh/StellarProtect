@@ -23,6 +23,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.player.*;
+import org.bukkit.inventory.ItemStack;
 
 public class PlayerLogListener implements Listener {
 
@@ -129,12 +130,15 @@ public class PlayerLogListener implements Listener {
     public void onInteract(PlayerInteractEvent event) {
         if (event.getClickedBlock() == null) return;
         Block block = event.getClickedBlock();
-        if (ActionType.INTERACT.shouldSkipLog(block.getWorld().getName(), block.getType().name()))
-            return;
 
-        GenericHandler genericHandler = Handlers.canHandle(block, event.getItem());
+        ItemStack item = event.getItem();
+        String blockType = block.getType().name();
+
+        GenericHandler genericHandler = Handlers.canHandle(block, blockType, item);
         if (genericHandler != null) {
-            genericHandler.handle(event.getPlayer(), block, event.getItem());
+            if (ActionType.INTERACT.shouldSkipLog(block.getWorld().getName(), blockType)) return;
+
+            genericHandler.handle(event.getPlayer(), block, item);
         }
     }
 

@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Getter
 public enum ActionType {
@@ -67,6 +68,8 @@ public enum ActionType {
     private static final ActionType[] ID_TO_ACTION_CACHE;
     private static final Map<String, ActionType> NAME_TO_ACTION_CACHE = new HashMap<>();
 
+    private static final Map<String, String> WORLD_LOWER_CACHE = new ConcurrentHashMap<>();
+
     static {
         int maxId = Arrays.stream(ActionType.values())
             .mapToInt(ActionType::getId)
@@ -83,13 +86,23 @@ public enum ActionType {
 
     private final int id;
     private final HashMap<String, WorldConfigType> worldTypes = new HashMap<>();
-    private final HashSet<String> worlds = new HashSet<>();
-    private final HashSet<String> disabledTypes = new HashSet<>();
+
+    private final Set<String> worlds = new HashSet<>();
+    private final Set<String> disabledTypes = new HashSet<>();
+
+    @Setter
+    private boolean hasAllWorlds = false;
+
     @Setter
     private boolean enabled = true;
 
     ActionType(int id) {
         this.id = id;
+    }
+
+    private static String getLowerCaseWorld(String world) {
+        if (world == null) return null;
+        return WORLD_LOWER_CACHE.computeIfAbsent(world, String::toLowerCase);
     }
 
     public static ActionType getById(int id) {
@@ -104,50 +117,91 @@ public enum ActionType {
     }
 
     public static List<String> getAllNamesNoPrefix(@Nullable String filter) {
-        List<String> names = new LinkedList<>();
+        List<String> names = new ArrayList<>();
         for (ActionType actionType : ActionType.values()) {
-            if (filter == null || actionType.name().toLowerCase().contains(filter)) {
-                names.add(actionType.name().toLowerCase());
+            if (filter == null) continue;
+
+            String name = actionType.name().toLowerCase();
+            if (name.contains(filter)) {
+                names.add(name);
             }
         }
         return names;
     }
 
     public static List<String> getAllNames(@Nullable String filter) {
-        List<String> names = new LinkedList<>();
+        List<String> names = new ArrayList<>();
         for (ActionType actionType : ActionType.values()) {
-            if (filter == null || actionType.name().toLowerCase().contains(filter)) {
-                names.add("a:" + actionType.name().toLowerCase());
+            if (filter == null) continue;
+
+            String name = "a:" + actionType.name().toLowerCase();
+            if (name.contains(filter)) {
+                names.add(name);
             }
         }
         return names;
     }
 
     public boolean shouldSkipLog(String world, String type) {
-        WorldConfigType worldConfigType = worldTypes.get(world);
-        if (worldConfigType != null) {
-            return !worldConfigType.isEnabled() || worldConfigType.getDisabledTypes().contains(type.toLowerCase());
+        if (!enabled) {
+            return true;
         }
-        return !enabled || disabledTypes.contains(type.toLowerCase()) || (!worlds.contains("all") && !worlds.contains(world.toLowerCase()));
+
+        String typeLower = type.toLowerCase();
+
+        WorldConfigType worldConfig = worldTypes.get(world);
+        if (worldConfig != null) {
+            return !worldConfig.isEnabled() || worldConfig.getDisabledTypes().contains(typeLower);
+        }
+
+        if (disabledTypes.contains(typeLower)) {
+            return true;
+        }
+
+        if (hasAllWorlds) {
+            return false;
+        }
+
+        String worldLower = getLowerCaseWorld(world);
+        return worldLower != null && !worlds.contains(worldLower);
     }
 
     public boolean shouldSkipLogStart(@Nullable String world, String type) {
-        WorldConfigType worldConfigType = worldTypes.get(world);
-        if (worldConfigType != null) {
-            for (String disabledType : worldConfigType.getDisabledTypes()) {
-                if (disabledType.startsWith(type.toLowerCase())) {
+        if (!enabled) {
+            return true;
+        }
+
+        String typeLower = type.toLowerCase();
+
+        WorldConfigType worldConfig = worldTypes.get(world);
+        if (worldConfig != null) {
+            if (!worldConfig.isEnabled()) {
+                return true;
+            }
+            for (String disabledType : worldConfig.getDisabledTypes()) {
+                if (disabledType.startsWith(typeLower)) {
                     return true;
                 }
             }
-            return !worldConfigType.isEnabled();
+            return false;
         }
 
         for (String disabledType : disabledTypes) {
-            if (disabledType.startsWith(type.toLowerCase())) {
+            if (disabledType.startsWith(typeLower)) {
                 return true;
             }
         }
-        return !enabled || (!worlds.contains("all") && world != null && !worlds.contains(world.toLowerCase()));
+
+        if (hasAllWorlds) {
+            return false;
+        }
+
+        if (world == null) {
+            return true;
+        }
+
+        String worldLower = getLowerCaseWorld(world);
+        return !worlds.contains(worldLower);
     }
 
 }

@@ -2,26 +2,25 @@ package io.github.insideranh.stellarprotect.listeners.handlers;
 
 import com.mongodb.lang.Nullable;
 import io.github.insideranh.stellarprotect.listeners.handlers.interacts.PlayerGrowCropHandler;
-import io.github.insideranh.stellarprotect.listeners.handlers.interacts.PlayerUseHandler;
+import io.github.insideranh.stellarprotect.listeners.handlers.interacts.PlayerPlaceUseHandler;
+import io.github.insideranh.stellarprotect.listeners.handlers.interacts.PlayerToggleHandler;
 import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.LinkedList;
-
 public class Handlers {
 
-    private static final LinkedList<GenericHandler> interactHandlers = new LinkedList<>();
+    private static final GenericHandler[] GENERIC_HANDLERS = {
+        new PlayerToggleHandler(),
+        new PlayerPlaceUseHandler(),
+        new PlayerGrowCropHandler()
+    };
 
-    static {
-        interactHandlers.add(new PlayerGrowCropHandler());
-        interactHandlers.add(new PlayerUseHandler());
-    }
+    public static @Nullable GenericHandler canHandle(Block block, String blockType, ItemStack itemStack) {
+        String itemType = itemStack == null ? "" : itemStack.getType().name();
 
-    public static @Nullable GenericHandler canHandle(Block block, ItemStack itemStack) {
-        for (GenericHandler handler : interactHandlers) {
-            GenericHandler canHandle = handler.canHandle(block, itemStack);
-            if (canHandle != null) {
-                return canHandle;
+        for (GenericHandler handler : GENERIC_HANDLERS) {
+            if (handler.canHandle(block, blockType, itemType) != null) {
+                return handler;
             }
         }
         return null;

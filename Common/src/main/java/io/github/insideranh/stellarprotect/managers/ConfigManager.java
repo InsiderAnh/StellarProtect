@@ -12,6 +12,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -90,13 +91,6 @@ public class ConfigManager {
         this.tablesWorlds = this.tablesPrefix + plugin.getConfig().getString("tablesOrCollections.worlds", "worlds");
         this.tablesEntityIds = this.tablesPrefix + plugin.getConfig().getString("tablesOrCollections.entity_ids", "entity_ids");
 
-        /*
-        LoggerCache.setBatchSize(batchSize);
-        LoggerCache.setMaxLogsPerLocation(maxLogsPerLocation);
-        LoggerCache.setTimeForCacheClear(timeForCacheClear);
-        LoggerCache.setCleanPlacedCachePeriod(cleanPlacedCachePeriod);
-         */
-
         HashMap<ActionType, HashMap<String, WorldConfigType>> worlds = new HashMap<>();
 
         File worldsFolder = new File(plugin.getDataFolder(), "worlds");
@@ -125,8 +119,11 @@ public class ConfigManager {
             actionType.getWorldTypes().putAll(worldsConfig);
 
             boolean enabled = plugin.getConfig().getBoolean("logs." + actionType.name().toLowerCase() + ".enabled");
+            List<String> worldList = plugin.getConfig().getStringList("logs." + actionType.name().toLowerCase() + ".worlds").stream().map(String::toLowerCase).collect(Collectors.toList());
+
             actionType.setEnabled(enabled);
-            actionType.getWorlds().addAll(plugin.getConfig().getStringList("logs." + actionType.name().toLowerCase() + ".worlds").stream().map(String::toLowerCase).collect(Collectors.toList()));
+            actionType.setHasAllWorlds(worldList.contains("all"));
+            actionType.getWorlds().addAll(worldList);
             actionType.getDisabledTypes().addAll(plugin.getConfig().getStringList("logs." + actionType.name().toLowerCase() + ".disable_types").stream().map(String::toLowerCase).collect(Collectors.toList()));
         }
     }

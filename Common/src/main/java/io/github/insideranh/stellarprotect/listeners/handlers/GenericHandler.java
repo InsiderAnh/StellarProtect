@@ -11,7 +11,7 @@ public abstract class GenericHandler {
 
     protected final StellarProtect plugin = StellarProtect.getInstance();
 
-    public abstract @Nullable GenericHandler canHandle(@NonNull Block block, @Nullable ItemStack itemStack);
+    public abstract @Nullable GenericHandler canHandle(@NonNull Block block, @NonNull String blockName, @NonNull String itemStack);
 
     public abstract void handle(Player player, @NonNull Block block, @Nullable ItemStack itemStack);
 

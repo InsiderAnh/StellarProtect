@@ -1,23 +1,21 @@
 package io.github.insideranh.stellarprotect.listeners.handlers.interacts;
 
-import io.github.insideranh.stellarprotect.StellarProtect;
-import io.github.insideranh.stellarprotect.api.ProtectNMS;
 import io.github.insideranh.stellarprotect.cache.LoggerCache;
 import io.github.insideranh.stellarprotect.data.PlayerProtect;
-import io.github.insideranh.stellarprotect.database.entries.world.CropGrowLogEntry;
+import io.github.insideranh.stellarprotect.database.entries.players.PlayerBlockLogEntry;
+import io.github.insideranh.stellarprotect.enums.ActionType;
 import io.github.insideranh.stellarprotect.listeners.handlers.GenericHandler;
+import io.github.insideranh.stellarprotect.trackers.BlockTracker;
 import lombok.NonNull;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-public class PlayerGrowCropHandler extends GenericHandler {
-
-    private final ProtectNMS protectNMS = StellarProtect.getInstance().getProtectNMS();
+public class PlayerToggleHandler extends GenericHandler {
 
     @Override
     public GenericHandler canHandle(@NonNull Block block, @NonNull String blockType, @NonNull String itemType) {
-        if (protectNMS.canGrow(block) && itemType.equals("BONE")) {
+        if (BlockTracker.isToggleableState(blockType)) {
             return this;
         }
         return null;
@@ -27,8 +25,12 @@ public class PlayerGrowCropHandler extends GenericHandler {
     public void handle(Player player, @NonNull Block block, ItemStack itemStack) {
         PlayerProtect playerProtect = PlayerProtect.getPlayer(player);
         if (playerProtect == null) return;
+        if (playerProtect.getNextUse() > System.currentTimeMillis()) {
+            return;
+        }
+        playerProtect.setNextUse(System.currentTimeMillis() + 300L);
 
-        LoggerCache.addLog(new CropGrowLogEntry(playerProtect.getPlayerId(), block));
+        LoggerCache.addLog(new PlayerBlockLogEntry(playerProtect.getPlayerId(), block, ActionType.INTERACT));
     }
 
 }

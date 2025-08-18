@@ -24,7 +24,10 @@ import lombok.NonNull;
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.CompletableFuture;
