@@ -16,8 +16,6 @@ import java.util.function.Consumer;
 
 public interface LoggerRepository {
 
-    void loadTemporaryLogs();
-
     void clearOldLogs();
 
     void save(List<LogEntry> logEntries);

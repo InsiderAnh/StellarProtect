@@ -34,7 +34,6 @@ public class MemoryArgument extends StellarArgument {
             memoryObjects.put("messages.memory.cachedLogsByCategory", new MemoryAnalysisItem(LoggerCache.getCachedLogsByCategory()));
             memoryObjects.put("messages.memory.unSavedLogsByCategory", new MemoryAnalysisItem(LoggerCache.getUnSavedLogsByCategory()));
             memoryObjects.put("messages.memory.placedBlockLogs", new MemoryAnalysisItem(LoggerCache.getPlacedBlockLogs()));
-            memoryObjects.put("messages.memory.playerRecentActions", new MemoryAnalysisItem(LoggerCache.getPlayerRecentActions()));
             memoryObjects.put("messages.memory.queryCache", new MemoryAnalysisItem(LoggerCache.getQueryCache()));
 
             sender.sendMessage(plugin.getLangManager().get("messages.memory.title"));

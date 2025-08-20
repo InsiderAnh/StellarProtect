@@ -69,25 +69,6 @@ public class ItemsRepositorySQL implements ItemsRepository {
     }
 
     @Override
-    public void updateItemUsageInDatabase(long templateId, int quantity) {
-        stellarProtect.getExecutor().execute(() -> {
-            String sql = "UPDATE " + stellarProtect.getConfigManager().getTablesItemTemplates() + " " +
-                "SET access_count = access_count + 1," +
-                "last_accessed = CURRENT_TIMESTAMP," +
-                "total_quantity_used = total_quantity_used + ?" +
-                "WHERE id = ?";
-
-            try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-                stmt.setInt(1, quantity);
-                stmt.setLong(2, templateId);
-                stmt.executeUpdate();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        });
-    }
-
-    @Override
     public void loadMostUsedItems() {
         ListeningExecutorService executor = MoreExecutors.listeningDecorator(
             new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<>(1024))
@@ -96,8 +77,7 @@ public class ItemsRepositorySQL implements ItemsRepository {
         executor.execute(() -> {
             String sql = "SELECT id, base64, s, access_count, last_accessed, total_quantity_used, created_at " +
                 "FROM " + stellarProtect.getConfigManager().getTablesItemTemplates() + " " +
-                "ORDER BY access_count DESC, total_quantity_used DESC " +
-                "LIMIT 5000";
+                "ORDER BY access_count DESC, total_quantity_used DESC";
 
             try (PreparedStatement statement = connection.prepareStatement(sql);
                  ResultSet resultSet = statement.executeQuery()) {
@@ -115,7 +95,7 @@ public class ItemsRepositorySQL implements ItemsRepository {
                 long count = stellarProtect.getItemsManager().getItemReferenceCount();
 
                 stellarProtect.getItemsManager().getCurrentId().set(count + 1L);
-                stellarProtect.getLogger().info("Loaded " + count + " item references.");
+                Debugger.debugLog("Loaded " + count + " item references.");
             } catch (SQLException e) {
                 stellarProtect.getLogger().info("Error en loadMostUsedItems: " + e.getMessage());
             }

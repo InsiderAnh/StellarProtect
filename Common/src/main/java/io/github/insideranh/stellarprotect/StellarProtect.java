@@ -70,6 +70,7 @@ public class StellarProtect extends JavaPlugin {
     private MetricsLite bStats;
     private UpdateChecker updateChecker;
     private Economy economy;
+    private boolean isFolia;
 
     public StellarProtect() {
         instance = this;
@@ -120,6 +121,7 @@ public class StellarProtect extends JavaPlugin {
 
         loadLastHooks();
 
+        isFolia = MinecraftVersions.WILD_UPDATE.isAtLeast() && ServerVersions.isFolia();
         if (!configManager.isCheckUpdates()) return;
         updateChecker = new UpdateChecker();
     }
@@ -243,7 +245,7 @@ public class StellarProtect extends JavaPlugin {
     }
 
     public StellarTaskHook getStellarTaskHook(Runnable runnable) {
-        if (MinecraftVersions.WILD_UPDATE.isAtLeast() && ServerVersions.isFolia()) {
+        if (isFolia) {
             return new FoliaTaskHook(runnable);
         }
         return new BukkitTaskHook(runnable);

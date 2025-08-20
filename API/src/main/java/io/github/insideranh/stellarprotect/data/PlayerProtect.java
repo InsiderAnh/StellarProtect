@@ -1,21 +1,23 @@
 package io.github.insideranh.stellarprotect.data;
 
+import io.github.insideranh.stellarprotect.maps.ObjectLongMap;
+import io.github.insideranh.stellarprotect.maps.ObjectObjectMap;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.entity.Player;
 
-import java.util.HashMap;
 import java.util.UUID;
 
 @Getter
 @Setter
 public class PlayerProtect {
 
-    private static HashMap<UUID, PlayerProtect> players = new HashMap<>();
+    private static final ObjectObjectMap<UUID, PlayerProtect> players = new ObjectObjectMap<>(120);
+    private static final ObjectLongMap<String> nameToIdCache = new ObjectLongMap<>(120);
     private final long playerId;
     private final UUID uuid;
     private String name;
-    private String realname;
+    private String realName;
     private boolean inspect;
     private long nextInspect;
     private LookupSession lookupSession;
@@ -30,29 +32,43 @@ public class PlayerProtect {
     public PlayerProtect(UUID uuid, String name, long playerId) {
         this.playerId = playerId;
         this.name = name.toLowerCase();
-        this.realname = name;
+        this.realName = name;
         this.uuid = uuid;
-    }
-
-    public static PlayerProtect removePlayer(Player player) {
-        return players.remove(player.getUniqueId());
     }
 
     public static PlayerProtect getPlayer(Player player) {
         return players.get(player.getUniqueId());
     }
 
+    public static PlayerProtect removePlayer(Player player) {
+        UUID uuid = player.getUniqueId();
+        PlayerProtect removed = players.remove(uuid);
+        if (removed != null) {
+            nameToIdCache.removeLong(removed.name);
+        }
+        return removed;
+    }
+
     public static long getPlayerId(String name) {
+        String lowerName = name.toLowerCase();
+
+        if (nameToIdCache.containsKey(lowerName)) {
+            return nameToIdCache.getLong(lowerName);
+        }
+
         for (PlayerProtect playerProtect : players.values()) {
-            if (playerProtect.getName().equalsIgnoreCase(name)) {
-                return playerProtect.getPlayerId();
+            if (playerProtect.name.equals(lowerName)) {
+                nameToIdCache.put(lowerName, playerProtect.playerId);
+                return playerProtect.playerId;
             }
         }
+
         return -2;
     }
 
     public void create() {
-        players.put(getUuid(), this);
+        players.put(uuid, this);
+        nameToIdCache.put(name, playerId);
     }
 
 }

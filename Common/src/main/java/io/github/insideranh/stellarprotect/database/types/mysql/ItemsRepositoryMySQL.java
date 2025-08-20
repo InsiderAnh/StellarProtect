@@ -73,11 +73,6 @@ public class ItemsRepositoryMySQL implements ItemsRepository {
     }
 
     @Override
-    public void updateItemUsageInDatabase(long templateId, int quantity) {
-
-    }
-
-    @Override
     public void loadMostUsedItems() {
         ListeningExecutorService executor = MoreExecutors.listeningDecorator(
             new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<>(1024))
@@ -86,8 +81,7 @@ public class ItemsRepositoryMySQL implements ItemsRepository {
         executor.execute(() -> {
             String sql = "SELECT id, base64, s, access_count, last_accessed, total_quantity_used, created_at " +
                 "FROM " + stellarProtect.getConfigManager().getTablesItemTemplates() + " " +
-                "ORDER BY access_count DESC, total_quantity_used DESC " +
-                "LIMIT 5000";
+                "ORDER BY access_count DESC, total_quantity_used DESC";
 
             try (Connection connection = dataSource.getConnection();
                  PreparedStatement statement = connection.prepareStatement(sql);
@@ -106,7 +100,7 @@ public class ItemsRepositoryMySQL implements ItemsRepository {
                 long count = stellarProtect.getItemsManager().getItemReferenceCount();
 
                 stellarProtect.getItemsManager().getCurrentId().set(count + 1L);
-                stellarProtect.getLogger().info("Loaded " + count + " item references.");
+                Debugger.debugLog("Loaded " + count + " item references.");
             } catch (SQLException e) {
                 stellarProtect.getLogger().info("Error en loadMostUsedItems: " + e.getMessage());
             }

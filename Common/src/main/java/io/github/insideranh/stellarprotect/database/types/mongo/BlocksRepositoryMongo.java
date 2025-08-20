@@ -8,6 +8,7 @@ import com.mongodb.client.model.InsertManyOptions;
 import io.github.insideranh.stellarprotect.StellarProtect;
 import io.github.insideranh.stellarprotect.blocks.BlockTemplate;
 import io.github.insideranh.stellarprotect.database.repositories.BlocksRepository;
+import io.github.insideranh.stellarprotect.utils.Debugger;
 import org.bson.Document;
 
 import java.util.List;
@@ -75,9 +76,9 @@ public class BlocksRepositoryMongo implements BlocksRepository {
                     item_templates.insertMany(batch, new InsertManyOptions().ordered(false));
                 }
 
-                stellarProtect.getLogger().info("Saved " + blockTemplates.size() + " block templates in MongoDB (Optimized)");
+                Debugger.debugSave("Saved " + blockTemplates.size() + " block templates in MongoDB");
             } catch (Exception e) {
-                stellarProtect.getLogger().info("Error on save blocks in MongoDB (Optimized): " + e.getMessage());
+                stellarProtect.getLogger().info("Error on save blocks in MongoDB : " + e.getMessage());
                 e.printStackTrace();
             }
         });

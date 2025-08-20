@@ -3,7 +3,7 @@ package io.github.insideranh.stellarprotect.managers;
 import io.github.insideranh.stellarprotect.StellarProtect;
 import io.github.insideranh.stellarprotect.blocks.BlockTemplate;
 import io.github.insideranh.stellarprotect.blocks.DataBlock;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import io.github.insideranh.stellarprotect.maps.IntObjectMap;
 import lombok.Getter;
 import org.bukkit.block.Block;
 
@@ -16,7 +16,7 @@ public class BlocksManager {
     private final StellarProtect plugin = StellarProtect.getInstance();
 
     // String -> BlockId
-    private final Map<Integer, Integer> blockHashToId = new Int2ObjectOpenHashMap<>(100);
+    private final IntObjectMap<Integer> blockHashToId = new IntObjectMap<>(1000);
     // BlockId -> BlockTemplate
     private final Map<Integer, BlockTemplate> idToBlockTemplate = new HashMap<>(100);
     private final Set<Integer> unsavedBlocks = new HashSet<>();

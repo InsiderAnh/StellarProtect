@@ -2,14 +2,13 @@ package io.github.insideranh.stellarprotect.arguments;
 
 import lombok.Getter;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Getter
 public class UsersArg {
 
-    private final List<Long> userIds = new LinkedList<>();
+    private final Set<Long> userIds = new LinkedHashSet<>();
 
     public UsersArg(Set<Long> userIds) {
         this.userIds.addAll(userIds);

@@ -35,7 +35,6 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
@@ -47,42 +46,6 @@ public class LoggerRepositoryMySQL implements LoggerRepository {
 
     public LoggerRepositoryMySQL(HikariDataSource dataSource) {
         this.dataSource = dataSource;
-    }
-
-    @Override
-    public void loadTemporaryLogs() {
-        Debugger.debugLog("Loading logs from database...");
-        AtomicInteger count = new AtomicInteger(0);
-
-        long twelveHoursAgo = System.currentTimeMillis() - 12 * 60 * 60 * 1000;
-
-        try (Connection connection = getConnection()) {
-            try (PreparedStatement stmt = connection.prepareStatement(
-                "SELECT ple.*, p.name, p.uuid " +
-                    "FROM " + stellarProtect.getConfigManager().getTablesLogEntries() + " ple " +
-                    "JOIN " + stellarProtect.getConfigManager().getTablesPlayers() + " p ON ple.player_id = p.id " +
-                    "WHERE ple.created_at >= ? " +
-                    "ORDER BY ple.created_at DESC " +
-                    "LIMIT 10000"
-            )) {
-                stmt.setLong(1, twelveHoursAgo);
-                ResultSet rs = stmt.executeQuery();
-                while (rs.next()) {
-                    long playerId = rs.getLong("player_id");
-                    String playerName = rs.getString("name");
-
-                    PlayerCache.cacheName(playerId, playerName);
-
-                    LogEntry entry = LogEntryFactory.fromDatabase(rs);
-                    LoggerCache.loadLog(entry);
-                    count.incrementAndGet();
-                }
-            }
-            Debugger.debugLog("Loaded " + count.get() + " logs from database (most recent first, max 10k).");
-
-        } catch (SQLException e) {
-            stellarProtect.getLogger().log(Level.SEVERE, "Failed to load temporary logs.", e);
-        }
     }
 
     @Override

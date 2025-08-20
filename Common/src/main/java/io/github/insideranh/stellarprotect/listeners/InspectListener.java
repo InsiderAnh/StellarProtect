@@ -22,8 +22,6 @@ public class InspectListener implements Listener {
         Player player = event.getPlayer();
         if (event.getClickedBlock() == null) return;
 
-        //plugin.getProtectNMS().sendBlockHash(player, event.getClickedBlock());
-
         PlayerProtect playerProtect = PlayerProtect.getPlayer(player);
         if (playerProtect == null || !playerProtect.isInspect())
             return;

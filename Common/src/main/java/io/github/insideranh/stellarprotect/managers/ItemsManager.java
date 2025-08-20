@@ -23,7 +23,7 @@ import java.util.concurrent.atomic.AtomicLong;
 @Getter
 public class ItemsManager {
 
-    private final ConcurrentHashMap<String, Long> itemHashToId = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, Long> itemHashToId = new ConcurrentHashMap<>(1000);
     private final ItemsCache itemCache = new ItemsCache();
     private final HashSet<Long> unsavedTemplates = new HashSet<>();
     private final StellarProtect plugin = StellarProtect.getInstance();

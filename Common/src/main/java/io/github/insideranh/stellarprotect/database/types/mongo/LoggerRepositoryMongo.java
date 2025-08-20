@@ -38,7 +38,6 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
@@ -54,38 +53,6 @@ public class LoggerRepositoryMongo implements LoggerRepository {
         this.database = database;
         this.players = database.getCollection(StellarProtect.getInstance().getConfigManager().getTablesPlayers());
         this.logEntries = database.getCollection(StellarProtect.getInstance().getConfigManager().getTablesLogEntries());
-    }
-
-    @Override
-    public void loadTemporaryLogs() {
-        Debugger.debugLog("Loading logs from database...");
-        AtomicInteger count = new AtomicInteger(0);
-
-        long twelveHoursAgo = System.currentTimeMillis() - 12 * 60 * 60 * 1000;
-
-        FindIterable<Document> findPlayerLogEntries = logEntries
-            .find(Filters.gte("created_at", twelveHoursAgo))
-            .sort(Sorts.descending("created_at"))
-            .limit(10000);
-
-        for (Document doc : findPlayerLogEntries) {
-            long playerId = doc.getLong("player_id");
-
-            Document playerDoc = players.find(Filters.eq("id", playerId)).first();
-            if (playerDoc != null) {
-                String playerName = playerDoc.getString("name");
-                PlayerCache.cacheName(playerId, playerName);
-            }
-
-            try {
-                LoggerCache.loadLog(LogEntryFactory.fromDocument(doc));
-                count.incrementAndGet();
-            } catch (Exception ignored) {
-                String data = doc.getString("data");
-                Debugger.debugLog("Failed to load log entry: " + data);
-            }
-        }
-        Debugger.debugLog("Loaded " + count.get() + " logs from database (most recent first, max 10k).");
     }
 
     @Override

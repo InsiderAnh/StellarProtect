@@ -28,4 +28,17 @@ public class RadiusArg {
         this.maxZ = maxZ;
     }
 
+    @Override
+    public String toString() {
+        return "RadiusArg{" +
+            "radius=" + radius +
+            ", minX=" + minX +
+            ", maxX=" + maxX +
+            ", minY=" + minY +
+            ", maxY=" + maxY +
+            ", minZ=" + minZ +
+            ", maxZ=" + maxZ +
+            '}';
+    }
+
 }

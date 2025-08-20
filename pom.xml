@@ -69,7 +69,6 @@
                                     </excludes>
                                 </filter>
                             </filters>
-
                             <relocations>
                                 <relocation>
                                     <pattern>de.tr7zw.changeme.nbtapi</pattern>
@@ -86,6 +85,23 @@
                                 <relocation>
                                     <pattern>com.zaxxer.hikari</pattern>
                                     <shadedPattern>io.github.insideranh.stellarprotect.libs.hikaricp</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>it.unimi.dsi</pattern>
+                                    <shadedPattern>io.github.insideranh.stellarprotect.libs.fastutil</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.openjdk.jol</pattern>
+                                    <shadedPattern>io.github.insideranh.stellarprotect.libs.jol</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.slf4j</pattern>
+                                    <shadedPattern>io.github.insideranh.stellarprotect.libs.slf4j</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>com.cjcrafter.foliascheduler</pattern>
+                                    <shadedPattern>io.github.insideranh.stellarprotect.libs.foliascheduler
+                                    </shadedPattern>
                                 </relocation>
                             </relocations>
                         </configuration>

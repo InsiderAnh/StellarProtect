@@ -86,11 +86,6 @@ public class ItemsRepositoryMongo implements ItemsRepository {
     }
 
     @Override
-    public void updateItemUsageInDatabase(long templateId, int quantity) {
-
-    }
-
-    @Override
     public void loadMostUsedItems() {
         try {
             List<Bson> pipeline = Arrays.asList(
@@ -98,7 +93,6 @@ public class ItemsRepositoryMongo implements ItemsRepository {
                     Sorts.descending("access_count"),
                     Sorts.descending("total_quantity_used")
                 )),
-                Aggregates.limit(5000),
                 Aggregates.project(Projections.fields(
                     Projections.include("_id", "base64", "s", "access_count",
                         "last_accessed", "total_quantity_used", "created_at")
@@ -121,7 +115,7 @@ public class ItemsRepositoryMongo implements ItemsRepository {
             long count = stellarProtect.getItemsManager().getItemReferenceCount();
 
             stellarProtect.getItemsManager().getCurrentId().set(count + 1L);
-            stellarProtect.getLogger().info("Loaded " + count + " item references.");
+            Debugger.debugLog("Loaded " + count + " item references.");
         } catch (Exception e) {
             stellarProtect.getLogger().info("Error en loadMostUsedItems: " + e.getMessage());
         }

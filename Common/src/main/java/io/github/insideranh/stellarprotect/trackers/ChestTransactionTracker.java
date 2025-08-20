@@ -7,6 +7,7 @@ import io.github.insideranh.stellarprotect.database.entries.players.PlayerTransa
 import io.github.insideranh.stellarprotect.enums.ActionType;
 import io.github.insideranh.stellarprotect.items.ItemReference;
 import io.github.insideranh.stellarprotect.utils.Debugger;
+import io.github.insideranh.stellarprotect.utils.InventorySerializable;
 import io.github.insideranh.stellarprotect.utils.WorldUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -234,45 +235,41 @@ public class ChestTransactionTracker implements Listener {
         Map<ItemStack, Integer> added = new HashMap<>();
         Map<ItemStack, Integer> removed = new HashMap<>();
 
-        Map<ItemStack, Integer> initialItems = countItemsAsBase64(initial);
-        Map<ItemStack, Integer> currentItems = countItemsAsBase64(current);
+        Map<ItemStack, Integer> initialItems = countItems(initial);
+        Map<ItemStack, Integer> currentItems = countItems(current);
 
         for (Map.Entry<ItemStack, Integer> entry : currentItems.entrySet()) {
-            ItemStack base64Key = entry.getKey();
+            ItemStack item = entry.getKey();
             int currentCount = entry.getValue();
-            int initialCount = initialItems.getOrDefault(base64Key, 0);
+            int initialCount = initialItems.getOrDefault(item, 0);
 
             if (currentCount > initialCount) {
-                added.put(base64Key, currentCount - initialCount);
+                added.put(item, currentCount - initialCount);
             }
         }
 
         for (Map.Entry<ItemStack, Integer> entry : initialItems.entrySet()) {
-            ItemStack base64Key = entry.getKey();
+            ItemStack item = entry.getKey();
             int initialCount = entry.getValue();
-            int currentCount = currentItems.getOrDefault(base64Key, 0);
+            int currentCount = currentItems.getOrDefault(item, 0);
 
             if (initialCount > currentCount) {
-                removed.put(base64Key, initialCount - currentCount);
+                removed.put(item, initialCount - currentCount);
             }
         }
 
         return new TransactionResult(playerName, location, added, removed);
     }
 
-    private Map<ItemStack, Integer> countItemsAsBase64(ItemStack[] contents) {
-        Map<ItemStack, Integer> itemCounts = new HashMap<>();
+    private Map<ItemStack, Integer> countItems(ItemStack[] contents) {
+        ItemCounter counter = new ItemCounter();
 
         for (ItemStack item : contents) {
-            if (item != null && item.getType() != Material.AIR) {
-                ItemStack singleItem = item.clone();
-                singleItem.setAmount(1);
-
-                itemCounts.put(singleItem, itemCounts.getOrDefault(singleItem, 0) + item.getAmount());
-            }
+            if (item == null || item.getType() == Material.AIR) continue;
+            counter.addItem(item);
         }
 
-        return itemCounts;
+        return counter.getItemStackMap();
     }
 
     private ItemStack[] cloneContents(ItemStack[] contents) {
@@ -333,6 +330,34 @@ public class ChestTransactionTracker implements Listener {
         }
 
         Debugger.debugExtras("Limpieza completada. Eliminados " + keysToRemove.size() + " estados antiguos y " + playersToRemove.size() + " jugadores desconectados.");
+    }
+
+    private static class ItemCounter {
+
+        private final Map<String, Integer> counts = new HashMap<>();
+        private final Map<String, ItemStack> keyToItem = new HashMap<>();
+
+        public void addItem(ItemStack item) {
+            if (item != null && item.getType() != Material.AIR) {
+                ItemStack singleItem = item.clone();
+                singleItem.setAmount(1);
+
+                String key = InventorySerializable.createSimpleItemKey(singleItem);
+
+                counts.put(key, counts.getOrDefault(key, 0) + item.getAmount());
+                keyToItem.putIfAbsent(key, singleItem);
+            }
+        }
+
+        public Map<ItemStack, Integer> getItemStackMap() {
+            Map<ItemStack, Integer> result = new HashMap<>();
+            for (Map.Entry<String, Integer> entry : counts.entrySet()) {
+                ItemStack item = keyToItem.get(entry.getKey());
+                result.put(item, entry.getValue());
+            }
+            return result;
+        }
+
     }
 
     public static class TransactionResult {

@@ -8,8 +8,6 @@ public interface ItemsRepository {
 
     void saveItems(List<ItemTemplate> itemTemplates);
 
-    void updateItemUsageInDatabase(long templateId, int quantity);
-
     void loadMostUsedItems();
 
 }
