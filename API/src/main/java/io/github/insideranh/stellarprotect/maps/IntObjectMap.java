@@ -25,10 +25,6 @@ public final class IntObjectMap<V> {
         Arrays.fill(keys, EMPTY_KEY);
     }
 
-    public IntObjectMap() {
-        this(DEFAULT_CAPACITY);
-    }
-
     private static int hash(int key) {
         key ^= key >>> 16;
         key *= 0x45d9f3b;
@@ -141,10 +137,6 @@ public final class IntObjectMap<V> {
         Arrays.fill(keys, EMPTY_KEY);
         Arrays.fill(values, null);
         size = 0;
-    }
-
-    public double getLoadFactor() {
-        return (double) size / keys.length;
     }
 
 }

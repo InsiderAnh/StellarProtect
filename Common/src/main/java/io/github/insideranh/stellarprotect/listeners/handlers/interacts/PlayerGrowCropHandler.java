@@ -17,7 +17,7 @@ public class PlayerGrowCropHandler extends GenericHandler {
 
     @Override
     public GenericHandler canHandle(@NonNull Block block, @NonNull String blockType, @NonNull String itemType) {
-        if (protectNMS.canGrow(block) && itemType.equals("BONE")) {
+        if (itemType.equals("BONE") && protectNMS.canGrow(block)) {
             return this;
         }
         return null;

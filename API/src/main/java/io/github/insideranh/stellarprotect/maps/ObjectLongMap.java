@@ -27,10 +27,6 @@ public final class ObjectLongMap<K> {
         this.threshold = (int) (capacity * LOAD_FACTOR);
     }
 
-    public ObjectLongMap() {
-        this(DEFAULT_CAPACITY);
-    }
-
     private static int hash(Object key) {
         int h = key.hashCode();
         h ^= h >>> 16;

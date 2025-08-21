@@ -26,10 +26,6 @@ public final class ObjectObjectMap<K, V> {
         this.threshold = (int) (capacity * LOAD_FACTOR);
     }
 
-    public ObjectObjectMap() {
-        this(DEFAULT_CAPACITY);
-    }
-
     private static int hash(Object key) {
         int h = key.hashCode();
         h ^= h >>> 16;
