@@ -2,6 +2,7 @@ package io.github.insideranh.stellarprotect.commands.arguments;
 
 import io.github.insideranh.stellarprotect.StellarProtect;
 import io.github.insideranh.stellarprotect.arguments.*;
+import io.github.insideranh.stellarprotect.cache.ItemsCache;
 import io.github.insideranh.stellarprotect.cache.keys.LocationCache;
 import io.github.insideranh.stellarprotect.commands.StellarArgument;
 import io.github.insideranh.stellarprotect.data.LookupSession;
@@ -45,13 +46,16 @@ public class LookupArgument extends StellarArgument {
             plugin.getLangManager().sendMessage(sender, "messages.waitingForLookup");
             return;
         }
-        playerProtect.setNextLookup(System.currentTimeMillis() + 10000L);
+        playerProtect.setNextLookup(System.currentTimeMillis() + 5000L);
 
+        ItemsCache itemsCache = StellarProtect.getInstance().getItemsManager().getItemCache();
         ArgumentsParser.parseUsers(arguments).thenAccept(usersArg -> {
             DatabaseFilters databaseFilters = new DatabaseFilters();
             databaseFilters.setTimeFilter(timeArg);
             databaseFilters.setRadiusFilter(radiusArg);
             databaseFilters.setPageFilter(pageArg);
+            databaseFilters.setWordsFilter(itemsCache.findIdsByTypeNameContains(includesArg));
+            databaseFilters.setWordsExcludeFilter(itemsCache.findIdsByTypeNameContains(excludesArg));
             databaseFilters.setActionTypesFilter(actionTypesArg.stream().map(ActionType::getId).collect(Collectors.toCollection(ArrayList::new)));
             databaseFilters.setUserFilters(usersArg);
 
@@ -60,7 +64,7 @@ public class LookupArgument extends StellarArgument {
 
             plugin.getLangManager().sendMessage(sender, "messages.actions.lookup");
 
-            plugin.getProtectDatabase().getLogs(databaseFilters, pageArg.getSkip(), pageArg.getLimit()).thenAccept(callbackLookup -> {
+            plugin.getProtectDatabase().getLogs(databaseFilters, databaseFilters.isIgnoreCache(), pageArg.getSkip(), pageArg.getLimit()).thenAccept(callbackLookup -> {
                 Map<LocationCache, Set<LogEntry>> groupedLogs = callbackLookup.getLogs();
                 long total = (long) Math.ceil((double) callbackLookup.getTotal() / pageArg.getPerPage());
 

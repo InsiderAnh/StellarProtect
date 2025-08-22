@@ -14,8 +14,12 @@ public class DatabaseFilters {
     private PageArg pageFilter;
     private List<Integer> actionTypesFilter = new ArrayList<>();
     private List<Integer> actionTypesExcludeFilter = new ArrayList<>();
-    private List<String> worldsFilter = new ArrayList<>();
-    private List<String> worldsExcludeFilter = new ArrayList<>();
+    private List<Long> wordsFilter = new ArrayList<>();
+    private List<Long> wordsExcludeFilter = new ArrayList<>();
     private UsersArg userFilters;
+
+    public boolean isIgnoreCache() {
+        return !wordsFilter.isEmpty() || !wordsExcludeFilter.isEmpty();
+    }
 
 }

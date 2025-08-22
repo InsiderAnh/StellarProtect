@@ -70,8 +70,8 @@ public class ProtectDatabase {
         return databaseConnection.getLoggerRepository().getChestTransactions(location, skip, limit);
     }
 
-    public CompletableFuture<CallbackLookup<Map<LocationCache, Set<LogEntry>>, Long>> getLogs(@NonNull DatabaseFilters databaseFilters, int skip, int limit) {
-        return databaseConnection.getLoggerRepository().getLogs(databaseFilters, skip, limit);
+    public CompletableFuture<CallbackLookup<Map<LocationCache, Set<LogEntry>>, Long>> getLogs(@NonNull DatabaseFilters databaseFilters, boolean ignoreCache, int skip, int limit) {
+        return databaseConnection.getLoggerRepository().getLogs(databaseFilters, ignoreCache, skip, limit);
     }
 
     public CompletableFuture<CallbackLookup<Map<LocationCache, Set<LogEntry>>, Long>> getRestoreActions(@NonNull TimeArg timeArg, @NonNull RadiusArg radiusArg, @NonNull List<ActionType> actionTypes, int skip, int limit) {

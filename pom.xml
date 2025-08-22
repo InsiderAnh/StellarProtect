@@ -87,10 +87,6 @@
                                     <shadedPattern>io.github.insideranh.stellarprotect.libs.hikaricp</shadedPattern>
                                 </relocation>
                                 <relocation>
-                                    <pattern>it.unimi.dsi</pattern>
-                                    <shadedPattern>io.github.insideranh.stellarprotect.libs.fastutil</shadedPattern>
-                                </relocation>
-                                <relocation>
                                     <pattern>org.openjdk.jol</pattern>
                                     <shadedPattern>io.github.insideranh.stellarprotect.libs.jol</shadedPattern>
                                 </relocation>

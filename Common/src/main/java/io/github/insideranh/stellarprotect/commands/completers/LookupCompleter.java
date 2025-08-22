@@ -219,7 +219,9 @@ public class LookupCompleter extends StellarCompleter {
         TIME("t", "time"),
         RADIUS("r", "radius"),
         PAGE("p", "page"),
-        USERS("u", "users");
+        USERS("u", "users"),
+        INCLUDES("i", "include"),
+        EXCLUDES("e", "exclude");
 
         private final String shortPrefix;
         private final String longPrefix;

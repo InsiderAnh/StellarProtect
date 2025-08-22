@@ -64,7 +64,7 @@ public class MetricsLite {
             }
         }
         // Load the data
-        boolean enabled = true;
+        boolean enabled = config.getBoolean("enabled", true);
         String serverUUID = config.getString("serverUuid");
         boolean logErrors = config.getBoolean("logFailedRequests", false);
         boolean logSentData = config.getBoolean("logSentData", false);

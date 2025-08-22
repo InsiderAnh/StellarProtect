@@ -13,6 +13,6 @@ public abstract class GenericHandler {
 
     public abstract @Nullable GenericHandler canHandle(@NonNull Block block, @NonNull String blockName, @NonNull String itemStack);
 
-    public abstract void handle(Player player, @NonNull Block block, @Nullable ItemStack itemStack);
+    public abstract void handle(Player player, long playerId, @NonNull Block block, @Nullable ItemStack itemStack);
 
 }

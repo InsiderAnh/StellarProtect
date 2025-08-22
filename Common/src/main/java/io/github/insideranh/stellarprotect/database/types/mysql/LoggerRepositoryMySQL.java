@@ -210,9 +210,9 @@ public class LoggerRepositoryMySQL implements LoggerRepository {
     }
 
     @Override
-    public CompletableFuture<CallbackLookup<Map<LocationCache, Set<LogEntry>>, Long>> getLogs(@NonNull DatabaseFilters databaseFilters, int skip, int limit) {
+    public CompletableFuture<CallbackLookup<Map<LocationCache, Set<LogEntry>>, Long>> getLogs(@NonNull DatabaseFilters databaseFilters, boolean ignoreCache, int skip, int limit) {
         return CompletableFuture.supplyAsync(() -> {
-            List<LogEntry> cachedLogs = LoggerCache.getLogs(databaseFilters, skip, limit)
+            List<LogEntry> cachedLogs = ignoreCache ? Collections.emptyList() : LoggerCache.getLogs(databaseFilters, skip, limit)
                 .stream()
                 .sorted(Comparator.comparingLong(LogEntry::getCreatedAt).reversed())
                 .collect(Collectors.toList());
@@ -569,6 +569,8 @@ public class LoggerRepositoryMySQL implements LoggerRepository {
             .addTimeFilter(databaseFilters.getTimeFilter())
             .addRadiusFilter(databaseFilters.getRadiusFilter())
             .addUsersFilter(databaseFilters.getUserFilters())
+            .addWordsFilter(databaseFilters.getWordsFilter())
+            .addWordsExcludeFilter(databaseFilters.getWordsExcludeFilter())
             .addActionTypesFilter(databaseFilters.getActionTypesFilter());
     }
 
@@ -666,6 +668,54 @@ public class LoggerRepositoryMySQL implements LoggerRepository {
                     .collect(Collectors.joining(","));
                 whereConditions.add("ple.player_id IN (" + placeholders + ")");
                 parameters.addAll(usersArg.getUserIds());
+            }
+            return this;
+        }
+
+        public QueryBuilder addWordsFilter(List<Long> worldsFilter) {
+            if (worldsFilter != null && !worldsFilter.isEmpty()) {
+                List<String> jsonConditions = new ArrayList<>();
+
+                for (Long wordId : worldsFilter) {
+                    List<String> worldConditions = new ArrayList<>();
+
+                    worldConditions.add("ple.extra_json LIKE ?");
+                    parameters.add("%\"id\":" + wordId + ",%");
+
+                    worldConditions.add("ple.extra_json LIKE ?");
+                    parameters.add("%\"ai\":{%\"" + wordId + "\":%");
+
+                    worldConditions.add("ple.extra_json LIKE ?");
+                    parameters.add("%\"ri\":{%\"" + wordId + "\":%");
+
+                    jsonConditions.add("(" + String.join(" OR ", worldConditions) + ")");
+                }
+
+                whereConditions.add("(" + String.join(" OR ", jsonConditions) + ")");
+            }
+            return this;
+        }
+
+        public QueryBuilder addWordsExcludeFilter(List<Long> worldsExcludeFilter) {
+            if (worldsExcludeFilter != null && !worldsExcludeFilter.isEmpty()) {
+                List<String> excludeConditions = new ArrayList<>();
+
+                for (Long wordId : worldsExcludeFilter) {
+                    List<String> worldExcludeConditions = new ArrayList<>();
+
+                    worldExcludeConditions.add("ple.extra_json NOT LIKE ?");
+                    parameters.add("%\"id\":" + wordId + ",%");
+
+                    worldExcludeConditions.add("ple.extra_json NOT LIKE ?");
+                    parameters.add("%\"ai\":{%\"" + wordId + "\":%");
+
+                    worldExcludeConditions.add("ple.extra_json NOT LIKE ?");
+                    parameters.add("%\"ri\":{%\"" + wordId + "\":%");
+
+                    excludeConditions.add("(" + String.join(" AND ", worldExcludeConditions) + ")");
+                }
+
+                whereConditions.add("(" + String.join(" AND ", excludeConditions) + ")");
             }
             return this;
         }

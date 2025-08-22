@@ -52,4 +52,8 @@ public class PlayerShopGUIEntry extends LogEntry {
         return itemTemplate.getBukkitItem().getType().name();
     }
 
+    @Override
+    public String toSaveJson() {
+        return "{\"i\":\"" + itemId + "\",\"a\":" + amount + "\",\"p\":" + price + ",\"s\":" + shopAction + "}";
+    }
 }

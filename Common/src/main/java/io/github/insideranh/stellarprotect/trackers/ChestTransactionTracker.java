@@ -43,13 +43,13 @@ public class ChestTransactionTracker implements Listener {
     private static final long CLEANUP_THRESHOLD = 30 * 60 * 1000L;
 
     private static final ArrayDeque<ItemCount[]> ARRAY_POOL = new ArrayDeque<>();
-    private static final ArrayDeque<FastItemCounter> COUNTER_POOL = new ArrayDeque<>();
+    private static final ArrayDeque<ItemCounter> COUNTER_POOL = new ArrayDeque<>();
     private static final int POOL_SIZE = 32;
 
     static {
         for (int i = 0; i < POOL_SIZE; i++) {
             ARRAY_POOL.offer(new ItemCount[54]);
-            COUNTER_POOL.offer(new FastItemCounter());
+            COUNTER_POOL.offer(new ItemCounter());
         }
     }
 
@@ -219,8 +219,8 @@ public class ChestTransactionTracker implements Listener {
         ItemCount[] array = getFromPool();
         if (array == null) array = new ItemCount[54];
 
-        FastItemCounter counter = getCounterFromPool();
-        if (counter == null) counter = new FastItemCounter();
+        ItemCounter counter = getCounterFromPool();
+        if (counter == null) counter = new ItemCounter();
 
         counter.reset();
 
@@ -380,11 +380,11 @@ public class ChestTransactionTracker implements Listener {
         }
     }
 
-    private FastItemCounter getCounterFromPool() {
+    private ItemCounter getCounterFromPool() {
         return COUNTER_POOL.poll();
     }
 
-    private void returnCounterToPool(FastItemCounter counter) {
+    private void returnCounterToPool(ItemCounter counter) {
         if (counter != null && COUNTER_POOL.size() < POOL_SIZE) {
             COUNTER_POOL.offer(counter);
         }
@@ -395,7 +395,7 @@ public class ChestTransactionTracker implements Listener {
         int count;
     }
 
-    private static class FastItemCounter {
+    private static class ItemCounter {
         private static final int DEFAULT_CAPACITY = 64;
 
         ItemStack[] items;
@@ -404,7 +404,7 @@ public class ChestTransactionTracker implements Listener {
         int capacity;
         int size;
 
-        FastItemCounter() {
+        ItemCounter() {
             this.capacity = DEFAULT_CAPACITY;
             this.items = new ItemStack[capacity];
             this.counts = new int[capacity];
@@ -419,7 +419,7 @@ public class ChestTransactionTracker implements Listener {
         }
 
         void addItem(ItemStack item) {
-            int hash = fastItemHash(item);
+            int hash = hashItem(item);
 
             for (int i = 0; i < size; i++) {
                 if (hashes[i] == hash && itemsEqual(items[i], item)) {
@@ -437,7 +437,7 @@ public class ChestTransactionTracker implements Listener {
             }
         }
 
-        private int fastItemHash(ItemStack item) {
+        private int hashItem(ItemStack item) {
             int hash = item.getType().ordinal();
             if (item.hasItemMeta()) {
                 ItemMeta meta = item.getItemMeta();

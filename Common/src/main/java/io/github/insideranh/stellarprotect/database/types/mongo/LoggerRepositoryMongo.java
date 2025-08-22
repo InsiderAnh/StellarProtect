@@ -290,9 +290,9 @@ public class LoggerRepositoryMongo implements LoggerRepository {
     }
 
     @Override
-    public CompletableFuture<CallbackLookup<Map<LocationCache, Set<LogEntry>>, Long>> getLogs(@NonNull DatabaseFilters databaseFilters, int skip, int limit) {
+    public CompletableFuture<CallbackLookup<Map<LocationCache, Set<LogEntry>>, Long>> getLogs(@NonNull DatabaseFilters databaseFilters, boolean ignoreCache, int skip, int limit) {
         return CompletableFuture.supplyAsync(() -> {
-            List<LogEntry> cachedLogs = LoggerCache.getLogs(databaseFilters, skip, limit)
+            List<LogEntry> cachedLogs = ignoreCache ? Collections.emptyList() : LoggerCache.getLogs(databaseFilters, skip, limit)
                 .stream()
                 .sorted(Comparator.comparingLong(LogEntry::getCreatedAt).reversed())
                 .collect(Collectors.toList());
@@ -447,6 +447,8 @@ public class LoggerRepositoryMongo implements LoggerRepository {
         RadiusArg radiusArg = databaseFilters.getRadiusFilter();
         UsersArg usersArg = databaseFilters.getUserFilters();
         List<Integer> actionTypes = databaseFilters.getActionTypesFilter();
+        List<Long> wordsFilter = databaseFilters.getWordsFilter();
+        List<Long> wordsExcludeFilter = databaseFilters.getWordsExcludeFilter();
 
         List<Bson> filters = new ArrayList<>();
 
@@ -471,8 +473,49 @@ public class LoggerRepositoryMongo implements LoggerRepository {
         if (actionTypes != null && !actionTypes.isEmpty()) {
             filters.add(Filters.in("action_type", actionTypes));
         }
+        if (wordsFilter != null && !wordsFilter.isEmpty()) {
+            filters.add(buildWordsIncludeFilter(wordsFilter));
+        }
 
+        if (wordsExcludeFilter != null && !wordsExcludeFilter.isEmpty()) {
+            filters.add(buildWordsExcludeFilter(wordsExcludeFilter));
+        }
         return filters.isEmpty() ? new Document() : Filters.and(filters);
+    }
+
+    private Bson buildWordsIncludeFilter(List<Long> worldsFilter) {
+        if (worldsFilter.size() == 1) {
+            Long worldId = worldsFilter.get(0);
+            return Filters.text("\"id\":" + worldId + " OR \"ai\":{\"" + worldId + "\" OR \"ri\":{\"" + worldId + "\"");
+        }
+
+        List<Bson> worldConditions = new ArrayList<>();
+        for (Long worldId : worldsFilter) {
+            worldConditions.add(Filters.text("\"id\":" + worldId + " OR \"ai\":{\"" + worldId + "\" OR \"ri\":{\"" + worldId + "\""));
+        }
+
+        return Filters.or(worldConditions);
+    }
+
+    private Bson buildWordsExcludeFilter(List<Long> worldsExcludeFilter) {
+        List<Bson> excludeConditions = new ArrayList<>();
+
+        for (Long wordId : worldsExcludeFilter) {
+            List<Bson> singleWorldExcludeConditions = new ArrayList<>();
+
+            singleWorldExcludeConditions.add(Filters.not(Filters.regex("extra_json",
+                ".*\"id\"\\s*:\\s*\"?" + wordId + "\"?\\s*[,}].*")));
+
+            singleWorldExcludeConditions.add(Filters.not(Filters.regex("extra_json",
+                ".*\"ai\"\\s*:\\s*\\{[^}]*\"" + wordId + "\"\\s*:\\s*\\d+.*")));
+
+            singleWorldExcludeConditions.add(Filters.not(Filters.regex("extra_json",
+                ".*\"ri\"\\s*:\\s*\\{[^}]*\"" + wordId + "\"\\s*:\\s*\\d+.*")));
+
+            excludeConditions.add(Filters.and(singleWorldExcludeConditions));
+        }
+
+        return excludeConditions.size() == 1 ? excludeConditions.get(0) : Filters.and(excludeConditions);
     }
 
     private Set<LogEntry> executeLogQuery(Bson filter, int skip, int limit) {

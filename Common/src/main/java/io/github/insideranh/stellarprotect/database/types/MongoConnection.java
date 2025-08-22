@@ -7,6 +7,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.IndexOptions;
 import com.mongodb.client.model.Indexes;
+import com.mongodb.client.model.Sorts;
 import io.github.insideranh.stellarprotect.StellarProtect;
 import io.github.insideranh.stellarprotect.database.repositories.*;
 import io.github.insideranh.stellarprotect.database.types.mongo.*;
@@ -198,6 +199,21 @@ public class MongoConnection implements DatabaseConnection {
             itemTemplates.createIndex(
                 Indexes.descending("total_quantity_used"),
                 new IndexOptions().background(true).name("idx_item_total_used")
+            );
+
+            // text_search: (extra_json text)
+            logEntries.createIndex(
+                Indexes.text("extra_json"),
+                new IndexOptions().background(true).name("text_search")
+            );
+
+            // text_search with date: (extra_json text, created_at DESC)
+            logEntries.createIndex(
+                Indexes.compoundIndex(
+                    Indexes.text("extra_json"),
+                    Indexes.descending("created_at")
+                ),
+                new IndexOptions().background(true).name("text_search_date")
             );
 
             stellarProtect.getLogger().info("All MongoDB indexes created successfully");

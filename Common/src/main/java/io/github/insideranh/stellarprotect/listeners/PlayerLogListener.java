@@ -129,6 +129,15 @@ public class PlayerLogListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onInteract(PlayerInteractEvent event) {
         if (event.getClickedBlock() == null) return;
+        Player player = event.getPlayer();
+
+        PlayerProtect playerProtect = PlayerProtect.getPlayer(player);
+        if (playerProtect == null) return;
+        if (playerProtect.getNextUse() > System.currentTimeMillis()) {
+            return;
+        }
+        playerProtect.setNextUse(System.currentTimeMillis() + 300L);
+
         Block block = event.getClickedBlock();
 
         ItemStack item = event.getItem();
@@ -138,7 +147,7 @@ public class PlayerLogListener implements Listener {
         if (genericHandler != null) {
             if (ActionType.INTERACT.shouldSkipLog(block.getWorld().getName(), blockType)) return;
 
-            genericHandler.handle(event.getPlayer(), block, item);
+            genericHandler.handle(player, playerProtect.getPlayerId(), block, item);
         }
     }
 

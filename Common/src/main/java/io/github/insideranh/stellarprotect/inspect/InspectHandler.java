@@ -7,6 +7,7 @@ import io.github.insideranh.stellarprotect.database.entries.economy.PlayerEconom
 import io.github.insideranh.stellarprotect.database.entries.economy.PlayerXPEntry;
 import io.github.insideranh.stellarprotect.database.entries.items.ItemLogEntry;
 import io.github.insideranh.stellarprotect.database.entries.players.*;
+import io.github.insideranh.stellarprotect.database.entries.world.CropGrowLogEntry;
 import io.github.insideranh.stellarprotect.enums.ActionType;
 import io.github.insideranh.stellarprotect.items.ItemTemplate;
 import io.github.insideranh.stellarprotect.items.MinecraftItem;
@@ -141,10 +142,27 @@ public class InspectHandler {
             PlaceRemoveItemActionHandler placeRemoveActionHandler = new PlaceRemoveItemActionHandler();
             handlers.put(ActionType.PLACE_ITEM, placeRemoveActionHandler);
             handlers.put(ActionType.REMOVE_ITEM, placeRemoveActionHandler);
+
+            handlers.put(ActionType.CROP_GROW, new GrowAgeActionHandler());
         }
 
         public static ActionHandler getHandler(ActionType actionType) {
             return handlers.get(actionType);
+        }
+
+    }
+
+    public static class GrowAgeActionHandler implements ActionHandler {
+
+        @Override
+        public void handle(Player player, LogEntry logEntry, StellarProtect plugin) {
+            CropGrowLogEntry growAgeEntry = (CropGrowLogEntry) logEntry;
+            plugin.getLangManager().sendMessage(player, "messages.actions.crop_grow",
+                text -> text
+                    .replace("<time>", TimeUtils.formatMillisAsAgo(logEntry.getCreatedAt()))
+                    .replace("<player>", PlayerCache.getName(logEntry.getPlayerId()))
+                    .replace("<data>", plugin.getLangManager().get("messages.actions.growAge", replace -> replace.replace("<age>", String.valueOf(growAgeEntry.getAge()))))
+            );
         }
 
     }

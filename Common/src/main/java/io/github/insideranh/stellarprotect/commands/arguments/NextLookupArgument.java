@@ -44,11 +44,11 @@ public class NextLookupArgument extends StellarArgument {
             return;
         }
 
-        playerProtect.setNextLookup(System.currentTimeMillis() + 10000L);
+        playerProtect.setNextLookup(System.currentTimeMillis() + 5000L);
 
         plugin.getLangManager().sendMessage(sender, "messages.loadingLookup");
 
-        plugin.getProtectDatabase().getLogs(lookupSession.getDatabaseFilters(), pageArg.getSkip(), pageArg.getLimit()).thenAccept(callbackLookup -> {
+        plugin.getProtectDatabase().getLogs(lookupSession.getDatabaseFilters(), false, pageArg.getSkip(), pageArg.getLimit()).thenAccept(callbackLookup -> {
             Map<LocationCache, Set<LogEntry>> groupedLogs = callbackLookup.getLogs();
 
             long total = (long) Math.ceil((double) callbackLookup.getTotal() / pageArg.getPerPage());

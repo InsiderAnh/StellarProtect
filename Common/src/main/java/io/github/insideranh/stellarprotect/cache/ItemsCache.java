@@ -2,10 +2,7 @@ package io.github.insideranh.stellarprotect.cache;
 
 import io.github.insideranh.stellarprotect.items.ItemTemplate;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ItemsCache {
 
@@ -29,7 +26,7 @@ public class ItemsCache {
 
     private int size = 0;
 
-    private static long fastHash(String str) {
+    private static long hash(String str) {
         if (str == null) return 0;
 
         long hash = 0;
@@ -50,7 +47,7 @@ public class ItemsCache {
         return hash;
     }
 
-    private static long fastHashLong(long value) {
+    private static long hashLong(long value) {
         value = (~value) + (value << 18);
         value = value ^ (value >>> 31);
         value = value * 21;
@@ -93,7 +90,7 @@ public class ItemsCache {
     private void addToStringIndex(IndexEntry[] index, String key, int position) {
         if (key == null) return;
 
-        long hash = fastHash(key);
+        long hash = hash(key);
         int slot = (int) (hash & MASK);
 
         IndexEntry entry = new IndexEntry(hash, position);
@@ -111,7 +108,7 @@ public class ItemsCache {
     }
 
     private void addToIdIndex(long id, int position) {
-        long hash = fastHashLong(id);
+        long hash = hashLong(id);
         int slot = (int) (hash & MASK);
 
         IndexEntry entry = new IndexEntry(hash, position);
@@ -131,7 +128,7 @@ public class ItemsCache {
     private ItemTemplate searchInStringIndex(IndexEntry[] index, String key) {
         if (key == null) return null;
 
-        long hash = fastHash(key);
+        long hash = hash(key);
         int slot = (int) (hash & MASK);
 
         while (index[slot] != null) {
@@ -155,7 +152,7 @@ public class ItemsCache {
     }
 
     private ItemTemplate searchById(long id) {
-        long hash = fastHashLong(id);
+        long hash = hashLong(id);
         int slot = (int) (hash & MASK);
 
         while (idIndex[slot] != null) {
@@ -306,8 +303,14 @@ public class ItemsCache {
         return findContains(searchText, loreTokens, FieldType.LOWER_LORE);
     }
 
-    public List<Long> findIdsByTypeNameContains(String searchText) {
-        return findContains(searchText, typeNameTokens, FieldType.LOWER_TYPE_NAME);
+    public List<Long> findIdsByTypeNameContains(List<String> searchTexts) {
+        if (searchTexts.isEmpty()) return Collections.emptyList();
+
+        List<Long> result = new ArrayList<>();
+        for (String searchText : searchTexts) {
+            result.addAll(findContains(searchText, typeNameTokens, FieldType.LOWER_TYPE_NAME));
+        }
+        return result;
     }
 
     public ItemTemplate[] items() {

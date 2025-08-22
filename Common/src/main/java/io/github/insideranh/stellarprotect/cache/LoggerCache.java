@@ -27,6 +27,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.StampedLock;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 @Getter
 public class LoggerCache {
@@ -260,6 +262,8 @@ public class LoggerCache {
         TimeArg timeArg = databaseFilters.getTimeFilter();
         RadiusArg radiusArg = databaseFilters.getRadiusFilter();
         List<Integer> actionTypeIds = databaseFilters.getActionTypesFilter();
+        List<Long> worldsFilter = databaseFilters.getWordsFilter();
+        List<Long> worldsExcludeFilter = databaseFilters.getWordsExcludeFilter();
         UsersArg usersArg = databaseFilters.getUserFilters();
 
         StringBuilder keyBuilder = STRING_BUILDER_POOL.get();
@@ -294,6 +298,22 @@ public class LoggerCache {
 
         if (!usersArg.getUserIds().isEmpty()) {
             usersArg.getUserIds().forEach(userId -> keyBuilder.append(userId).append(','));
+        } else {
+            keyBuilder.append("ALL");
+        }
+
+        keyBuilder.append('_');
+
+        if (!worldsFilter.isEmpty()) {
+            worldsFilter.forEach(world -> keyBuilder.append(world).append(','));
+        } else {
+            keyBuilder.append("ALL");
+        }
+
+        keyBuilder.append('_');
+
+        if (!worldsExcludeFilter.isEmpty()) {
+            worldsExcludeFilter.forEach(world -> keyBuilder.append(world).append(','));
         } else {
             keyBuilder.append("ALL");
         }
@@ -670,7 +690,7 @@ public class LoggerCache {
             return empty;
         }
 
-        public void forEachReverse(java.util.function.Consumer<LogEntry> consumer) {
+        public void forEachReverse(Consumer<LogEntry> consumer) {
             long stamp = lock.readLock();
             try {
                 for (int i = size - 1; i >= 0; i--) {
@@ -698,7 +718,7 @@ public class LoggerCache {
             }
         }
 
-        public void forEachIf(java.util.function.Predicate<LogEntry> filter, List<LogEntry> collector) {
+        public void forEachIf(Predicate<LogEntry> filter, List<LogEntry> collector) {
             long stamp = lock.readLock();
             try {
                 for (int i = 0; i < size; i++) {
