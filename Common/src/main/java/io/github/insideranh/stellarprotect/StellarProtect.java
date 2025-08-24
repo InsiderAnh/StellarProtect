@@ -93,6 +93,8 @@ public class StellarProtect extends JavaPlugin {
         getConfig().options().copyDefaults(true);
         saveConfig();
 
+        isFolia = MinecraftVersions.WILD_UPDATE.isAtLeast() && ServerVersions.isFolia();
+
         this.lookupExecutor = MoreExecutors.listeningDecorator(new ThreadPoolExecutor(2, 2, 0L, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<>(1024)));
         this.joinExecutor = MoreExecutors.listeningDecorator(new ThreadPoolExecutor(2, 2, 0L, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<>(1024)));
 
@@ -121,7 +123,6 @@ public class StellarProtect extends JavaPlugin {
 
         loadLastHooks();
 
-        isFolia = MinecraftVersions.WILD_UPDATE.isAtLeast() && ServerVersions.isFolia();
         if (!configManager.isCheckUpdates()) return;
         updateChecker = new UpdateChecker();
     }
