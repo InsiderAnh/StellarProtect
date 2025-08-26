@@ -361,8 +361,7 @@ public class LoggerCache {
                     long createdAt = log.getCreatedAt();
                     if (createdAt < timeStart || createdAt > timeEnd) return false;
                     if (hasActionFilter && !actionIds.contains(log.getActionType())) return false;
-                    if (hasUserFilter && !userIds.contains(log.getPlayerId())) return false;
-                    return true;
+                    return !hasUserFilter || userIds.contains(log.getPlayerId());
                 }, logs);
             });
         }

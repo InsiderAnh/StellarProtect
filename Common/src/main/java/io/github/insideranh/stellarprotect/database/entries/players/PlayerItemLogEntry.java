@@ -12,6 +12,7 @@ import org.bson.Document;
 import org.bukkit.Location;
 
 import java.sql.ResultSet;
+import java.util.Objects;
 
 @Getter
 public class PlayerItemLogEntry extends LogEntry {
@@ -47,6 +48,19 @@ public class PlayerItemLogEntry extends LogEntry {
     @Override
     public String toSaveJson() {
         return "{\"id\":" + itemReferenceId + ",\"a\":" + amount + "}";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        PlayerItemLogEntry that = (PlayerItemLogEntry) o;
+        return itemReferenceId == that.itemReferenceId && amount == that.amount;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), itemReferenceId, amount);
     }
 
 }

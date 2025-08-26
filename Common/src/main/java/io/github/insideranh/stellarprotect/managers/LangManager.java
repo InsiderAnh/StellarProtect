@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import org.bukkit.command.CommandSender;
 
+import java.util.List;
 import java.util.function.Function;
 
 @Getter
@@ -32,6 +33,10 @@ public class LangManager {
 
     public String get(@NonNull String path) {
         return lang.getString(path);
+    }
+
+    public List<String> getList(@NonNull String path) {
+        return lang.getList(path);
     }
 
     public String get(@NonNull String path, Function<String, String> replacer) {

@@ -7,7 +7,6 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.IndexOptions;
 import com.mongodb.client.model.Indexes;
-import com.mongodb.client.model.Sorts;
 import io.github.insideranh.stellarprotect.StellarProtect;
 import io.github.insideranh.stellarprotect.database.repositories.*;
 import io.github.insideranh.stellarprotect.database.types.mongo.*;

@@ -1,11 +1,13 @@
 package io.github.insideranh.stellarprotect.data;
 
+import com.avaje.ebeaninternal.server.transaction.TransactionLogBuffer;
 import io.github.insideranh.stellarprotect.maps.ObjectLongMap;
 import io.github.insideranh.stellarprotect.maps.ObjectObjectMap;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.entity.Player;
 
+import java.util.HashMap;
 import java.util.UUID;
 
 @Getter
@@ -24,6 +26,7 @@ public class PlayerProtect {
     private long nextLookup;
     private InspectSession inspectSession;
     private long nextUse;
+    private HashMap<Integer, Object> posibleLogs = new HashMap<>();
 
     private long loginTime;
 

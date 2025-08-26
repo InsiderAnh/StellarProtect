@@ -547,8 +547,6 @@ public class LoggerRepositorySQL implements LoggerRepository {
     }
 
     private long executeCountQuery(String countQuery, List<Object> parameters) {
-        Debugger.debugLog("Count query: " + countQuery + " Parameters: " + parameters);
-
         try (PreparedStatement countStmt = connection.prepareStatement(countQuery)) {
             setParameters(countStmt, parameters);
 
@@ -570,8 +568,6 @@ public class LoggerRepositorySQL implements LoggerRepository {
             List<Object> allParams = new ArrayList<>(parameters);
             allParams.add(limit);
             allParams.add(skip);
-
-            Debugger.debugLog("Query: " + dataQuery + " Parameters: " + allParams);
 
             setParameters(dataStmt, allParams);
 

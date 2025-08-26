@@ -40,7 +40,7 @@ public enum DeathCause {
     SONIC_BOOM(31),
     UNKNOWN(100);
 
-    private byte id;
+    private final byte id;
 
     DeathCause(int id) {
         this.id = (byte) id;

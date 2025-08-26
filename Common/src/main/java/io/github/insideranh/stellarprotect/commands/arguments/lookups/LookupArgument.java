@@ -1,4 +1,4 @@
-package io.github.insideranh.stellarprotect.commands.arguments;
+package io.github.insideranh.stellarprotect.commands.arguments.lookups;
 
 import io.github.insideranh.stellarprotect.StellarProtect;
 import io.github.insideranh.stellarprotect.arguments.*;
@@ -59,6 +59,7 @@ public class LookupArgument extends StellarArgument {
             databaseFilters.setActionTypesFilter(actionTypesArg.stream().map(ActionType::getId).collect(Collectors.toCollection(ArrayList::new)));
             databaseFilters.setUserFilters(usersArg);
 
+            playerProtect.getPosibleLogs().clear();
             playerProtect.setInspectSession(null);
             playerProtect.setLookupSession(new LookupSession(pageArg, databaseFilters, 0, 10));
 

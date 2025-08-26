@@ -205,7 +205,7 @@ public class InsiderConfig {
     }
 
     public List<String> getList(String path) {
-        return this.config.getStringList(path);
+        return StellarProtect.getInstance().getColorUtils().color(config.getStringList(path));
     }
 
     public List<String> getListOrDefault(String path, List<String> def) {

@@ -42,9 +42,9 @@ messages:
     block_use: |-
       &7<time> &8| &d<player>&f use &8| &d(<data>)
     drop_item: |-
-      &7<time> &8| &d<player>&f drop &8| &d(<data>)
+      &7<time> &8| &d<player>&f drop &8| &d(<data>) &8| &a[View]
     pickup_item: |-
-      &7<time> &8| &d<player>&f pickup &8| &d(<data>)
+      &7<time> &8| &d<player>&f pickup &8| &d(<data>) &8| &a[View]
     furnace_place: |-
       &7<time> &8| &d<player>&f furnace place &8| &d(<data>)
     furnace_extract: |-
@@ -116,6 +116,39 @@ messages:
     remove_item: |-
       &7<time> &8| &d<player>&f remove item &8| &d(<data>)  &a[View]
   tooltips:
+    item_details:
+      displayName:
+        - "&7"
+        - "&7Display name: &d<displayName>"
+      lore:
+        - "&7"
+        - "&7Lore:"
+        - "<lore>"
+      lore_format: "&7- &f<line>"
+      enchants:
+        - "&7"
+        - "&7Enchants:"
+        - "<enchants>"
+      enchant_format: "&7- &f<name> &8| &d<level>"
+      body:
+        - "&7Cantidad: &dx<amount>"
+        - "<display_name>"
+        - "<lore>"
+        - "<enchants>"
+        - "&7"
+        - "&eClick to view item."
+    transactions_inventory:
+      added:
+        - "&aAdded:"
+        - "<added>"
+      removed:
+        - "&cRemoved:"
+        - "<removed>"
+      body:
+        - "<added>"
+        - "<removed>"
+        - "&7"
+        - "&eClick to view inventory."
     place_item: |-
       &d<data> &7(x<amount>)
     remove_item: |-
@@ -128,11 +161,6 @@ messages:
       &d2.- &f<line2>
       &d3.- &f<line3>
       &d4.- &f<line4>
-    inventory_transaction: |-
-      &7Added:
-      <added>
-      &7Removed:
-      <removed>
     game_mode: |-
       &fLast game mode: &d<lastGameMode>
       &fNew game mode: &d<newGameMode>

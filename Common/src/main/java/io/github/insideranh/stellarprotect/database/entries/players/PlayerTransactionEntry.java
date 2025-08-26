@@ -12,6 +12,7 @@ import org.bukkit.Location;
 import java.sql.ResultSet;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 @Getter
 public class PlayerTransactionEntry extends LogEntry {
@@ -93,6 +94,19 @@ public class PlayerTransactionEntry extends LogEntry {
         obj.add("ri", removedItemsObj);
 
         return obj.toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        PlayerTransactionEntry that = (PlayerTransactionEntry) o;
+        return Objects.equals(added, that.added) && Objects.equals(removed, that.removed);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), added, removed);
     }
 
 }

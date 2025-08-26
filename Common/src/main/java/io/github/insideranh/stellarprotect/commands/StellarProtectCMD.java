@@ -2,6 +2,14 @@ package io.github.insideranh.stellarprotect.commands;
 
 import io.github.insideranh.stellarprotect.StellarProtect;
 import io.github.insideranh.stellarprotect.commands.arguments.*;
+import io.github.insideranh.stellarprotect.commands.arguments.basic.DebugArgument;
+import io.github.insideranh.stellarprotect.commands.arguments.basic.MemoryArgument;
+import io.github.insideranh.stellarprotect.commands.arguments.basic.VersionArgument;
+import io.github.insideranh.stellarprotect.commands.arguments.lookups.InspectArgument;
+import io.github.insideranh.stellarprotect.commands.arguments.lookups.LookupArgument;
+import io.github.insideranh.stellarprotect.commands.arguments.lookups.NextInspectArgument;
+import io.github.insideranh.stellarprotect.commands.arguments.lookups.NextLookupArgument;
+import io.github.insideranh.stellarprotect.commands.arguments.views.ViewArgument;
 import io.github.insideranh.stellarprotect.commands.completers.LookupCompleter;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -31,6 +39,7 @@ public class StellarProtectCMD implements TabExecutor {
         arguments.put("version", new VersionArgument());
         arguments.put("restore", new RestoreArgument());
         arguments.put("teleport", new TeleportArgument());
+        arguments.put("view", new ViewArgument());
 
         completes.put("lookup", new LookupCompleter());
     }
@@ -94,6 +103,12 @@ public class StellarProtectCMD implements TabExecutor {
                 arguments.get("nextlookup").onCommand(sender, Arrays.copyOfRange(args, 1, args.length));
                 break;
             }
+            case "view":
+                if (hasBlockedPermission(sender, "view")) {
+                    return false;
+                }
+                arguments.get("view").onCommand(sender, Arrays.copyOfRange(args, 1, args.length));
+                break;
             case "purge":
                 if (hasBlockedPermission(sender, "purge")) {
                     return false;

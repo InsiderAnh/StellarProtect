@@ -2,6 +2,7 @@ package io.github.insideranh.stellarprotect.inspect;
 
 import io.github.insideranh.stellarprotect.StellarProtect;
 import io.github.insideranh.stellarprotect.cache.PlayerCache;
+import io.github.insideranh.stellarprotect.data.PlayerProtect;
 import io.github.insideranh.stellarprotect.database.entries.LogEntry;
 import io.github.insideranh.stellarprotect.database.entries.economy.PlayerEconomyEntry;
 import io.github.insideranh.stellarprotect.database.entries.economy.PlayerXPEntry;
@@ -19,10 +20,8 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class InspectHandler {
 
@@ -144,6 +143,10 @@ public class InspectHandler {
             handlers.put(ActionType.REMOVE_ITEM, placeRemoveActionHandler);
 
             handlers.put(ActionType.CROP_GROW, new GrowAgeActionHandler());
+
+            ItemLogActionHandler itemLogActionHandler = new ItemLogActionHandler();
+            handlers.put(ActionType.DROP_ITEM, itemLogActionHandler);
+            handlers.put(ActionType.PICKUP_ITEM, itemLogActionHandler);
         }
 
         public static ActionHandler getHandler(ActionType actionType) {
@@ -203,12 +206,34 @@ public class InspectHandler {
         @Override
         public void handle(Player player, LogEntry logEntry, StellarProtect plugin) {
             PlayerTransactionEntry inventoryTransactionEntry = (PlayerTransactionEntry) logEntry;
+            PlayerProtect playerProtect = PlayerProtect.getPlayer(player);
+            if (playerProtect == null) return;
+
+            List<String> tooltipBody = new LinkedList<>();
+            for (String line : plugin.getLangManager().getList("messages.tooltips.transactions_inventory.body")) {
+                if (line.contains("<added>")) {
+                    if (!inventoryTransactionEntry.getAdded().isEmpty()) {
+                        for (String tooltip : plugin.getLangManager().getList("messages.tooltips.transactions_inventory.added")) {
+                            tooltipBody.add(tooltip.replace("<added>", TooltipUtils.getTooltipRemoved(inventoryTransactionEntry.getAdded())));
+                        }
+                    }
+                } else if (line.contains("<removed>")) {
+                    if (!inventoryTransactionEntry.getRemoved().isEmpty()) {
+                        for (String tooltip : plugin.getLangManager().getList("messages.tooltips.transactions_inventory.removed")) {
+                            tooltipBody.add(tooltip.replace("<removed>", TooltipUtils.getTooltipRemoved(inventoryTransactionEntry.getRemoved())));
+                        }
+                    }
+                } else {
+                    tooltipBody.add(line);
+                }
+            }
+
+            playerProtect.getPosibleLogs().put(inventoryTransactionEntry.hashCode(), inventoryTransactionEntry);
+
             plugin.getProtectNMS().sendActionTitle(player,
                 plugin.getLangManager().get("messages.actions.inventory_transaction"),
-                plugin.getLangManager().get("messages.tooltips.inventory_transaction")
-                    .replace("<added>", TooltipUtils.getTooltipAdded(inventoryTransactionEntry.getAdded()))
-                    .replace("<removed>", TooltipUtils.getTooltipRemoved(inventoryTransactionEntry.getRemoved())),
-                "",
+                String.join("\n", tooltipBody),
+                "/spt view inventory " + logEntry.hashCode(),
                 text -> text
                     .replace("<time>", TimeUtils.formatMillisAsAgo(logEntry.getCreatedAt()))
                     .replace("<player>", PlayerCache.getName(logEntry.getPlayerId()))

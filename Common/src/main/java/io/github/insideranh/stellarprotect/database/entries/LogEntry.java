@@ -9,6 +9,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
 import java.sql.ResultSet;
+import java.util.Objects;
 
 @Getter
 public class LogEntry {
@@ -89,6 +90,18 @@ public class LogEntry {
 
     public String toSaveJson() {
         return "";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        LogEntry logEntry = (LogEntry) o;
+        return playerId == logEntry.playerId && worldId == logEntry.worldId && Double.compare(x, logEntry.x) == 0 && Double.compare(y, logEntry.y) == 0 && Double.compare(z, logEntry.z) == 0 && actionType == logEntry.actionType && createdAt == logEntry.createdAt;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(playerId, worldId, x, y, z, actionType, createdAt);
     }
 
 }

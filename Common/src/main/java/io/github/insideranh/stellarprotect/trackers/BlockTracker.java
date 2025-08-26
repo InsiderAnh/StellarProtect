@@ -61,16 +61,6 @@ public class BlockTracker {
             .toArray();
     }
 
-    public static void main(String[] args) {
-        long start = System.nanoTime();
-        for (int i = 0; i < 100000; i++) {
-            isToggleableState("STONE");
-            isToggleableState("OAK_DOOR");
-        }
-        long end = System.nanoTime();
-        System.out.println("Tiempo: " + (end - start) / 1_000_000 + "ms");
-    }
-
     private static boolean binarySearchHash(int[] sortedHashes, int hash) {
         int low = 0;
         int high = sortedHashes.length - 1;

@@ -1,4 +1,4 @@
-package io.github.insideranh.stellarprotect.commands.arguments;
+package io.github.insideranh.stellarprotect.commands.arguments.lookups;
 
 import io.github.insideranh.stellarprotect.StellarProtect;
 import io.github.insideranh.stellarprotect.arguments.ArgumentsParser;
@@ -45,6 +45,7 @@ public class NextLookupArgument extends StellarArgument {
         }
 
         playerProtect.setNextLookup(System.currentTimeMillis() + 5000L);
+        playerProtect.getPosibleLogs().clear();
 
         plugin.getLangManager().sendMessage(sender, "messages.loadingLookup");
 

@@ -1,4 +1,4 @@
-package io.github.insideranh.stellarprotect.commands.arguments;
+package io.github.insideranh.stellarprotect.commands.arguments.lookups;
 
 import io.github.insideranh.stellarprotect.StellarProtect;
 import io.github.insideranh.stellarprotect.arguments.ArgumentsParser;
@@ -47,6 +47,7 @@ public class NextInspectArgument extends StellarArgument {
         if (playerProtect.getNextInspect() > System.currentTimeMillis())
             return;
         playerProtect.setNextInspect(System.currentTimeMillis() + 500L);
+        playerProtect.getPosibleLogs().clear();
 
         Location blockLocation = inspectSession.getLocation().getBlock().getLocation();
         playerProtect.setInspectSession(new InspectSession(blockLocation, pageArg.getSkip(), pageArg.getPerPage(), WorldUtils.isValidChestBlock(inspectSession.getLocation().getBlock().getType())));

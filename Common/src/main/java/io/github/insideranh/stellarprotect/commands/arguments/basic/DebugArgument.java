@@ -1,4 +1,4 @@
-package io.github.insideranh.stellarprotect.commands.arguments;
+package io.github.insideranh.stellarprotect.commands.arguments.basic;
 
 import io.github.insideranh.stellarprotect.StellarProtect;
 import io.github.insideranh.stellarprotect.commands.StellarArgument;

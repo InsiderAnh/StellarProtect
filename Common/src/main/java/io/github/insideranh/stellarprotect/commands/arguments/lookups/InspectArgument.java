@@ -1,4 +1,4 @@
-package io.github.insideranh.stellarprotect.commands.arguments;
+package io.github.insideranh.stellarprotect.commands.arguments.lookups;
 
 import io.github.insideranh.stellarprotect.StellarProtect;
 import io.github.insideranh.stellarprotect.commands.StellarArgument;
@@ -27,6 +27,7 @@ public class InspectArgument extends StellarArgument {
             return;
         }
         playerProtect.setInspect(!playerProtect.isInspect());
+        playerProtect.getPosibleLogs().clear();
         playerProtect.setInspectSession(null);
         playerProtect.setLookupSession(null);
 
