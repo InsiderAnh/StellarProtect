@@ -1,6 +1,8 @@
 package io.github.insideranh.stellarprotect.listeners;
 
 import io.github.insideranh.stellarprotect.StellarProtect;
+import io.github.insideranh.stellarprotect.blocks.adjacents.AdjacentTracker;
+import io.github.insideranh.stellarprotect.blocks.adjacents.AdjacentType;
 import io.github.insideranh.stellarprotect.cache.LoggerCache;
 import io.github.insideranh.stellarprotect.data.PlayerProtect;
 import io.github.insideranh.stellarprotect.database.entries.players.PlayerBlockLogEntry;
@@ -23,6 +25,8 @@ import org.bukkit.event.entity.EntityTameEvent;
 import org.bukkit.event.inventory.FurnaceExtractEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.List;
+
 public class BlockListener implements Listener {
 
     private final StellarProtect plugin = StellarProtect.getInstance();
@@ -32,11 +36,19 @@ public class BlockListener implements Listener {
         if (event.isCancelled()) return;
 
         Block block = event.getBlock();
-        if (block.getType().equals(Material.AIR) || ActionType.BLOCK_BREAK.shouldSkipLog(block.getWorld().getName(), block.getType().name()))
+        Material material = block.getType();
+        if (block.getType().equals(Material.AIR) || ActionType.BLOCK_BREAK.shouldSkipLog(block.getWorld().getName(), material.name()))
             return;
 
         PlayerProtect playerProtect = PlayerProtect.getPlayer(event.getPlayer());
         if (playerProtect == null) return;
+
+        if (AdjacentType.isUp(material)) {
+            List<Block> affectedBlocks = AdjacentTracker.getAffectedBlocksAbove(block);
+            for (Block affectedBlock : affectedBlocks) {
+                LoggerCache.addLog(new PlayerBlockLogEntry(playerProtect.getPlayerId(), affectedBlock, ActionType.BLOCK_BREAK));
+            }
+        }
 
         LoggerCache.addLog(new PlayerBlockLogEntry(playerProtect.getPlayerId(), block, ActionType.BLOCK_BREAK));
     }

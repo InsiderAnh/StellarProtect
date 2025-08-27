@@ -39,6 +39,12 @@ public class PlayerItemLogEntry extends LogEntry {
         this.amount = itemReference.getAmount();
     }
 
+    public PlayerItemLogEntry(long playerId, ItemReference itemReference, Location location, ActionType actionType, long currentTime) {
+        super(playerId, actionType.getId(), location, currentTime);
+        this.itemReferenceId = itemReference.getTemplateId();
+        this.amount = itemReference.getAmount();
+    }
+
     @Override
     public String getDataString() {
         ItemTemplate itemTemplate = StellarProtect.getInstance().getItemsManager().getItemTemplate(itemReferenceId);

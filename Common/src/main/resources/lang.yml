@@ -119,10 +119,9 @@ messages:
     item_details:
       displayName:
         - "&7"
-        - "&7Display name: &d<displayName>"
+        - "&d<displayName>"
       lore:
         - "&7"
-        - "&7Lore:"
         - "<lore>"
       lore_format: "&7- &f<line>"
       enchants:

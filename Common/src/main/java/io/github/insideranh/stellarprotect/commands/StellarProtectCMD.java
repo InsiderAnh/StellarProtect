@@ -1,7 +1,9 @@
 package io.github.insideranh.stellarprotect.commands;
 
 import io.github.insideranh.stellarprotect.StellarProtect;
-import io.github.insideranh.stellarprotect.commands.arguments.*;
+import io.github.insideranh.stellarprotect.commands.arguments.PurgeArgument;
+import io.github.insideranh.stellarprotect.commands.arguments.RestoreArgument;
+import io.github.insideranh.stellarprotect.commands.arguments.TeleportArgument;
 import io.github.insideranh.stellarprotect.commands.arguments.basic.DebugArgument;
 import io.github.insideranh.stellarprotect.commands.arguments.basic.MemoryArgument;
 import io.github.insideranh.stellarprotect.commands.arguments.basic.VersionArgument;

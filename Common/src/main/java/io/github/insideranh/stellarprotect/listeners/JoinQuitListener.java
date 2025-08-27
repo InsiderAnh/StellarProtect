@@ -42,6 +42,8 @@ public class JoinQuitListener implements Listener {
         PlayerProtect playerProtect = PlayerProtect.removePlayer(player);
         if (playerProtect == null) return;
 
+        PickUpDropListener.forceFlushCurrentGroup(playerProtect, true);
+
         long time = (System.currentTimeMillis() - playerProtect.getLoginTime()) / 1000L;
         if (time > 0) {
             LoggerCache.addLog(new PlayerSessionEntry(playerProtect.getPlayerId(), player.getLocation(), (byte) 0, time));

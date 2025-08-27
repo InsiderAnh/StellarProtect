@@ -21,7 +21,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class InspectHandler {
 
@@ -94,13 +93,19 @@ public class InspectHandler {
     }
 
     public void handleGenericAction(Player player, LogEntry logEntry, ActionType actionType) {
-        MinecraftItem minecraftItem = StringCleanerUtils.parseMinecraftData(logEntry.getDataString());
+        String data;
+        if (actionType.getId() == ActionType.CHAT.getId() || actionType.getId() == ActionType.COMMAND.getId()) {
+            data = logEntry.getDataString();
+        } else {
+            MinecraftItem minecraftItem = StringCleanerUtils.parseMinecraftData(logEntry.getDataString());
+            data = minecraftItem.getCleanName();
+        }
 
         plugin.getLangManager().sendMessage(player, "messages.actions." + actionType.name().toLowerCase(),
             text -> text
                 .replace("<time>", TimeUtils.formatMillisAsAgo(logEntry.getCreatedAt()))
                 .replace("<player>", PlayerCache.getName(logEntry.getPlayerId()))
-                .replace("<data>", minecraftItem.getCleanName())
+                .replace("<data>", data)
         );
     }
 

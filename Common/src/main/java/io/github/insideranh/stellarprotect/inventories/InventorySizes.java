@@ -13,12 +13,12 @@ public enum InventorySizes {
 
     private final int size;
 
-    public int toInv() {
-        return this.size * 9;
-    }
-
     InventorySizes(final int size) {
         this.size = size;
+    }
+
+    public int toInv() {
+        return this.size * 9;
     }
 
 }

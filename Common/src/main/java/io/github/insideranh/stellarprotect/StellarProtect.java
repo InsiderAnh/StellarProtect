@@ -9,6 +9,7 @@ import io.github.insideranh.stellarprotect.api.ProtectNMS;
 import io.github.insideranh.stellarprotect.api.events.DecorativeLogicHandler;
 import io.github.insideranh.stellarprotect.api.events.EventLogicHandler;
 import io.github.insideranh.stellarprotect.blocks.DataBlock;
+import io.github.insideranh.stellarprotect.blocks.adjacents.AdjacentType;
 import io.github.insideranh.stellarprotect.bstats.MetricsLite;
 import io.github.insideranh.stellarprotect.commands.StellarProtectCMD;
 import io.github.insideranh.stellarprotect.database.ProtectDatabase;
@@ -97,6 +98,8 @@ public class StellarProtect extends JavaPlugin {
 
         this.lookupExecutor = MoreExecutors.listeningDecorator(new ThreadPoolExecutor(2, 2, 0L, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<>(1024)));
         this.joinExecutor = MoreExecutors.listeningDecorator(new ThreadPoolExecutor(2, 2, 0L, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<>(1024)));
+
+        this.lookupExecutor.execute(AdjacentType::initializeCache);
 
         this.configManager.load();
 

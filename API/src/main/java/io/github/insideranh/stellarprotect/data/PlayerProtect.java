@@ -1,10 +1,10 @@
 package io.github.insideranh.stellarprotect.data;
 
-import com.avaje.ebeaninternal.server.transaction.TransactionLogBuffer;
 import io.github.insideranh.stellarprotect.maps.ObjectLongMap;
 import io.github.insideranh.stellarprotect.maps.ObjectObjectMap;
 import lombok.Getter;
 import lombok.Setter;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
@@ -16,21 +16,31 @@ public class PlayerProtect {
 
     private static final ObjectObjectMap<UUID, PlayerProtect> players = new ObjectObjectMap<>(120);
     private static final ObjectLongMap<String> nameToIdCache = new ObjectLongMap<>(120);
+
     private final long playerId;
     private final UUID uuid;
-    private String name;
-    private String realName;
-    private boolean inspect;
-    private long nextInspect;
-    private LookupSession lookupSession;
-    private long nextLookup;
-    private InspectSession inspectSession;
-    private long nextUse;
-    private HashMap<Integer, Object> posibleLogs = new HashMap<>();
+    private final String name;
+    private final String realName;
 
+    private LookupSession lookupSession;
+    private InspectSession inspectSession;
+
+    private boolean inspect;
+
+    private long nextLookup;
+    private long nextUse;
+    private long nextInspect;
     private long loginTime;
 
     private double lastEconomyBalance;
+
+    private Location lastLocation;
+    private int lastPickUpAmount;
+    private long pickUpXYZ;
+    private long lastPickItemId;
+    private long nextSeparateLogPickUp;
+
+    private HashMap<Integer, Object> posibleLogs = new HashMap<>();
 
     public PlayerProtect(UUID uuid, String name, long playerId) {
         this.playerId = playerId;

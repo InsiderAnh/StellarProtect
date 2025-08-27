@@ -21,6 +21,18 @@ import java.util.stream.Collectors;
 
 public class ItemLogActionHandler implements InspectHandler.ActionHandler {
 
+    private static boolean hasDisplayName(ItemStack item) {
+        return item.hasItemMeta() && item.getItemMeta().hasDisplayName();
+    }
+
+    private static boolean hasLore(ItemStack item) {
+        return item.hasItemMeta() && item.getItemMeta().hasLore();
+    }
+
+    private static boolean hasEnchants(ItemStack item) {
+        return item.hasItemMeta() && item.getItemMeta().hasEnchants();
+    }
+
     @Override
     public void handle(Player player, LogEntry logEntry, StellarProtect plugin) {
         PlayerItemLogEntry itemLogEntry = (PlayerItemLogEntry) logEntry;
@@ -109,18 +121,6 @@ public class ItemLogActionHandler implements InspectHandler.ActionHandler {
                 .replace("<player>", PlayerCache.getName(logEntry.getPlayerId()))
                 .replace("<data>", itemDetails.getCleanName())
         );
-    }
-
-    private static boolean hasDisplayName(ItemStack item) {
-        return item.hasItemMeta() && item.getItemMeta().hasDisplayName();
-    }
-
-    private static boolean hasLore(ItemStack item) {
-        return item.hasItemMeta() && item.getItemMeta().hasLore();
-    }
-
-    private static boolean hasEnchants(ItemStack item) {
-        return item.hasItemMeta() && item.getItemMeta().hasEnchants();
     }
 
     private static class ItemDetails {
