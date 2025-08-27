@@ -67,12 +67,15 @@ public class LookupCompleter extends StellarCompleter {
     private List<String> getSuggestionsForArgument(ArgumentType type, String usedPrefix, String value, ArgumentParser parser) {
         switch (type) {
             case MATERIAL_INCLUDES:
-            case MATERIAL_EXCLUDES:
                 if (value.isEmpty()) {
-                    return Arrays.asList("[display:&aAmazing sword]", "[lore:&7The best sword]");
+                    return Arrays.asList("mi:[display:&aAmazing sword]", "mi:[lore:&7The best sword]");
                 }
                 return Collections.emptyList();
-
+            case MATERIAL_EXCLUDES:
+                if (value.isEmpty()) {
+                    return Arrays.asList("me:[display:&aAmazing sword]", "me:[lore:&7The best sword]");
+                }
+                return Collections.emptyList();
             case ACTION:
                 return handleActionSuggestions(usedPrefix, value);
 
