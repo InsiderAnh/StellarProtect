@@ -569,8 +569,8 @@ public class LoggerRepositoryMySQL implements LoggerRepository {
             .addTimeFilter(databaseFilters.getTimeFilter())
             .addRadiusFilter(databaseFilters.getRadiusFilter())
             .addUsersFilter(databaseFilters.getUserFilters())
-            .addWordsFilter(databaseFilters.getWordsFilter())
-            .addWordsExcludeFilter(databaseFilters.getWordsExcludeFilter())
+            .addWordsFilter(databaseFilters.getAllIncludeFilters())
+            .addWordsExcludeFilter(databaseFilters.getAllExcludeFilters())
             .addActionTypesFilter(databaseFilters.getActionTypesFilter());
     }
 

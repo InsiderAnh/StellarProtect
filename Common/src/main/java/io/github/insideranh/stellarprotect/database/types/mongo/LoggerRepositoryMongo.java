@@ -447,8 +447,8 @@ public class LoggerRepositoryMongo implements LoggerRepository {
         RadiusArg radiusArg = databaseFilters.getRadiusFilter();
         UsersArg usersArg = databaseFilters.getUserFilters();
         List<Integer> actionTypes = databaseFilters.getActionTypesFilter();
-        List<Long> wordsFilter = databaseFilters.getWordsFilter();
-        List<Long> wordsExcludeFilter = databaseFilters.getWordsExcludeFilter();
+        List<Long> wordsFilter = databaseFilters.getAllIncludeFilters();
+        List<Long> wordsExcludeFilter = databaseFilters.getAllExcludeFilters();
 
         List<Bson> filters = new ArrayList<>();
 

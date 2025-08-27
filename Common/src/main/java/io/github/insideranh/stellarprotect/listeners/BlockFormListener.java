@@ -7,6 +7,7 @@ import io.github.insideranh.stellarprotect.database.entries.players.PlayerBlockL
 import io.github.insideranh.stellarprotect.enums.ActionType;
 import io.github.insideranh.stellarprotect.managers.ConfigManager;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -17,32 +18,29 @@ public class BlockFormListener implements Listener {
 
     private final StellarProtect plugin = StellarProtect.getInstance();
     private final ConfigManager configManager = plugin.getConfigManager();
+    private final int airOrdinal = Material.AIR.ordinal();
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onBlockFormTo(BlockFromToEvent event) {
         Block oldBlock = event.getBlock();
         Block newBlock = event.getToBlock();
 
-        String oldBlockName = oldBlock.getType().name();
+        Material oldMaterial = oldBlock.getType();
+        String oldBlockName = oldMaterial.name();
         long userId = getEntityId(oldBlockName, oldBlock.getLocation());
 
-        boolean isOldBlockAir = this.isAir(oldBlockName);
+        boolean isOldBlockAir = oldMaterial.ordinal() == airOrdinal;
         if (!isOldBlockAir) {
             PlayerBlockLogEntry blockBreakEntry = new PlayerBlockLogEntry(userId, oldBlock, ActionType.BLOCK_BREAK);
             LoggerCache.addLog(blockBreakEntry);
         }
 
-        String newBlockName = newBlock.getType().name();
-        boolean isNewBlockAir = this.isAir(newBlockName);
+        boolean isNewBlockAir = newBlock.getType().ordinal() == airOrdinal;
 
         if (!isNewBlockAir) {
-            PlayerBlockLogEntry blockBreakEntry = new PlayerBlockLogEntry(userId, oldBlock, ActionType.BLOCK_BREAK);
+            PlayerBlockLogEntry blockBreakEntry = new PlayerBlockLogEntry(userId, newBlock, ActionType.BLOCK_BREAK);
             LoggerCache.addLog(blockBreakEntry);
         }
-    }
-
-    private boolean isAir(String blockName) {
-        return blockName.startsWith("AIR");
     }
 
     private long getEntityId(String name, Location location) {

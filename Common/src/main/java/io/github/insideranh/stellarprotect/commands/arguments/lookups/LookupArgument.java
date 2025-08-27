@@ -39,8 +39,11 @@ public class LookupArgument extends StellarArgument {
         TimeArg timeArg = ArgumentsParser.parseTime(arguments);
         RadiusArg radiusArg = ArgumentsParser.parseRadiusOrNull(arguments, player.getLocation());
         List<ActionType> actionTypesArg = ArgumentsParser.parseActionTypes(arguments);
-        List<String> includesArg = ArgumentsParser.parseIncludesWord(arguments);
-        List<String> excludesArg = ArgumentsParser.parseExcludesWord(arguments);
+        List<String> includesArg = ArgumentsParser.parseIncludesMaterials(arguments);
+        List<String> excludesArg = ArgumentsParser.parseExcludesMaterials(arguments);
+
+        Map<String, List<String>> includesMap = ArgumentsParser.parseIncludeMaterials(arguments);
+        Map<String, List<String>> excludesMap = ArgumentsParser.parseExcludeMaterials(arguments);
 
         if (playerProtect.getNextLookup() > System.currentTimeMillis()) {
             plugin.getLangManager().sendMessage(sender, "messages.waitingForLookup");
@@ -54,8 +57,11 @@ public class LookupArgument extends StellarArgument {
             databaseFilters.setTimeFilter(timeArg);
             databaseFilters.setRadiusFilter(radiusArg);
             databaseFilters.setPageFilter(pageArg);
-            databaseFilters.setWordsFilter(itemsCache.findIdsByTypeNameContains(includesArg));
-            databaseFilters.setWordsExcludeFilter(itemsCache.findIdsByTypeNameContains(excludesArg));
+            databaseFilters.setAllIncludeFilters(itemsCache.findIdsByTypeNameContains(includesArg, ItemsCache.FieldType.LOWER_TYPE_NAME));
+            databaseFilters.setAllExcludeFilters(itemsCache.findIdsByTypeNameContains(excludesArg, ItemsCache.FieldType.LOWER_TYPE_NAME));
+            databaseFilters.setIncludeMaterialFilters(itemsCache.findIdsContains(includesMap));
+            databaseFilters.setExcludeMaterialFilters(itemsCache.findIdsContains(excludesMap));
+
             databaseFilters.setActionTypesFilter(actionTypesArg.stream().map(ActionType::getId).collect(Collectors.toCollection(ArrayList::new)));
             databaseFilters.setUserFilters(usersArg);
 

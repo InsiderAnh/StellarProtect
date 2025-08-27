@@ -541,8 +541,10 @@ public class LoggerRepositorySQL implements LoggerRepository {
             .addTimeFilter(databaseFilters.getTimeFilter())
             .addRadiusFilter(databaseFilters.getRadiusFilter())
             .addUsersFilter(databaseFilters.getUserFilters())
-            .addWordsFilter(databaseFilters.getWordsFilter())
-            .addWordsExcludeFilter(databaseFilters.getWordsExcludeFilter())
+            .allIncludeFilters(databaseFilters.getAllIncludeFilters())
+            .allExcludeFilters(databaseFilters.getAllExcludeFilters())
+            .allIncludeFilters(databaseFilters.getIncludeMaterialFilters())
+            .allExcludeFilters(databaseFilters.getExcludeMaterialFilters())
             .addActionTypesFilter(databaseFilters.getActionTypesFilter());
     }
 
@@ -638,11 +640,11 @@ public class LoggerRepositorySQL implements LoggerRepository {
             return this;
         }
 
-        public QueryBuilder addWordsFilter(List<Long> worldsFilter) {
-            if (worldsFilter != null && !worldsFilter.isEmpty()) {
+        public QueryBuilder allIncludeFilters(List<Long> materialFilters) {
+            if (materialFilters != null && !materialFilters.isEmpty()) {
                 List<String> jsonConditions = new ArrayList<>();
 
-                for (Long wordId : worldsFilter) {
+                for (Long wordId : materialFilters) {
                     List<String> worldConditions = new ArrayList<>();
 
                     worldConditions.add("ple.extra_json LIKE ?");
@@ -662,21 +664,21 @@ public class LoggerRepositorySQL implements LoggerRepository {
             return this;
         }
 
-        public QueryBuilder addWordsExcludeFilter(List<Long> worldsExcludeFilter) {
-            if (worldsExcludeFilter != null && !worldsExcludeFilter.isEmpty()) {
+        public QueryBuilder allExcludeFilters(List<Long> materialFilters) {
+            if (materialFilters != null && !materialFilters.isEmpty()) {
                 List<String> excludeConditions = new ArrayList<>();
 
-                for (Long wordId : worldsExcludeFilter) {
+                for (Long materialId : materialFilters) {
                     List<String> worldExcludeConditions = new ArrayList<>();
 
                     worldExcludeConditions.add("ple.extra_json NOT LIKE ?");
-                    parameters.add("%\"id\":" + wordId + ",%");
+                    parameters.add("%\"id\":" + materialId + ",%");
 
                     worldExcludeConditions.add("ple.extra_json NOT LIKE ?");
-                    parameters.add("%\"ai\":{%\"" + wordId + "\":%");
+                    parameters.add("%\"ai\":{%\"" + materialId + "\":%");
 
                     worldExcludeConditions.add("ple.extra_json NOT LIKE ?");
-                    parameters.add("%\"ri\":{%\"" + wordId + "\":%");
+                    parameters.add("%\"ri\":{%\"" + materialId + "\":%");
 
                     excludeConditions.add("(" + String.join(" AND ", worldExcludeConditions) + ")");
                 }

@@ -13,7 +13,7 @@ public class AdjacentTracker {
         List<Block> affectedBlocks = new ArrayList<>();
         Block currentBlock = brokenBlock.getRelative(BlockFace.UP);
 
-        while (currentBlock.getY() < currentBlock.getY() + 5) {
+        while (currentBlock.getY() < 380) {
             Material material = currentBlock.getType();
 
             if (AdjacentType.isUp(material)) {
@@ -22,6 +22,27 @@ public class AdjacentTracker {
             } else {
                 break;
             }
+        }
+        return affectedBlocks;
+    }
+
+    public static List<Block> getAffectedBlocksSide(Block brokenBlock) {
+        List<Block> affectedBlocks = new ArrayList<>();
+        Block block = brokenBlock.getRelative(BlockFace.NORTH);
+        if (AdjacentType.isSide(block.getType())) {
+            affectedBlocks.add(block);
+        }
+        block = brokenBlock.getRelative(BlockFace.EAST);
+        if (AdjacentType.isSide(block.getType())) {
+            affectedBlocks.add(block);
+        }
+        block = brokenBlock.getRelative(BlockFace.SOUTH);
+        if (AdjacentType.isSide(block.getType())) {
+            affectedBlocks.add(block);
+        }
+        block = brokenBlock.getRelative(BlockFace.WEST);
+        if (AdjacentType.isSide(block.getType())) {
+            affectedBlocks.add(block);
         }
         return affectedBlocks;
     }

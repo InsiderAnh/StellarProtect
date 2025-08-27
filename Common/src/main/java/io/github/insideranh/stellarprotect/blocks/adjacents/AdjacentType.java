@@ -43,15 +43,25 @@ public enum AdjacentType {
         "WOOD_BUTTON", "WOODEN_DOOR", "WOODEN_SLAB", "WOOD_STAIRS", "SIGN_POST",
         "WALL_SIGN", "LONG_GRASS", "HUGE_MUSHROOM_1", "HUGE_MUSHROOM_2", "DOUBLE_PLANT"
     ),
-    WATER(),
     DOWN,
-    SIDE;
+    SIDE(
+        "WALL_TORCH", "REDSTONE_WALL_TORCH", "TORCH", "REDSTONE_TORCH", "REDSTONE_TORCH_OFF", "REDSTONE_TORCH_ON",
+        "VINE", "COCOA", "TRIPWIRE", "TRIPWIRE_HOOK", "ITEM_FRAME", "PAINTING", "LADER", "LEVER", "SOUL_TORCH", "SOUL_WALL_TORCH",
+        "WHITE_BANNER", "ORANGE_BANNER", "MAGENTA_BANNER", "LIGHT_BLUE_BANNER", "YELLOW_BANNER", "LIME_BANNER", "PINK_BANNER", "GRAY_BANNER",
+        "LIGHT_GRAY_BANNER", "CYAN_BANNER", "PURPLE_BANNER", "BLUE_BANNER", "BROWN_BANNER", "GREEN_BANNER", "RED_BANNER", "BLACK_BANNER",
+        "WHITE_WALL_BANNER", "ORANGE_WALL_BANNER", "MAGENTA_WALL_BANNER", "LIGHT_WALL_BLUE_WALL_BANNER", "YELLOW_WALL_BANNER", "LIME_WALL_BANNER", "PINK_WALL_BANNER",
+        "GRAY_WALL_BANNER", "LIGHT_WALL_GRAY_WALL_BANNER", "CYAN_WALL_BANNER", "PURPLE_WALL_BANNER", "BLUE_WALL_BANNER", "BROWN_WALL_BANNER",
+        "GREEN_WALL_BANNER", "RED_WALL_BANNER", "BLACK_WALL_BANNER",
+        "OAK_SIGN", "SPRUCE_SIGN", "BIRCH_SIGN", "JUNGLE_SIGN", "ACACIA_SIGN", "DARK_OAK_SIGN", "CRIMSON_SIGN", "WARPED_SIGN",
+        "OAK_WALL_SIGN", "SPRUCE_WALL_SIGN", "BIRCH_WALL_SIGN", "JUNGLE_WALL_SIGN", "ACACIA_WALL_SIGN", "DARK_WALL_OAK_WALL_SIGN", "CRIMSON_WALL_SIGN", "WARPED_WALL_SIGN",
+        "OAK_BUTTON", "SPRUCE_BUTTON", "BIRCH_BUTTON", "JUNGLE_BUTTON", "ACACIA_BUTTON", "DARK_OAK_BUTTON",
+        "CRIMSON_BUTTON", "WARPED_BUTTON", "STONE_BUTTON", "POLISHED_BLACKSTONE_BUTTON"
+    );
 
     private static final byte[] bitCache = new byte[Material.values().length];
     private static final byte UP_FLAG = 1;
     private static final byte DOWN_FLAG = 2;
     private static final byte SIDE_FLAG = 3;
-    private static final byte WATER_FLAG = 4;
     private static boolean initialized = false;
     private final List<String> blocks = new ArrayList<>();
 
@@ -82,6 +92,11 @@ public enum AdjacentType {
         return (bitCache[ordinal] & UP_FLAG) != 0;
     }
 
+    public static boolean isSide(Material material) {
+        int ordinal = material.ordinal();
+        return (bitCache[ordinal] & SIDE_FLAG) != 0;
+    }
+
     private static byte getFlag(AdjacentType type) {
         switch (type) {
             case UP:
@@ -90,8 +105,6 @@ public enum AdjacentType {
                 return DOWN_FLAG;
             case SIDE:
                 return SIDE_FLAG;
-            case WATER:
-                return WATER_FLAG;
             default:
                 return 0;
         }

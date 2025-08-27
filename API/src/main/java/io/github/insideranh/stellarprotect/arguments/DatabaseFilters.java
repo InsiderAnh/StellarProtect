@@ -14,12 +14,14 @@ public class DatabaseFilters {
     private PageArg pageFilter;
     private List<Integer> actionTypesFilter = new ArrayList<>();
     private List<Integer> actionTypesExcludeFilter = new ArrayList<>();
-    private List<Long> wordsFilter = new ArrayList<>();
-    private List<Long> wordsExcludeFilter = new ArrayList<>();
+    private List<Long> allIncludeFilters = new ArrayList<>();
+    private List<Long> allExcludeFilters = new ArrayList<>();
+    private List<Long> includeMaterialFilters = new ArrayList<>();
+    private List<Long> excludeMaterialFilters = new ArrayList<>();
     private UsersArg userFilters;
 
     public boolean isIgnoreCache() {
-        return !wordsFilter.isEmpty() || !wordsExcludeFilter.isEmpty();
+        return !allIncludeFilters.isEmpty() || !allExcludeFilters.isEmpty() || !includeMaterialFilters.isEmpty() || !excludeMaterialFilters.isEmpty();
     }
 
 }

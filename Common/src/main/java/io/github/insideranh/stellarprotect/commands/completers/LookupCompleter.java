@@ -45,7 +45,7 @@ public class LookupCompleter extends StellarCompleter {
     }
 
     private List<String> getDefaultSuggestions() {
-        return Arrays.asList("t:1h", "r:10", "p:1-10", "a:block_break", "u:player", "i:grass", "e:stone");
+        return Arrays.asList("t:1h", "r:10", "p:1-10", "a:block_break", "u:player", "i:grass", "e:stone", "mi:[display:&aAmazing sword]");
     }
 
     private List<String> getAvailableArguments(ArgumentParser parser) {
@@ -66,6 +66,13 @@ public class LookupCompleter extends StellarCompleter {
 
     private List<String> getSuggestionsForArgument(ArgumentType type, String usedPrefix, String value, ArgumentParser parser) {
         switch (type) {
+            case MATERIAL_INCLUDES:
+            case MATERIAL_EXCLUDES:
+                if (value.isEmpty()) {
+                    return Arrays.asList("[display:&aAmazing sword]", "[lore:&7The best sword]");
+                }
+                return Collections.emptyList();
+
             case ACTION:
                 return handleActionSuggestions(usedPrefix, value);
 
@@ -221,7 +228,9 @@ public class LookupCompleter extends StellarCompleter {
         PAGE("p", "page"),
         USERS("u", "users"),
         INCLUDES("i", "include"),
-        EXCLUDES("e", "exclude");
+        EXCLUDES("e", "exclude"),
+        MATERIAL_INCLUDES("mi", "material_includes"),
+        MATERIAL_EXCLUDES("me", "material_excludes");
 
         private final String shortPrefix;
         private final String longPrefix;

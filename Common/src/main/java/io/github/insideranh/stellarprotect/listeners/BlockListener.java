@@ -50,6 +50,13 @@ public class BlockListener implements Listener {
             }
         }
 
+        if (AdjacentType.isSide(material)) {
+            List<Block> affectedBlocks = AdjacentTracker.getAffectedBlocksSide(block);
+            for (Block affectedBlock : affectedBlocks) {
+                LoggerCache.addLog(new PlayerBlockLogEntry(playerProtect.getPlayerId(), affectedBlock, ActionType.BLOCK_BREAK));
+            }
+        }
+
         LoggerCache.addLog(new PlayerBlockLogEntry(playerProtect.getPlayerId(), block, ActionType.BLOCK_BREAK));
     }
 

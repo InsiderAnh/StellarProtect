@@ -262,8 +262,8 @@ public class LoggerCache {
         TimeArg timeArg = databaseFilters.getTimeFilter();
         RadiusArg radiusArg = databaseFilters.getRadiusFilter();
         List<Integer> actionTypeIds = databaseFilters.getActionTypesFilter();
-        List<Long> worldsFilter = databaseFilters.getWordsFilter();
-        List<Long> worldsExcludeFilter = databaseFilters.getWordsExcludeFilter();
+        List<Long> worldsFilter = databaseFilters.getAllIncludeFilters();
+        List<Long> worldsExcludeFilter = databaseFilters.getAllExcludeFilters();
         UsersArg usersArg = databaseFilters.getUserFilters();
 
         StringBuilder keyBuilder = STRING_BUILDER_POOL.get();

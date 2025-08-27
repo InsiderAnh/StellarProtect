@@ -1,5 +1,6 @@
 package io.github.insideranh.stellarprotect.cache;
 
+import io.github.insideranh.stellarprotect.arguments.ArgumentsParser;
 import io.github.insideranh.stellarprotect.items.ItemTemplate;
 
 import java.util.*;
@@ -303,13 +304,30 @@ public class ItemsCache {
         return findContains(searchText, loreTokens, FieldType.LOWER_LORE);
     }
 
-    public List<Long> findIdsByTypeNameContains(List<String> searchTexts) {
+    public List<Long> findIdsByTypeNameContains(List<String> searchTexts, FieldType fieldType) {
         if (searchTexts.isEmpty()) return Collections.emptyList();
 
         List<Long> result = new ArrayList<>();
         for (String searchText : searchTexts) {
-            result.addAll(findContains(searchText, typeNameTokens, FieldType.LOWER_TYPE_NAME));
+            result.addAll(findContains(searchText, typeNameTokens, fieldType));
         }
+        return result;
+    }
+
+    public List<Long> findIdsContains(Map<String, List<String>> searchTexts) {
+        if (searchTexts.isEmpty()) return Collections.emptyList();
+
+        List<Long> result = new ArrayList<>();
+        if (searchTexts.containsKey(ArgumentsParser.MATERIAL_TYPE)) {
+            result.addAll(findIdsByTypeNameContains(searchTexts.get(ArgumentsParser.MATERIAL_TYPE), FieldType.LOWER_TYPE_NAME));
+        }
+        if (searchTexts.containsKey(ArgumentsParser.DISPLAY)) {
+            result.addAll(findIdsByTypeNameContains(searchTexts.get(ArgumentsParser.DISPLAY), FieldType.LOWER_DISPLAY_NAME));
+        }
+        if (searchTexts.containsKey(ArgumentsParser.LORE)) {
+            result.addAll(findIdsByTypeNameContains(searchTexts.get(ArgumentsParser.LORE), FieldType.LOWER_LORE));
+        }
+
         return result;
     }
 
@@ -321,7 +339,7 @@ public class ItemsCache {
         return size;
     }
 
-    private enum FieldType {DISPLAY_NAME, LORE, TYPE_NAME, LOWER_DISPLAY_NAME, LOWER_LORE, LOWER_TYPE_NAME}
+    public enum FieldType {DISPLAY_NAME, LORE, TYPE_NAME, LOWER_DISPLAY_NAME, LOWER_LORE, LOWER_TYPE_NAME}
 
     private static class IntOpenHashSet {
 
