@@ -197,12 +197,12 @@ public class LoggerRepositoryMySQL implements LoggerRepository {
 
                 } catch (Exception e) {
                     connection.rollback();
-                    throw e;
+                    Debugger.debugSave("Failed to save log entries. Trying again...");
                 } finally {
                     connection.setAutoCommit(true);
                 }
             } catch (Exception e) {
-                stellarProtect.getLogger().log(Level.SEVERE, "Failed to save log entries.", e);
+                Debugger.debugSave("Failed to save log entries. Trying again...");
             }
 
             Debugger.debugSave("Saved " + logEntries.size() + " log entries in " + (System.currentTimeMillis() - start) + "ms");

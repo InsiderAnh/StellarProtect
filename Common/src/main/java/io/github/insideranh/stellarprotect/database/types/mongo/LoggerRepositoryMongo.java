@@ -99,7 +99,7 @@ public class LoggerRepositoryMongo implements LoggerRepository {
 
                 Debugger.debugSave("Saved " + result.getInsertedCount() + " log entries in " + (System.currentTimeMillis() - start) + "ms");
             } catch (Exception e) {
-                stellarProtect.getLogger().log(Level.SEVERE, "Failed to save log entries to MongoDB", e);
+                Debugger.debugSave("Failed to save log entries. Trying again...");
             }
         });
     }
