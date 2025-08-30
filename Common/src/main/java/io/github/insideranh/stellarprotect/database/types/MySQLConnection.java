@@ -109,7 +109,6 @@ public class MySQLConnection implements DatabaseConnection {
                         "block_data TEXT" +
                         ")");
 
-                    statement.execute("SET SESSION sql_log_bin = 0");
                     statement.execute("SET SESSION foreign_key_checks = 0");
                     statement.execute("SET SESSION unique_checks = 0");
                 }
