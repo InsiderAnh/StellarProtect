@@ -1,5 +1,6 @@
 package io.github.insideranh.stellarprotect.commands.arguments.basic;
 
+import io.github.insideranh.stellarprotect.StellarProtect;
 import io.github.insideranh.stellarprotect.commands.StellarArgument;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
@@ -16,7 +17,7 @@ public class VersionArgument extends StellarArgument {
         sender.sendMessage("§7       §fAdvanced Protection System");
         sender.sendMessage("§7╰───────────────────────╯");
         sender.sendMessage("§7§6");
-        sender.sendMessage("§7▸ §fVersion: §a0.0.1");
+        sender.sendMessage("§7▸ §fVersion: §a" + StellarProtect.getInstance().getDescription().getVersion());
         sender.sendMessage("§7▸ §fDeveloper: §dInsiderAnh");
         sender.sendMessage("§a§4");
         sender.sendMessage("§7▸ §fSpigot:§7 https://shorturl.at/3fexE");
