@@ -31,8 +31,8 @@ public enum ActionType {
     TAME(11),
     BREED(12),
 
-    CHAT(13),
-    COMMAND(14),
+    CHAT(13, false),
+    COMMAND(14, false),
 
     BUCKET_EMPTY(15),
     BUCKET_FILL(16),
@@ -66,10 +66,10 @@ public enum ActionType {
     SHOP_GUI(80),
 
     // Nexo
-    FURNITURE_BREAK(81),
-    FURNITURE_PLACE(82),
+    FURNITURE_BREAK(81, false),
+    FURNITURE_PLACE(82, false),
 
-    X_KIT_EVENT(83);
+    X_KIT_EVENT(83, false);
 
     private static final ActionType[] ID_TO_ACTION_CACHE;
     private static final Map<String, ActionType> NAME_TO_ACTION_CACHE = new HashMap<>();
@@ -101,9 +101,15 @@ public enum ActionType {
 
     @Setter
     private boolean enabled = true;
+    private boolean parseMinecraftData = true;
 
     ActionType(int id) {
         this.id = id;
+    }
+
+    ActionType(int id, boolean parseMinecraftData) {
+        this.id = id;
+        this.parseMinecraftData = parseMinecraftData;
     }
 
     private static String getLowerCaseWorld(String world) {

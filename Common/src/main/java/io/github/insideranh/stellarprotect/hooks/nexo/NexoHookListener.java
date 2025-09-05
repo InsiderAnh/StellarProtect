@@ -95,7 +95,7 @@ public class NexoHookListener implements Listener {
 
         String nexoBlockId = event.getMechanic().getItemID();
 
-        LoggerCache.addLog(new PlayerFurnitureLogEntry(playerProtect.getPlayerId(), block.getLocation(), ActionType.FURNACE_PLACE, nexoBlockId));
+        LoggerCache.addLog(new PlayerFurnitureLogEntry(playerProtect.getPlayerId(), block.getLocation(), ActionType.FURNITURE_PLACE, nexoBlockId));
     }
 
 }

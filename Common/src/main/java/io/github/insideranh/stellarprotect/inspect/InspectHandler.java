@@ -6,6 +6,7 @@ import io.github.insideranh.stellarprotect.data.PlayerProtect;
 import io.github.insideranh.stellarprotect.database.entries.LogEntry;
 import io.github.insideranh.stellarprotect.database.entries.economy.PlayerEconomyEntry;
 import io.github.insideranh.stellarprotect.database.entries.economy.PlayerXPEntry;
+import io.github.insideranh.stellarprotect.database.entries.hooks.PlayerFurnitureLogEntry;
 import io.github.insideranh.stellarprotect.database.entries.hooks.PlayerXKitEventLogEntry;
 import io.github.insideranh.stellarprotect.database.entries.items.ItemLogEntry;
 import io.github.insideranh.stellarprotect.database.entries.players.*;
@@ -95,11 +96,11 @@ public class InspectHandler {
 
     public void handleGenericAction(Player player, LogEntry logEntry, ActionType actionType) {
         String data;
-        if (actionType.getId() == ActionType.CHAT.getId() || actionType.getId() == ActionType.COMMAND.getId()) {
-            data = logEntry.getDataString();
-        } else {
+        if (actionType.isParseMinecraftData()) {
             MinecraftItem minecraftItem = StringCleanerUtils.parseMinecraftData(logEntry.getDataString());
             data = minecraftItem.getCleanName();
+        } else {
+            data = logEntry.getDataString();
         }
 
         plugin.getLangManager().sendMessage(player, "messages.actions." + actionType.name().toLowerCase(),
@@ -154,11 +155,32 @@ public class InspectHandler {
             handlers.put(ActionType.DROP_ITEM, itemLogActionHandler);
             handlers.put(ActionType.PICKUP_ITEM, itemLogActionHandler);
 
+            FurnitureActionHandler furnitureActionHandler = new FurnitureActionHandler();
+            handlers.put(ActionType.FURNITURE_BREAK, furnitureActionHandler);
+            handlers.put(ActionType.FURNITURE_PLACE, furnitureActionHandler);
+
             handlers.put(ActionType.X_KIT_EVENT, new XKitEventActionHandler());
         }
 
         public static ActionHandler getHandler(ActionType actionType) {
             return handlers.get(actionType);
+        }
+
+    }
+
+    public static class FurnitureActionHandler implements ActionHandler {
+
+        @Override
+        public void handle(Player player, LogEntry logEntry, StellarProtect plugin) {
+            PlayerFurnitureLogEntry furnitureEntry = (PlayerFurnitureLogEntry) logEntry;
+
+            String messageKey = "messages.actions." + (furnitureEntry.getActionType() == ActionType.FURNITURE_BREAK.getId() ? "furniture_break" : "furniture_place");
+            plugin.getLangManager().sendMessage(player, messageKey,
+                text -> text
+                    .replace("<time>", TimeUtils.formatMillisAsAgo(logEntry.getCreatedAt()))
+                    .replace("<player>", PlayerCache.getName(logEntry.getPlayerId()))
+                    .replace("<data>", furnitureEntry.getNexoBlockId())
+            );
         }
 
     }
