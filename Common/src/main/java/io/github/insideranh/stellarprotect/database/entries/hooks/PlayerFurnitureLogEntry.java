@@ -1,10 +1,8 @@
 package io.github.insideranh.stellarprotect.database.entries.hooks;
 
 import com.google.gson.JsonObject;
-import io.github.insideranh.stellarprotect.StellarProtect;
 import io.github.insideranh.stellarprotect.database.entries.LogEntry;
 import io.github.insideranh.stellarprotect.enums.ActionType;
-import io.github.insideranh.stellarprotect.managers.BlocksManager;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import org.bson.Document;
@@ -15,7 +13,6 @@ import java.sql.ResultSet;
 @Getter
 public class PlayerFurnitureLogEntry extends LogEntry {
 
-    private static final BlocksManager blocksManager = StellarProtect.getInstance().getBlocksManager();
     private final String nexoBlockId;
 
     public PlayerFurnitureLogEntry(Document document, JsonObject jsonObject) {

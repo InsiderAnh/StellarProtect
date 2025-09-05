@@ -8,6 +8,7 @@ import io.github.insideranh.stellarprotect.database.entries.economy.PlayerXPEntr
 import io.github.insideranh.stellarprotect.database.entries.entity.EntityResurrectEntry;
 import io.github.insideranh.stellarprotect.database.entries.hooks.PlayerFurnitureLogEntry;
 import io.github.insideranh.stellarprotect.database.entries.hooks.PlayerShopGUIEntry;
+import io.github.insideranh.stellarprotect.database.entries.hooks.PlayerXKitEventLogEntry;
 import io.github.insideranh.stellarprotect.database.entries.players.*;
 import io.github.insideranh.stellarprotect.database.entries.players.chat.PlayerChatEntry;
 import io.github.insideranh.stellarprotect.database.entries.players.chat.PlayerCommandEntry;
@@ -113,7 +114,9 @@ public class LogEntryFactory {
         PLACE_ITEM(38, PlayerPlaceRemoveItemLogEntry.class),
         REMOVE_ITEM(39, PlayerPlaceRemoveItemLogEntry.class),
 
-        PLAYER_SHOP_GUI(80, PlayerShopGUIEntry.class);
+        PLAYER_SHOP_GUI(80, PlayerShopGUIEntry.class),
+
+        X_KIT_EVENT(83, PlayerXKitEventLogEntry.class);
 
         private final int actionId;
         private final Class<? extends LogEntry> entryClass;

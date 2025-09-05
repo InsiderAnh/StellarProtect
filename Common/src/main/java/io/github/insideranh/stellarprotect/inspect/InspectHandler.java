@@ -6,6 +6,7 @@ import io.github.insideranh.stellarprotect.data.PlayerProtect;
 import io.github.insideranh.stellarprotect.database.entries.LogEntry;
 import io.github.insideranh.stellarprotect.database.entries.economy.PlayerEconomyEntry;
 import io.github.insideranh.stellarprotect.database.entries.economy.PlayerXPEntry;
+import io.github.insideranh.stellarprotect.database.entries.hooks.PlayerXKitEventLogEntry;
 import io.github.insideranh.stellarprotect.database.entries.items.ItemLogEntry;
 import io.github.insideranh.stellarprotect.database.entries.players.*;
 import io.github.insideranh.stellarprotect.database.entries.world.CropGrowLogEntry;
@@ -152,10 +153,29 @@ public class InspectHandler {
             ItemLogActionHandler itemLogActionHandler = new ItemLogActionHandler();
             handlers.put(ActionType.DROP_ITEM, itemLogActionHandler);
             handlers.put(ActionType.PICKUP_ITEM, itemLogActionHandler);
+
+            handlers.put(ActionType.X_KIT_EVENT, new XKitEventActionHandler());
         }
 
         public static ActionHandler getHandler(ActionType actionType) {
             return handlers.get(actionType);
+        }
+
+    }
+
+    public static class XKitEventActionHandler implements ActionHandler {
+
+        @Override
+        public void handle(Player player, LogEntry logEntry, StellarProtect plugin) {
+            PlayerXKitEventLogEntry eventEntry = (PlayerXKitEventLogEntry) logEntry;
+
+            String messageKey = "messages.actions." + (eventEntry.getEventType() == (byte) 0 ? "x_kit_claim" : "x_kit_give");
+            plugin.getLangManager().sendMessage(player, messageKey,
+                text -> text
+                    .replace("<time>", TimeUtils.formatMillisAsAgo(logEntry.getCreatedAt()))
+                    .replace("<player>", PlayerCache.getName(logEntry.getPlayerId()))
+                    .replace("<data>", eventEntry.getKitId())
+            );
         }
 
     }

@@ -16,6 +16,7 @@ import io.github.insideranh.stellarprotect.database.ProtectDatabase;
 import io.github.insideranh.stellarprotect.enums.MinecraftVersion;
 import io.github.insideranh.stellarprotect.hooks.ShopGUIHookListener;
 import io.github.insideranh.stellarprotect.hooks.StellarTaskHook;
+import io.github.insideranh.stellarprotect.hooks.XPlayerKitsListener;
 import io.github.insideranh.stellarprotect.hooks.nexo.NexoDefaultHook;
 import io.github.insideranh.stellarprotect.hooks.nexo.NexoHook;
 import io.github.insideranh.stellarprotect.hooks.nexo.NexoHookListener;
@@ -59,6 +60,7 @@ public class StellarProtect extends JavaPlugin {
     private final EconomyManager economyManager;
     private final BlocksManager blocksManager;
     private final ProtectDatabase protectDatabase;
+    private final HooksManager hooksManager;
     private final InspectHandler inspectHandler;
     private final EventLogicHandler eventLogicHandler;
     private final DecorativeLogicHandler decorativeLogicHandler;
@@ -86,6 +88,7 @@ public class StellarProtect extends JavaPlugin {
         this.restoreManager = new RestoreManager();
         this.trackManager = new TrackManager();
         this.blocksManager = new BlocksManager();
+        this.hooksManager = new HooksManager();
         this.economyManager = new EconomyManager();
         this.protectDatabase = new ProtectDatabase();
         this.inspectHandler = new InspectHandler();
@@ -106,6 +109,7 @@ public class StellarProtect extends JavaPlugin {
         this.lookupExecutor.execute(AdjacentType::initializeCache);
 
         this.configManager.load();
+        this.hooksManager.load();
 
         this.protectDatabase.connect();
 
@@ -136,6 +140,7 @@ public class StellarProtect extends JavaPlugin {
 
     public void reload() {
         this.reloadConfig();
+        this.hooksManager.load();
         this.configManager.load();
         this.langManager.load();
         this.itemsManager.load();
@@ -153,12 +158,18 @@ public class StellarProtect extends JavaPlugin {
 
     void loadLastHooks() {
         getStellarTaskHook(() -> {
-            if (getServer().getPluginManager().isPluginEnabled("ShopGUIPlus")) {
+            if (hooksManager.isShopGuiHook() && getServer().getPluginManager().isPluginEnabled("ShopGUIPlus")) {
                 Bukkit.getPluginManager().registerEvents(new ShopGUIHookListener(), this);
+                getLogger().info("ShopGUIPlus detected, enabling ShopGUIPlus hook...");
             }
-            if (getServer().getPluginManager().isPluginEnabled("Nexo")) {
+            if (hooksManager.isNexoHook() && getServer().getPluginManager().isPluginEnabled("Nexo")) {
                 this.nexoHook = new NexoHook();
                 Bukkit.getPluginManager().registerEvents(new NexoHookListener(), this);
+                getLogger().info("Nexo detected, enabling Nexo hook...");
+            }
+            if (hooksManager.isXPlayerKitsHook() && getServer().getPluginManager().isPluginEnabled("XPlayerKits")) {
+                Bukkit.getPluginManager().registerEvents(new XPlayerKitsListener(), this);
+                getLogger().info("XPlayerKits detected, enabling XPlayerKits hook...");
             }
         }).runTask(10);
     }

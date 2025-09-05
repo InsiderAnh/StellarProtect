@@ -5,7 +5,10 @@ import com.google.common.collect.HashBiMap;
 import io.github.insideranh.stellarprotect.StellarProtect;
 import io.github.insideranh.stellarprotect.data.PlayerProtect;
 import lombok.NonNull;
+import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
 
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -53,6 +56,18 @@ public class PlayerUtils {
 
     public static void cacheEntityId(String entityType, long entityId) {
         specialIds.put(entityType, entityId);
+    }
+
+    public static long getPlayerOrConsoleId(CommandSender sender) {
+        if (sender instanceof ConsoleCommandSender) {
+            return -1L;
+        }
+        Player player = (Player) sender;
+        PlayerProtect playerProtect = PlayerProtect.getPlayer(player);
+        if (playerProtect == null) {
+            return -2L;
+        }
+        return playerProtect.getPlayerId();
     }
 
     public static long getPlayerOrEntityId(String name) {

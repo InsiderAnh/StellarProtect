@@ -40,10 +40,11 @@ public class BlockListener implements Listener {
         if (block.getType().equals(Material.AIR) || ActionType.BLOCK_BREAK.shouldSkipLog(block.getWorld().getName(), material.name()))
             return;
 
-        PlayerProtect playerProtect = PlayerProtect.getPlayer(event.getPlayer());
+        Player player = event.getPlayer();
+        PlayerProtect playerProtect = PlayerProtect.getPlayer(player);
         if (playerProtect == null) return;
 
-        if (plugin.getNexoHook() != null && plugin.getNexoHook().isNexoBlock(block)) {
+        if (plugin.getNexoHook().isNexoBlock(block)) {
             return;
         }
 
@@ -79,10 +80,16 @@ public class BlockListener implements Listener {
         if (event.isCancelled()) return;
 
         Block block = event.getBlock();
-        if (ActionType.BLOCK_PLACE.shouldSkipLog(block.getWorld().getName(), block.getType().name())) return;
+        if (block.getType().equals(Material.AIR) || ActionType.BLOCK_PLACE.shouldSkipLog(block.getWorld().getName(), block.getType().name()))
+            return;
 
-        PlayerProtect playerProtect = PlayerProtect.getPlayer(event.getPlayer());
+        Player player = event.getPlayer();
+        PlayerProtect playerProtect = PlayerProtect.getPlayer(player);
         if (playerProtect == null) return;
+
+        if (plugin.getNexoHook().isNexoListener(block, plugin.getProtectNMS().getItemInHand(player))) {
+            return;
+        }
 
         LoggerCache.addLog(new PlayerBlockLogEntry(playerProtect.getPlayerId(), block, ActionType.BLOCK_PLACE));
     }

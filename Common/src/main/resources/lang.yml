@@ -115,7 +115,15 @@ messages:
     place_item: |-
       &7<time> &8| &d<player>&f place item &8| &d(<data>) &a[View]
     remove_item: |-
-      &7<time> &8| &d<player>&f remove item &8| &d(<data>)  &a[View]
+      &7<time> &8| &d<player>&f remove item &8| &d(<data>) &a[View]
+    furniture_break: |-
+      &7<time> &8| &d<player>&f furniture break &8| &d(<data>)
+    furniture_place: |-
+      &7<time> &8| &d<player>&f furniture place &8| &d(<data>)
+    x_kit_give: |-
+      &7<time> &8| &d<player>&f received kit &8| &d(<data>)
+    x_kit_claim: |-
+      &7<time> &8| &d<player>&f claimed kit &8| &d(<data>)
   tooltips:
     item_details:
       displayName:

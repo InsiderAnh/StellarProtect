@@ -1,0 +1,7 @@
+hooks:
+  shop_gui:
+    enabled: true
+  nexo:
+    enabled: true
+  xplayerkits:
+    enabled: true

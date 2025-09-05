@@ -67,7 +67,9 @@ public enum ActionType {
 
     // Nexo
     FURNITURE_BREAK(81),
-    FURNITURE_PLACE(82);
+    FURNITURE_PLACE(82),
+
+    X_KIT_EVENT(83);
 
     private static final ActionType[] ID_TO_ACTION_CACHE;
     private static final Map<String, ActionType> NAME_TO_ACTION_CACHE = new HashMap<>();
