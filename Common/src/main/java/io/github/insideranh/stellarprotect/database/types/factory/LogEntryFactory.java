@@ -6,6 +6,7 @@ import io.github.insideranh.stellarprotect.database.entries.LogEntry;
 import io.github.insideranh.stellarprotect.database.entries.economy.PlayerEconomyEntry;
 import io.github.insideranh.stellarprotect.database.entries.economy.PlayerXPEntry;
 import io.github.insideranh.stellarprotect.database.entries.entity.EntityResurrectEntry;
+import io.github.insideranh.stellarprotect.database.entries.hooks.PlayerFurnitureLogEntry;
 import io.github.insideranh.stellarprotect.database.entries.hooks.PlayerShopGUIEntry;
 import io.github.insideranh.stellarprotect.database.entries.players.*;
 import io.github.insideranh.stellarprotect.database.entries.players.chat.PlayerChatEntry;
@@ -79,6 +80,8 @@ public class LogEntryFactory {
         BLOCK_INTERACT(10, PlayerBlockLogEntry.class),
         BLOCK_BURN(15, PlayerBlockLogEntry.class),
         BLOCK_EXPLODE(16, PlayerBlockLogEntry.class),
+        FURNITURE_BREAK(81, PlayerFurnitureLogEntry.class),
+        FURNITURE_PLACE(82, PlayerFurnitureLogEntry.class),
 
         ITEM_DROP(3, PlayerItemLogEntry.class),
         ITEM_PICKUP(4, PlayerItemLogEntry.class),
@@ -109,6 +112,7 @@ public class LogEntryFactory {
         PLAYER_ECONOMY(36, PlayerEconomyEntry.class),
         PLACE_ITEM(38, PlayerPlaceRemoveItemLogEntry.class),
         REMOVE_ITEM(39, PlayerPlaceRemoveItemLogEntry.class),
+
         PLAYER_SHOP_GUI(80, PlayerShopGUIEntry.class);
 
         private final int actionId;

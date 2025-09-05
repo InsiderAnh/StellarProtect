@@ -1,11 +1,12 @@
 name: StellarProtect
 main: io.github.insideranh.stellarprotect.StellarProtect
-version: 0.9.0
+version: 0.9.5
 author: InsiderAnh
 folia-supported: true
 api-version: 1.13
 softdepend:
   - ShopGUIPlus
+  - Nexo
 commands:
   stellarprotect:
     aliases:

@@ -43,6 +43,10 @@ public class BlockListener implements Listener {
         PlayerProtect playerProtect = PlayerProtect.getPlayer(event.getPlayer());
         if (playerProtect == null) return;
 
+        if (plugin.getNexoHook() != null && plugin.getNexoHook().isNexoBlock(block)) {
+            return;
+        }
+
         if (AdjacentType.isUp(material)) {
             List<Block> affectedBlocks = AdjacentTracker.getAffectedBlocksAbove(block);
             for (Block affectedBlock : affectedBlocks) {

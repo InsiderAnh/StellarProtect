@@ -16,12 +16,10 @@ import java.util.regex.Pattern;
 
 public class ArgumentsParser {
 
-    private static final Pattern TIME_PATTERN = Pattern.compile("([\\d.]+)(mo|[ywdhms])");
-
     public static final String MATERIAL_TYPE = "material_type";
     public static final String DISPLAY = "display";
     public static final String LORE = "lore";
-
+    private static final Pattern TIME_PATTERN = Pattern.compile("([\\d.]+)(mo|[ywdhms])");
     private static final Pattern INCLUDE_PATTERN = Pattern.compile("(?:mi:|material_includes:)(\\[([^:]+):([^\\]]+)\\]|([^\\s\\[]+))");
     private static final Pattern EXCLUDE_PATTERN = Pattern.compile("(?:me:|material_excludes:)(\\[([^:]+):([^\\]]+)\\]|([^\\s\\[]+))");
 
@@ -230,6 +228,7 @@ public class ArgumentsParser {
         }
         return null;
     }
+
     public static Map<String, List<String>> parseIncludeMaterials(String[] arguments) {
         String joined = String.join(" ", arguments).replace("\\", "").replace("'", "");
         return parseFilterArguments(joined, INCLUDE_PATTERN);

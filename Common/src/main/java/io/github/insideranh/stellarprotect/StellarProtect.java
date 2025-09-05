@@ -14,8 +14,11 @@ import io.github.insideranh.stellarprotect.bstats.MetricsLite;
 import io.github.insideranh.stellarprotect.commands.StellarProtectCMD;
 import io.github.insideranh.stellarprotect.database.ProtectDatabase;
 import io.github.insideranh.stellarprotect.enums.MinecraftVersion;
-import io.github.insideranh.stellarprotect.hooks.ShopGUIHook;
+import io.github.insideranh.stellarprotect.hooks.ShopGUIHookListener;
 import io.github.insideranh.stellarprotect.hooks.StellarTaskHook;
+import io.github.insideranh.stellarprotect.hooks.nexo.NexoDefaultHook;
+import io.github.insideranh.stellarprotect.hooks.nexo.NexoHook;
+import io.github.insideranh.stellarprotect.hooks.nexo.NexoHookListener;
 import io.github.insideranh.stellarprotect.hooks.tasks.BukkitTaskHook;
 import io.github.insideranh.stellarprotect.hooks.tasks.FoliaTaskHook;
 import io.github.insideranh.stellarprotect.inspect.InspectHandler;
@@ -59,6 +62,7 @@ public class StellarProtect extends JavaPlugin {
     private final InspectHandler inspectHandler;
     private final EventLogicHandler eventLogicHandler;
     private final DecorativeLogicHandler decorativeLogicHandler;
+    private NexoDefaultHook nexoHook = new NexoDefaultHook();
     private ChestTransactionTracker chestTransactionTracker;
     private ListeningExecutorService executor;
     private ListeningExecutorService lookupExecutor;
@@ -150,7 +154,11 @@ public class StellarProtect extends JavaPlugin {
     void loadLastHooks() {
         getStellarTaskHook(() -> {
             if (getServer().getPluginManager().isPluginEnabled("ShopGUIPlus")) {
-                Bukkit.getPluginManager().registerEvents(new ShopGUIHook(), this);
+                Bukkit.getPluginManager().registerEvents(new ShopGUIHookListener(), this);
+            }
+            if (getServer().getPluginManager().isPluginEnabled("Nexo")) {
+                this.nexoHook = new NexoHook();
+                Bukkit.getPluginManager().registerEvents(new NexoHookListener(), this);
             }
         }).runTask(10);
     }

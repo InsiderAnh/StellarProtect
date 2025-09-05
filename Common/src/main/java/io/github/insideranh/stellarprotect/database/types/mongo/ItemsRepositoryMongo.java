@@ -37,6 +37,7 @@ public class ItemsRepositoryMongo implements ItemsRepository {
                 List<Document> documents = new ArrayList<>();
 
                 for (ItemTemplate template : itemTemplates) {
+                    if (template == null) continue;
                     Document doc = new Document()
                         .append("_id", template.getId())
                         .append("base64", template.getBase64())

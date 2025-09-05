@@ -45,6 +45,7 @@ public class ItemsRepositoryMySQL implements ItemsRepository {
                 statement.setByte(3, (byte) 0);
 
                 for (ItemTemplate template : itemTemplates) {
+                    if (template == null) continue;
                     statement.setLong(1, template.getId());
                     statement.setString(2, template.getBase64());
                     statement.addBatch();

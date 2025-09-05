@@ -18,11 +18,15 @@ public class PlayerBlockLogEntry extends LogEntry {
 
     private static final BlocksManager blocksManager = StellarProtect.getInstance().getBlocksManager();
     private final int blockId;
+    private String nexoBlockId;
 
     public PlayerBlockLogEntry(Document document, JsonObject jsonObject) {
         super(document);
 
         this.blockId = getBlockId(jsonObject);
+        if (jsonObject.has("nbId")) {
+            this.nexoBlockId = jsonObject.get("nbId").getAsString();
+        }
     }
 
     @SneakyThrows
@@ -30,12 +34,22 @@ public class PlayerBlockLogEntry extends LogEntry {
         super(resultSet);
 
         this.blockId = getBlockId(jsonObject);
+        if (jsonObject.has("nbId")) {
+            this.nexoBlockId = jsonObject.get("nbId").getAsString();
+        }
     }
 
     public PlayerBlockLogEntry(long playerId, Block block, ActionType actionType) {
         super(playerId, actionType.getId(), block.getLocation(), System.currentTimeMillis());
         BlockTemplate itemTemplate = blocksManager.getBlockTemplate(block);
         this.blockId = itemTemplate.getId();
+    }
+
+    public PlayerBlockLogEntry(long playerId, Block block, ActionType actionType, String nexoBlockId) {
+        super(playerId, actionType.getId(), block.getLocation(), System.currentTimeMillis());
+        BlockTemplate itemTemplate = blocksManager.getBlockTemplate(block);
+        this.blockId = itemTemplate.getId();
+        this.nexoBlockId = nexoBlockId;
     }
 
     public int getBlockId(JsonObject jsonObject) {
@@ -49,12 +63,22 @@ public class PlayerBlockLogEntry extends LogEntry {
 
     @Override
     public String getDataString() {
+        if (nexoBlockId != null) {
+            return nexoBlockId;
+        }
+
         BlockTemplate itemTemplate = blocksManager.getBlockTemplate(blockId);
         return itemTemplate.getDataBlock().getBlockDataString();
     }
 
     @Override
     public String toSaveJson() {
+        if (nexoBlockId != null) {
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("b", blockId);
+            jsonObject.addProperty("nbId", nexoBlockId);
+            return jsonObject.toString();
+        }
         return "{\"b\":\"" + blockId + "\"}";
     }
 

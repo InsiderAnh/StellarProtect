@@ -12,7 +12,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
-public class ShopGUIHook implements Listener {
+public class ShopGUIHookListener implements Listener {
 
     private final StellarProtect plugin = StellarProtect.getInstance();
 

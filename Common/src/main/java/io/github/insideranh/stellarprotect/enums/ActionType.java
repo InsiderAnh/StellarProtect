@@ -63,7 +63,11 @@ public enum ActionType {
     PLACE_ITEM(38),
     REMOVE_ITEM(39),
 
-    SHOP_GUI(80);
+    SHOP_GUI(80),
+
+    // Nexo
+    FURNITURE_BREAK(81),
+    FURNITURE_PLACE(82);
 
     private static final ActionType[] ID_TO_ACTION_CACHE;
     private static final Map<String, ActionType> NAME_TO_ACTION_CACHE = new HashMap<>();
