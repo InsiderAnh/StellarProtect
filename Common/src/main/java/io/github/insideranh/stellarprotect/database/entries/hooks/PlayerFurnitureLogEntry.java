@@ -41,7 +41,7 @@ public class PlayerFurnitureLogEntry extends LogEntry {
     @Override
     public String toSaveJson() {
         JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("nbId", nexoBlockId);
+        jsonObject.addProperty("nbId", "nexo:" + nexoBlockId);
         return jsonObject.toString();
     }
 
