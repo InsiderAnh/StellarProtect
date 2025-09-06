@@ -79,8 +79,11 @@ public class NexoHookListener implements Listener {
 
         PlayerProtect playerProtect = PlayerProtect.getPlayer(event.getPlayer());
         if (playerProtect == null) return;
-
-        LoggerCache.addLog(new PlayerFurnitureLogEntry(playerProtect.getPlayerId(), player.getLocation(), ActionType.FURNITURE_BREAK, nexoBlockId));
+        org.bukkit.Location blockLoc = event.getBaseEntity()
+                .getLocation()
+                .getBlock()
+                .getLocation();
+        LoggerCache.addLog(new PlayerFurnitureLogEntry(playerProtect.getPlayerId(), blockLoc, ActionType.FURNITURE_BREAK, nexoBlockId));
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
@@ -88,7 +91,7 @@ public class NexoHookListener implements Listener {
         if (event.isCancelled()) return;
 
         Block block = event.getBlock();
-        if (ActionType.FURNACE_PLACE.shouldSkipLog(block.getWorld().getName(), block.getType().name())) return;
+        if (ActionType.FURNITURE_PLACE.shouldSkipLog(block.getWorld().getName(), block.getType().name())) return;
 
         PlayerProtect playerProtect = PlayerProtect.getPlayer(event.getPlayer());
         if (playerProtect == null) return;

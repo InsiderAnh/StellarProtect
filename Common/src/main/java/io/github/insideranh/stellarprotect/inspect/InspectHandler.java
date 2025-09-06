@@ -95,21 +95,28 @@ public class InspectHandler {
     }
 
     public void handleGenericAction(Player player, LogEntry logEntry, ActionType actionType) {
+        String raw = logEntry.getDataString();
         String data;
-        if (actionType.isParseMinecraftData()) {
-            MinecraftItem minecraftItem = StringCleanerUtils.parseMinecraftData(logEntry.getDataString());
+
+        if (raw != null && raw.startsWith("nexo:")) {
+            // Afficher tel quel: nexo:gemme_ore
+            data = raw;
+        } else if (actionType.isParseMinecraftData()) {
+            // Ancien comportement pour le vanilla
+            MinecraftItem minecraftItem = StringCleanerUtils.parseMinecraftData(raw);
             data = minecraftItem.getCleanName();
         } else {
-            data = logEntry.getDataString();
+            data = raw;
         }
 
         plugin.getLangManager().sendMessage(player, "messages.actions." + actionType.name().toLowerCase(),
-            text -> text
-                .replace("<time>", TimeUtils.formatMillisAsAgo(logEntry.getCreatedAt()))
-                .replace("<player>", PlayerCache.getName(logEntry.getPlayerId()))
-                .replace("<data>", data)
+                text -> text
+                        .replace("<time>", TimeUtils.formatMillisAsAgo(logEntry.getCreatedAt()))
+                        .replace("<player>", PlayerCache.getName(logEntry.getPlayerId()))
+                        .replace("<data>", data)
         );
     }
+
 
     public void sendNoLogsMessage(Player player, Location blockLocation) {
         plugin.getLangManager().sendMessage(player, "messages.noInspectLogs",
