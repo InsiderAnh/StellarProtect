@@ -194,19 +194,22 @@ public class StellarProtectCMD implements TabExecutor {
     }
 
     void sendHelp(CommandSender sender) {
-        sender.sendMessage(ChatColor.GRAY + "" + ChatColor.STRIKETHROUGH + "+---------------------------------------+");
-        sender.sendMessage(ChatColor.DARK_GRAY + "[!] " + ChatColor.RED + "StellarProtect " + ChatColor.DARK_GRAY + "[!]");
-        sender.sendMessage(ChatColor.GRAY + "" + ChatColor.STRIKETHROUGH + "+---------------------------------------+");
-        sender.sendMessage(ChatColor.YELLOW + "/spt reload " + ChatColor.GRAY + "- " + ChatColor.WHITE + "Reload the plugin.");
-        sender.sendMessage(ChatColor.YELLOW + "/spt help " + ChatColor.GRAY + "- " + ChatColor.WHITE + "Show this help.");
-        sender.sendMessage(ChatColor.YELLOW + "/spt version " + ChatColor.GRAY + "- " + ChatColor.WHITE + "Show the plugin version.");
-        sender.sendMessage(ChatColor.YELLOW + "/spt inspect " + ChatColor.GRAY + "- " + ChatColor.WHITE + "Enable/disable inspection mode.");
-        sender.sendMessage(ChatColor.YELLOW + "/spt lookup p:<page> t:<time> r:<radius> " + ChatColor.GRAY + "- " + ChatColor.WHITE + "Search for logs in a radius.");
-        sender.sendMessage(ChatColor.YELLOW + "/spt restore p:<page> t:<time> r:<radius> " + ChatColor.GRAY + "- " + ChatColor.WHITE + "Restore logs in a radius.");
-        sender.sendMessage(ChatColor.YELLOW + "/spt purge p:<page> t:<time> r:<radius> " + ChatColor.GRAY + "- " + ChatColor.WHITE + "Purge logs in a radius.");
-        sender.sendMessage(ChatColor.YELLOW + "/spt debug save|log|extras " + ChatColor.GRAY + "- " + ChatColor.WHITE + "Enable/disable debug mode.");
-        sender.sendMessage(ChatColor.YELLOW + "/spt memory " + ChatColor.GRAY + "- " + ChatColor.WHITE + "Show memory analysis.");
+        // Envoie des lignes depuis le fichier de langue (messages.help.*)
+        plugin.getLangManager().sendMessage(sender, "messages.help.headerTop");
+        plugin.getLangManager().sendMessage(sender, "messages.help.title");
+        plugin.getLangManager().sendMessage(sender, "messages.help.headerBottom");
+
+        plugin.getLangManager().sendMessage(sender, "messages.help.reload");
+        plugin.getLangManager().sendMessage(sender, "messages.help.help");
+        plugin.getLangManager().sendMessage(sender, "messages.help.version");
+        plugin.getLangManager().sendMessage(sender, "messages.help.inspect");
+        plugin.getLangManager().sendMessage(sender, "messages.help.lookup");
+        plugin.getLangManager().sendMessage(sender, "messages.help.restore");
+        plugin.getLangManager().sendMessage(sender, "messages.help.purge");
+        plugin.getLangManager().sendMessage(sender, "messages.help.debug");
+        plugin.getLangManager().sendMessage(sender, "messages.help.memory");
     }
+
 
     boolean hasBlockedPermission(CommandSender sender, String permission) {
         if (sender.hasPermission("stellarprotect." + permission) || sender.hasPermission("stellarprotect.admin") || sender.isOp()) {
