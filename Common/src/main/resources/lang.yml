@@ -15,6 +15,22 @@ messages:
   debugLog: "&aDebug log mode set to &7<state>"
   debugExtras: "&aDebug extras mode set to &7<state>"
   specifyRadius: "&cYou don't have radius specified, using default radius (10)."
+
+  help:
+    headerTop: '&7&m+---------------------------------------+'
+    title: '&8[!] &cStellarProtect &8[!]'
+    headerBottom: '&7&m+---------------------------------------+'
+
+    reload: '&e/spt reload &7- &fReload the plugin.'
+    help: '&e/spt help &7- &fShow this help.'
+    version: '&e/spt version &7- &fShow the plugin version.'
+    inspect: '&e/spt inspect &7- &fEnable/disable inspection mode.'
+    lookup: '&e/spt lookup p:<page> t:<time> r:<radius> &7- &fSearch for logs in a radius.'
+    restore: '&e/spt restore p:<page> t:<time> r:<radius> &7- &fRestore logs in a radius.'
+    purge: '&e/spt purge p:<page> t:<time> r:<radius> &7- &fPurge logs in a radius.'
+    debug: '&e/spt debug save|log|extras &7- &fEnable/disable debug mode.'
+    memory: '&e/spt memory &7- &fShow memory analysis.'
+
   memory:
     title: "&7----- &6StellarProtect &8| &dMemory Analysis &7-----"
     footprint: "&7Memory footprint:"
