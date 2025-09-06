@@ -8,10 +8,13 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.function.Function;
 
 public abstract class ProtectNMS {
+
+    public abstract int modelDataHashCode(ItemMeta itemMeta);
 
     public abstract Block readMaterial(Location location, String data);
 

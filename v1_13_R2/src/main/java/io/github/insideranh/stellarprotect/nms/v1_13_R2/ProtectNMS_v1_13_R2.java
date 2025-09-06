@@ -19,6 +19,7 @@ import org.bukkit.block.data.Waterlogged;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.function.Function;
 
@@ -27,6 +28,11 @@ public class ProtectNMS_v1_13_R2 extends ProtectNMS {
     @Override
     public int getHashBlockData(Block block) {
         return block.getBlockData().hashCode();
+    }
+
+    @Override
+    public int modelDataHashCode(ItemMeta itemMeta) {
+        return 0;
     }
 
     @Override

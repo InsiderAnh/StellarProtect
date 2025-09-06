@@ -37,7 +37,8 @@ public class TooltipUtils {
 
                 ItemTemplate itemTemplate = plugin.getItemsManager().getItemTemplate(key);
                 if (itemTemplate != null) {
-                    MinecraftItem minecraftItem = StringCleanerUtils.parseMinecraftData(itemTemplate.getBukkitItem().getType().name());
+                    String materialOrNexoId = plugin.getNexoHook().getNexoItemStackId(itemTemplate.getBukkitItem());
+                    MinecraftItem minecraftItem = StringCleanerUtils.parseMinecraftData(materialOrNexoId);
 
                     builder.append("\n")
                         .append(plugin.getLangManager().get("messages.tooltips.added_item")
@@ -63,7 +64,8 @@ public class TooltipUtils {
 
                 ItemTemplate itemTemplate = plugin.getItemsManager().getItemTemplate(key);
                 if (itemTemplate != null) {
-                    MinecraftItem minecraftItem = StringCleanerUtils.parseMinecraftData(itemTemplate.getBukkitItem().getType().name());
+                    String materialOrNexoId = plugin.getNexoHook().getNexoItemStackId(itemTemplate.getBukkitItem());
+                    MinecraftItem minecraftItem = StringCleanerUtils.parseMinecraftData(materialOrNexoId);
 
                     builder.append("\n")
                         .append(plugin.getLangManager().get("messages.tooltips.removed_item")

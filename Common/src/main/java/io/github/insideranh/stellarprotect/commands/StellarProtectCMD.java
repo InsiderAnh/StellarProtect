@@ -13,7 +13,6 @@ import io.github.insideranh.stellarprotect.commands.arguments.lookups.NextInspec
 import io.github.insideranh.stellarprotect.commands.arguments.lookups.NextLookupArgument;
 import io.github.insideranh.stellarprotect.commands.arguments.views.ViewArgument;
 import io.github.insideranh.stellarprotect.commands.completers.LookupCompleter;
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;

@@ -18,6 +18,7 @@ import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.material.MaterialData;
 
 import java.util.ArrayList;
@@ -28,6 +29,11 @@ public class ProtectNMS_v1_12_R2 extends ProtectNMS {
 
     private final Gson gson = new Gson();
     private final ArrayList<String> cropGrow = new ArrayList<>(Arrays.asList("WHEAT", "POTATO", "CARROT", "MELON_STEM", "PUMPKIN_STEM", "COCOA_BEANS"));
+
+    @Override
+    public int modelDataHashCode(ItemMeta itemMeta) {
+        return 0;
+    }
 
     @SuppressWarnings("deprecation")
     @Override

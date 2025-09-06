@@ -69,7 +69,8 @@ public class InspectHandler {
 
         String messageKey = transaction.isAdded() ? "messages.actions.added_item" : "messages.actions.removed_item";
 
-        MinecraftItem minecraftItem = StringCleanerUtils.parseMinecraftData(item.getType().name());
+        String materialOrNexoId = plugin.getNexoHook().getNexoItemStackId(item);
+        MinecraftItem minecraftItem = StringCleanerUtils.parseMinecraftData(materialOrNexoId);
 
         plugin.getLangManager().sendMessage(player, messageKey,
             text -> text
@@ -261,7 +262,7 @@ public class InspectHandler {
                 if (line.contains("<added>")) {
                     if (!inventoryTransactionEntry.getAdded().isEmpty()) {
                         for (String tooltip : plugin.getLangManager().getList("messages.tooltips.transactions_inventory.added")) {
-                            tooltipBody.add(tooltip.replace("<added>", TooltipUtils.getTooltipRemoved(inventoryTransactionEntry.getAdded())));
+                            tooltipBody.add(tooltip.replace("<added>", TooltipUtils.getTooltipAdded(inventoryTransactionEntry.getAdded())));
                         }
                     }
                 } else if (line.contains("<removed>")) {

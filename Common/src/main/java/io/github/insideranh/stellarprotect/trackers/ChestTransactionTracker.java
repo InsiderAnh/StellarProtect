@@ -1,6 +1,7 @@
 package io.github.insideranh.stellarprotect.trackers;
 
 import io.github.insideranh.stellarprotect.StellarProtect;
+import io.github.insideranh.stellarprotect.api.ProtectNMS;
 import io.github.insideranh.stellarprotect.cache.LoggerCache;
 import io.github.insideranh.stellarprotect.data.PlayerProtect;
 import io.github.insideranh.stellarprotect.database.entries.players.PlayerTransactionEntry;
@@ -36,6 +37,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class ChestTransactionTracker implements Listener {
 
+    private static final ProtectNMS protectNMS = StellarProtect.getInstance().getProtectNMS();
     private static final ConcurrentHashMap<String, Location> playerChestLocations = new ConcurrentHashMap<>();
     private static final ConcurrentHashMap<String, ItemCount[]> initialInventoryStates = new ConcurrentHashMap<>();
     private static final ConcurrentHashMap<String, Long> lastActivity = new ConcurrentHashMap<>();
@@ -302,6 +304,7 @@ public class ChestTransactionTracker implements Listener {
 
         if (item.hasItemMeta()) {
             ItemMeta meta = item.getItemMeta();
+            int customModelData = protectNMS.modelDataHashCode(meta);
             if (meta.hasDisplayName()) {
                 hash = hash * 31 + meta.getDisplayName().hashCode();
             }
@@ -310,6 +313,9 @@ public class ChestTransactionTracker implements Listener {
             }
             if (meta.hasEnchants()) {
                 hash = hash * 31 + meta.getEnchants().hashCode();
+            }
+            if (customModelData != 0) {
+                hash = hash * 31 + customModelData;
             }
         }
 
@@ -445,11 +451,18 @@ public class ChestTransactionTracker implements Listener {
             int hash = item.getType().ordinal();
             if (item.hasItemMeta()) {
                 ItemMeta meta = item.getItemMeta();
+                int customModelData = protectNMS.modelDataHashCode(meta);
                 if (meta.hasDisplayName()) {
                     hash = hash * 31 + meta.getDisplayName().hashCode();
                 }
                 if (meta.hasLore()) {
                     hash = hash * 31 + Objects.hashCode(meta.getLore());
+                }
+                if (meta.hasEnchants()) {
+                    hash = hash * 31 + meta.getEnchants().hashCode();
+                }
+                if (customModelData != 0) {
+                    hash = hash * 31 + customModelData;
                 }
             }
             return hash;

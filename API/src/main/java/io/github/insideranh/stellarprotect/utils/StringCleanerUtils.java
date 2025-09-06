@@ -59,6 +59,10 @@ public class StringCleanerUtils {
     private static String cleanMinecraftName(String name) {
         if (name == null || name.length() < 2) return name;
 
+        boolean isNexo = name.startsWith("nexo:");
+        if (isNexo) {
+            name = name.substring(5);
+        }
         String cleanedData = cleanMinecraft(name);
 
         if (HAS_TRANSLATION) {
@@ -82,6 +86,9 @@ public class StringCleanerUtils {
             }
         }
 
+        if (isNexo) {
+            return "nexo:" + builder.toString().trim();
+        }
         return builder.toString().trim();
     }
 
