@@ -49,7 +49,7 @@ public class PlayerBlockLogEntry extends LogEntry {
         super(playerId, actionType.getId(), block.getLocation(), System.currentTimeMillis());
         BlockTemplate itemTemplate = blocksManager.getBlockTemplate(block);
         this.blockId = itemTemplate.getId();
-        this.nexoBlockId = nexoBlockId;
+        this.nexoBlockId = "nexo:" + nexoBlockId;
     }
 
     public int getBlockId(JsonObject jsonObject) {

@@ -77,7 +77,7 @@ public class NexoHookListener implements Listener {
         if (ActionType.FURNITURE_BREAK.shouldSkipLog(player.getWorld().getName(), nexoBlockId))
             return;
 
-        PlayerProtect playerProtect = PlayerProtect.getPlayer(event.getPlayer());
+        PlayerProtect playerProtect = PlayerProtect.getPlayer(player);
         if (playerProtect == null) return;
 
         LoggerCache.addLog(new PlayerFurnitureLogEntry(playerProtect.getPlayerId(), player.getLocation(), ActionType.FURNITURE_BREAK, nexoBlockId));
@@ -88,7 +88,7 @@ public class NexoHookListener implements Listener {
         if (event.isCancelled()) return;
 
         Block block = event.getBlock();
-        if (ActionType.FURNACE_PLACE.shouldSkipLog(block.getWorld().getName(), block.getType().name())) return;
+        if (ActionType.FURNITURE_PLACE.shouldSkipLog(block.getWorld().getName(), block.getType().name())) return;
 
         PlayerProtect playerProtect = PlayerProtect.getPlayer(event.getPlayer());
         if (playerProtect == null) return;

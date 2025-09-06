@@ -30,7 +30,7 @@ public class PlayerFurnitureLogEntry extends LogEntry {
 
     public PlayerFurnitureLogEntry(long playerId, Location location, ActionType actionType, String nexoBlockId) {
         super(playerId, actionType.getId(), location, System.currentTimeMillis());
-        this.nexoBlockId = nexoBlockId;
+        this.nexoBlockId = "nexo:" + nexoBlockId;
     }
 
     @Override
@@ -41,7 +41,7 @@ public class PlayerFurnitureLogEntry extends LogEntry {
     @Override
     public String toSaveJson() {
         JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("nbId", "nexo:" + nexoBlockId);
+        jsonObject.addProperty("nbId", nexoBlockId);
         return jsonObject.toString();
     }
 

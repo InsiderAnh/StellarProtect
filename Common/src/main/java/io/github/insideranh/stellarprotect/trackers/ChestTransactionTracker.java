@@ -178,16 +178,19 @@ public class ChestTransactionTracker implements Listener {
                 if (state instanceof InventoryHolder) {
                     InventoryHolder holder = (InventoryHolder) state;
                     Inventory inventory = holder.getInventory();
-                    ItemCount[] currentSnapshot = captureInventorySnapshot(inventory.getContents());
+                    ItemStack[] inventoryContents = inventory.getContents();
+                    plugin.getExecutor().execute(() -> {
+                        ItemCount[] currentSnapshot = captureInventorySnapshot(inventoryContents);
 
-                    TransactionResult result = compareSnapshots(playerName, chestLocation, initialSnapshot, currentSnapshot);
+                        TransactionResult result = compareSnapshots(playerName, chestLocation, initialSnapshot, currentSnapshot);
 
-                    if (!result.itemsAdded.isEmpty() || !result.itemsRemoved.isEmpty()) {
-                        handleTransaction(player, result);
-                    }
+                        if (!result.itemsAdded.isEmpty() || !result.itemsRemoved.isEmpty()) {
+                            handleTransaction(player, result);
+                        }
 
-                    returnToPool(initialSnapshot);
-                    returnToPool(currentSnapshot);
+                        returnToPool(initialSnapshot);
+                        returnToPool(currentSnapshot);
+                    });
                 }
             }
         }
@@ -317,20 +320,18 @@ public class ChestTransactionTracker implements Listener {
         PlayerProtect playerProtect = PlayerProtect.getPlayer(player);
         if (playerProtect == null) return;
 
-        plugin.getExecutor().execute(() -> {
-            Map<Long, Integer> itemsAdded = new HashMap<>();
-            Map<Long, Integer> itemsRemoved = new HashMap<>();
+        Map<Long, Integer> itemsAdded = new HashMap<>();
+        Map<Long, Integer> itemsRemoved = new HashMap<>();
 
-            for (Map.Entry<ItemStack, Integer> entry : result.itemsAdded.entrySet()) {
-                ItemReference itemReference = plugin.getItemsManager().getItemReference(entry.getKey(), entry.getValue());
-                itemsAdded.put(itemReference.getTemplateId(), entry.getValue());
-            }
-            for (Map.Entry<ItemStack, Integer> entry : result.itemsRemoved.entrySet()) {
-                ItemReference itemReference = plugin.getItemsManager().getItemReference(entry.getKey(), entry.getValue());
-                itemsRemoved.put(itemReference.getTemplateId(), entry.getValue());
-            }
-            LoggerCache.addLog(new PlayerTransactionEntry(playerProtect.getPlayerId(), itemsAdded, itemsRemoved, result.chestLocation, ActionType.INVENTORY_TRANSACTION));
-        });
+        for (Map.Entry<ItemStack, Integer> entry : result.itemsAdded.entrySet()) {
+            ItemReference itemReference = plugin.getItemsManager().getItemReference(entry.getKey(), entry.getValue());
+            itemsAdded.put(itemReference.getTemplateId(), entry.getValue());
+        }
+        for (Map.Entry<ItemStack, Integer> entry : result.itemsRemoved.entrySet()) {
+            ItemReference itemReference = plugin.getItemsManager().getItemReference(entry.getKey(), entry.getValue());
+            itemsRemoved.put(itemReference.getTemplateId(), entry.getValue());
+        }
+        LoggerCache.addLog(new PlayerTransactionEntry(playerProtect.getPlayerId(), itemsAdded, itemsRemoved, result.chestLocation, ActionType.INVENTORY_TRANSACTION));
     }
 
     public void cleanupOldStates() {
@@ -391,11 +392,14 @@ public class ChestTransactionTracker implements Listener {
     }
 
     private static class ItemCount {
+
         ItemStack item;
         int count;
+
     }
 
     private static class ItemCounter {
+
         private static final int DEFAULT_CAPACITY = 64;
 
         ItemStack[] items;
@@ -467,6 +471,7 @@ public class ChestTransactionTracker implements Listener {
                 Objects.equals(metaA.getLore(), metaB.getLore()) &&
                 Objects.equals(metaA.getEnchants(), metaB.getEnchants());
         }
+
     }
 
     public static class TransactionResult {
