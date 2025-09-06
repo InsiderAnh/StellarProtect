@@ -69,15 +69,22 @@ public class InspectHandler {
 
         String messageKey = transaction.isAdded() ? "messages.actions.added_item" : "messages.actions.removed_item";
 
-        MinecraftItem minecraftItem = StringCleanerUtils.parseMinecraftData(item.getType().name());
+        // 1) Essayer de récupérer un ID Nexo
+        String nexoKey = plugin.getNexoHook().getNexoItemKey(item);
+
+// 2) Si pas Nexo, fallback sur le nom Minecraft propre
+        String data = (nexoKey != null)
+                ? nexoKey
+                : StringCleanerUtils.parseMinecraftData(item.getType().name()).getCleanName();
 
         plugin.getLangManager().sendMessage(player, messageKey,
-            text -> text
-                .replace("<time>", TimeUtils.formatMillisAsAgo(transaction.getCreatedAt()))
-                .replace("<player>", PlayerCache.getName(transaction.getPlayerId()))
-                .replace("<data>", minecraftItem.getCleanName())
-                .replace("<amount>", String.valueOf(transaction.getAmount()))
+                text -> text
+                        .replace("<time>", TimeUtils.formatMillisAsAgo(transaction.getCreatedAt()))
+                        .replace("<player>", PlayerCache.getName(transaction.getPlayerId()))
+                        .replace("<data>", data)
+                        .replace("<amount>", String.valueOf(transaction.getAmount()))
         );
+
     }
 
     public void processLogEntry(Player player, LogEntry logEntry) {
@@ -328,22 +335,36 @@ public class InspectHandler {
         @Override
         public void handle(Player player, LogEntry logEntry, StellarProtect plugin) {
             PlayerPlaceRemoveItemLogEntry itemEntry = (PlayerPlaceRemoveItemLogEntry) logEntry;
-            MinecraftItem minecraftItem = StringCleanerUtils.parseMinecraftData(itemEntry.getDataString());
             ItemTemplate itemTemplate = plugin.getItemsManager().getItemTemplate(itemEntry.getItemReferenceId());
-            MinecraftItem explainedItem = StringCleanerUtils.parseMinecraftData(itemTemplate.getBukkitItem().getType().name());
+
+            String shownData;
+            String explained; // pour le tooltip
+
+// Si l'item template est un item Nexo, montre "nexo:ID"
+            String nexoFromTemplate = plugin.getNexoHook().getNexoItemKey(itemTemplate.getBukkitItem());
+            if (nexoFromTemplate != null) {
+                shownData = nexoFromTemplate;
+                explained = nexoFromTemplate;
+            } else {
+                // Fallback vanilla
+                shownData = StringCleanerUtils.parseMinecraftData(itemEntry.getDataString()).getCleanName();
+                explained = StringCleanerUtils.parseMinecraftData(itemTemplate.getBukkitItem().getType().name()).getCleanName();
+            }
+
             String actionKey = "messages.actions." + (itemEntry.isPlaced() ? "place_item" : "remove_item");
             String tooltipKey = "messages.tooltips." + (itemEntry.isPlaced() ? "place_item" : "remove_item");
 
             plugin.getProtectNMS().sendActionTitle(player,
                 plugin.getLangManager().get(actionKey),
                 plugin.getLangManager().get(tooltipKey, text -> text
-                    .replace("<data>", explainedItem.getCleanName())
-                    .replace("<amount>", String.valueOf(itemEntry.getAmount()))),
+                        .replace("<data>", explained)
+                        .replace("<amount>", String.valueOf(itemEntry.getAmount()))),
                 "",
                 text -> text
                     .replace("<time>", TimeUtils.formatMillisAsAgo(logEntry.getCreatedAt()))
                     .replace("<player>", PlayerCache.getName(logEntry.getPlayerId()))
-                    .replace("<data>", minecraftItem.getCleanName())
+                        .replace("<data>", shownData)
+
             );
         }
     }
