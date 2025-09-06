@@ -36,6 +36,11 @@ public class ItemsManager {
             return;
         }
 
+        if (selectedLang.equalsIgnoreCase("zh")) {
+            selectedLang = "zh_cn";
+            plugin.getLogger().info("Legacy 'zh' language detected, using 'zh_cn' (Simplified Chinese) instead. Consider updating your config to use 'zh_cn' or 'zh_tw' explicitly.");
+        }
+
         plugin.getLogger().info("Loading items translations...");
 
         File folder = new File(plugin.getDataFolder(), "translations");
