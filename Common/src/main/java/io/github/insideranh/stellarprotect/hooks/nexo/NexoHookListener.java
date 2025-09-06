@@ -83,7 +83,7 @@ public class NexoHookListener implements Listener {
                 .getLocation()
                 .getBlock()
                 .getLocation();
-        LoggerCache.addLog(new PlayerFurnitureLogEntry(playerProtect.getPlayerId(), blockLoc, ActionType.FURNITURE_BREAK, nexoBlockId));
+        LoggerCache.addLog(new PlayerFurnitureLogEntry(playerProtect.getPlayerId(), blockLoc, ActionType.FURNITURE_BREAK, "nexo:" + nexoBlockId));
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
@@ -98,7 +98,7 @@ public class NexoHookListener implements Listener {
 
         String nexoBlockId = event.getMechanic().getItemID();
 
-        LoggerCache.addLog(new PlayerFurnitureLogEntry(playerProtect.getPlayerId(), block.getLocation(), ActionType.FURNITURE_PLACE, nexoBlockId));
+        LoggerCache.addLog(new PlayerFurnitureLogEntry(playerProtect.getPlayerId(), block.getLocation(), ActionType.FURNITURE_PLACE, "nexo:" + nexoBlockId));
     }
 
 }
