@@ -63,23 +63,24 @@ public class PlayerBlockLogEntry extends LogEntry {
 
     @Override
     public String getDataString() {
-        if (nexoBlockId != null) {
-            return nexoBlockId;
+        if (nexoBlockId != null && !nexoBlockId.isEmpty()) {
+            return nexoBlockId.startsWith("nexo:") ? nexoBlockId : "nexo:" + nexoBlockId;
         }
-
         BlockTemplate itemTemplate = blocksManager.getBlockTemplate(blockId);
         return itemTemplate.getDataBlock().getBlockDataString();
     }
 
+
+
+
     @Override
     public String toSaveJson() {
-        if (nexoBlockId != null) {
-            JsonObject jsonObject = new JsonObject();
-            jsonObject.addProperty("b", blockId);
-            jsonObject.addProperty("nbId", nexoBlockId);
-            return jsonObject.toString();
+        JsonObject obj = new JsonObject();
+        obj.addProperty("b", blockId);
+        if (nexoBlockId != null && !nexoBlockId.isEmpty()) {
+            obj.addProperty("nbId", nexoBlockId.contains(":") ? nexoBlockId : "nexo:" + nexoBlockId);
         }
-        return "{\"b\":\"" + blockId + "\"}";
+        return obj.toString();
     }
 
 }

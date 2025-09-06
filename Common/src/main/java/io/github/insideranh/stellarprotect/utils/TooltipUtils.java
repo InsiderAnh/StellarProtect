@@ -2,7 +2,6 @@ package io.github.insideranh.stellarprotect.utils;
 
 import io.github.insideranh.stellarprotect.StellarProtect;
 import io.github.insideranh.stellarprotect.items.ItemTemplate;
-import io.github.insideranh.stellarprotect.items.MinecraftItem;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 
@@ -37,19 +36,19 @@ public class TooltipUtils {
 
                 ItemTemplate itemTemplate = plugin.getItemsManager().getItemTemplate(key);
                 if (itemTemplate != null) {
-                    MinecraftItem minecraftItem = StringCleanerUtils.parseMinecraftData(itemTemplate.getBukkitItem().getType().name());
+                    ItemStack it = itemTemplate.getBukkitItem();
+                    String display = (it != null) ? formatItemNameForTooltip(plugin, it) : "unknown";
 
                     builder.append("\n")
-                        .append(plugin.getLangManager().get("messages.tooltips.added_item")
-                            .replace("<data>", minecraftItem.getCleanName())
-                            .replace("<amount>", String.valueOf(value))
-                        );
+                            .append(plugin.getLangManager().get("messages.tooltips.added_item")
+                                    .replace("<data>", display)
+                                    .replace("<amount>", String.valueOf(value))
+                            );
                 }
             }
         } else {
             builder.append(plugin.getLangManager().get("messages.tooltips.no_changes"));
         }
-
         return builder.toString().replaceFirst("\n", "");
     }
 
@@ -63,20 +62,30 @@ public class TooltipUtils {
 
                 ItemTemplate itemTemplate = plugin.getItemsManager().getItemTemplate(key);
                 if (itemTemplate != null) {
-                    MinecraftItem minecraftItem = StringCleanerUtils.parseMinecraftData(itemTemplate.getBukkitItem().getType().name());
+                    ItemStack it = itemTemplate.getBukkitItem();
+                    String display = (it != null) ? formatItemNameForTooltip(plugin, it) : "unknown";
 
                     builder.append("\n")
-                        .append(plugin.getLangManager().get("messages.tooltips.removed_item")
-                            .replace("<data>", minecraftItem.getCleanName())
-                            .replace("<amount>", String.valueOf(value))
-                        );
+                            .append(plugin.getLangManager().get("messages.tooltips.removed_item")
+                                    .replace("<data>", display)
+                                    .replace("<amount>", String.valueOf(value))
+                            );
                 }
             }
         } else {
             builder.append(plugin.getLangManager().get("messages.tooltips.no_changes"));
         }
-
         return builder.toString().replaceFirst("\n", "");
+    }
+    public static String formatItemNameForTooltip(StellarProtect plugin, ItemStack item) {
+        if (item == null) return "unknown";
+        try {
+            String nexoKey = plugin.getNexoHook() != null ? plugin.getNexoHook().getNexoItemKey(item) : null;
+            if (nexoKey != null && !nexoKey.isEmpty()) {
+                return nexoKey; // ex: nexo:gemme_ore
+            }
+        } catch (Throwable ignored) {}
+        return StringCleanerUtils.parseMinecraftData(item.getType().name()).getCleanName();
     }
 
 }

@@ -17,4 +17,6 @@ public class NexoDefaultHook {
         return false;
     }
 
+    public String getNexoItemKey(ItemStack item) {return null;}
+
 }
