@@ -11,6 +11,7 @@ import io.github.insideranh.stellarprotect.data.PlayerProtect;
 import io.github.insideranh.stellarprotect.database.entries.hooks.PlayerFurnitureLogEntry;
 import io.github.insideranh.stellarprotect.database.entries.players.PlayerBlockLogEntry;
 import io.github.insideranh.stellarprotect.enums.ActionType;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -79,8 +80,9 @@ public class NexoHookListener implements Listener {
 
         PlayerProtect playerProtect = PlayerProtect.getPlayer(player);
         if (playerProtect == null) return;
+        Location blockLocation = event.getBaseEntity().getLocation().getBlock().getLocation();
 
-        LoggerCache.addLog(new PlayerFurnitureLogEntry(playerProtect.getPlayerId(), player.getLocation(), ActionType.FURNITURE_BREAK, nexoBlockId));
+        LoggerCache.addLog(new PlayerFurnitureLogEntry(playerProtect.getPlayerId(), blockLocation, ActionType.FURNITURE_BREAK, nexoBlockId));
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
