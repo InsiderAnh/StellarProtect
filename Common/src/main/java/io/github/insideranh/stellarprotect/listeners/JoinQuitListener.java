@@ -5,6 +5,7 @@ import io.github.insideranh.stellarprotect.cache.LoggerCache;
 import io.github.insideranh.stellarprotect.cache.PlayerCache;
 import io.github.insideranh.stellarprotect.data.PlayerProtect;
 import io.github.insideranh.stellarprotect.database.entries.players.PlayerSessionEntry;
+import io.github.insideranh.stellarprotect.utils.StringCleanerUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -23,6 +24,10 @@ public class JoinQuitListener implements Listener {
             if (playerProtect != null) {
                 playerProtect.create();
                 playerProtect.setLoginTime(System.currentTimeMillis());
+
+                if (!plugin.getConfigManager().isEconomyDisabled()) {
+                    playerProtect.setLastEconomyBalance(StringCleanerUtils.limitTo2Decimals(plugin.getEconomy().getBalance(player)));
+                }
 
                 LoggerCache.addLog(new PlayerSessionEntry(playerProtect.getPlayerId(), player.getLocation(), (byte) 1, 0));
 
