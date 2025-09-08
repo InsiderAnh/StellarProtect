@@ -25,20 +25,20 @@ public class JoinQuitListener implements Listener {
                 playerProtect.create();
                 playerProtect.setLoginTime(System.currentTimeMillis());
 
-                if (!plugin.getConfigManager().isEconomyDisabled()) {
-                    playerProtect.setLastEconomyBalance(StringCleanerUtils.limitTo2Decimals(plugin.getEconomy().getBalance(player)));
-                }
-
                 LoggerCache.addLog(new PlayerSessionEntry(playerProtect.getPlayerId(), player.getLocation(), (byte) 1, 0));
 
                 PlayerCache.cacheName(playerProtect.getPlayerId(), player.getName());
+
+                if (!plugin.getConfigManager().isEconomyDisabled() && plugin.getEconomy() != null) {
+                    playerProtect.setLastEconomyBalance(StringCleanerUtils.limitTo2Decimals(plugin.getEconomy().getBalance(player)));
+                }
             }
+
+            if (!plugin.getConfigManager().isCheckUpdates()) return;
+            if (!player.hasPermission("stellarprotect.admin") || plugin.getUpdateChecker() == null) return;
+
+            plugin.getUpdateChecker().sendUpdateMessage(player);
         });
-
-        if (!plugin.getConfigManager().isCheckUpdates()) return;
-        if (!player.hasPermission("stellarprotect.admin") || plugin.getUpdateChecker() == null) return;
-
-        plugin.getUpdateChecker().sendUpdateMessage(player);
     }
 
     @EventHandler

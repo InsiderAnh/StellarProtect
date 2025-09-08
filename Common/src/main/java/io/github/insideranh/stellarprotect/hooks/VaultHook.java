@@ -1,4 +1,4 @@
-package io.github.insideranh.stellarprotect.managers;
+package io.github.insideranh.stellarprotect.hooks;
 
 import io.github.insideranh.stellarprotect.StellarProtect;
 import io.github.insideranh.stellarprotect.cache.LoggerCache;
@@ -10,7 +10,7 @@ import io.github.insideranh.stellarprotect.utils.StringCleanerUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-public class EconomyManager {
+public class VaultHook {
 
     private final StellarProtect plugin = StellarProtect.getInstance();
     private TaskCanceller taskCanceller;

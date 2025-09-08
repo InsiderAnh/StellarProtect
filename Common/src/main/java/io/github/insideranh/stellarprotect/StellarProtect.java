@@ -14,6 +14,7 @@ import io.github.insideranh.stellarprotect.bstats.MetricsLite;
 import io.github.insideranh.stellarprotect.commands.StellarProtectCMD;
 import io.github.insideranh.stellarprotect.database.ProtectDatabase;
 import io.github.insideranh.stellarprotect.enums.MinecraftVersion;
+import io.github.insideranh.stellarprotect.hooks.VaultHook;
 import io.github.insideranh.stellarprotect.hooks.ShopGUIHookListener;
 import io.github.insideranh.stellarprotect.hooks.StellarTaskHook;
 import io.github.insideranh.stellarprotect.hooks.XPlayerKitsListener;
@@ -57,7 +58,7 @@ public class StellarProtect extends JavaPlugin {
     private final ItemsManager itemsManager;
     private final RestoreManager restoreManager;
     private final TrackManager trackManager;
-    private final EconomyManager economyManager;
+    private final VaultHook vaultHook;
     private final BlocksManager blocksManager;
     private final ProtectDatabase protectDatabase;
     private final HooksManager hooksManager;
@@ -89,7 +90,7 @@ public class StellarProtect extends JavaPlugin {
         this.trackManager = new TrackManager();
         this.blocksManager = new BlocksManager();
         this.hooksManager = new HooksManager();
-        this.economyManager = new EconomyManager();
+        this.vaultHook = new VaultHook();
         this.protectDatabase = new ProtectDatabase();
         this.inspectHandler = new InspectHandler();
         this.eventLogicHandler = new EventVersionHandler();
@@ -146,7 +147,7 @@ public class StellarProtect extends JavaPlugin {
         this.itemsManager.load();
         this.blocksManager.load();
         this.cacheManager.load();
-        this.economyManager.load();
+        this.vaultHook.load();
         this.trackManager.load();
     }
 
