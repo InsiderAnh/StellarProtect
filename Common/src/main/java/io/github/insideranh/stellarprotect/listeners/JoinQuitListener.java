@@ -5,7 +5,6 @@ import io.github.insideranh.stellarprotect.cache.LoggerCache;
 import io.github.insideranh.stellarprotect.cache.PlayerCache;
 import io.github.insideranh.stellarprotect.data.PlayerProtect;
 import io.github.insideranh.stellarprotect.database.entries.players.PlayerSessionEntry;
-import io.github.insideranh.stellarprotect.utils.StringCleanerUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -29,9 +28,7 @@ public class JoinQuitListener implements Listener {
 
                 PlayerCache.cacheName(playerProtect.getPlayerId(), player.getName());
 
-                if (!plugin.getConfigManager().isEconomyDisabled() && plugin.getEconomy() != null) {
-                    playerProtect.setLastEconomyBalance(StringCleanerUtils.limitTo2Decimals(plugin.getEconomy().getBalance(player)));
-                }
+                plugin.getVaultHook().joinPlayer(player, playerProtect);
             }
 
             if (!plugin.getConfigManager().isCheckUpdates()) return;

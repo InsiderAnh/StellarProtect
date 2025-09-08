@@ -14,7 +14,6 @@ import io.github.insideranh.stellarprotect.bstats.MetricsLite;
 import io.github.insideranh.stellarprotect.commands.StellarProtectCMD;
 import io.github.insideranh.stellarprotect.database.ProtectDatabase;
 import io.github.insideranh.stellarprotect.enums.MinecraftVersion;
-import io.github.insideranh.stellarprotect.hooks.VaultHook;
 import io.github.insideranh.stellarprotect.hooks.ShopGUIHookListener;
 import io.github.insideranh.stellarprotect.hooks.StellarTaskHook;
 import io.github.insideranh.stellarprotect.hooks.XPlayerKitsListener;
@@ -23,6 +22,8 @@ import io.github.insideranh.stellarprotect.hooks.nexo.NexoHook;
 import io.github.insideranh.stellarprotect.hooks.nexo.NexoHookListener;
 import io.github.insideranh.stellarprotect.hooks.tasks.BukkitTaskHook;
 import io.github.insideranh.stellarprotect.hooks.tasks.FoliaTaskHook;
+import io.github.insideranh.stellarprotect.hooks.vault.DefaultVaultHook;
+import io.github.insideranh.stellarprotect.hooks.vault.VaultHook;
 import io.github.insideranh.stellarprotect.inspect.InspectHandler;
 import io.github.insideranh.stellarprotect.listeners.*;
 import io.github.insideranh.stellarprotect.listeners.blocks.CropGrowListener;
@@ -34,11 +35,9 @@ import io.github.insideranh.stellarprotect.trackers.ChestTransactionTracker;
 import io.github.insideranh.stellarprotect.utils.UpdateChecker;
 import lombok.Getter;
 import lombok.SneakyThrows;
-import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.event.Listener;
-import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Arrays;
@@ -58,7 +57,6 @@ public class StellarProtect extends JavaPlugin {
     private final ItemsManager itemsManager;
     private final RestoreManager restoreManager;
     private final TrackManager trackManager;
-    private final VaultHook vaultHook;
     private final BlocksManager blocksManager;
     private final ProtectDatabase protectDatabase;
     private final HooksManager hooksManager;
@@ -66,6 +64,7 @@ public class StellarProtect extends JavaPlugin {
     private final EventLogicHandler eventLogicHandler;
     private final DecorativeLogicHandler decorativeLogicHandler;
     private NexoDefaultHook nexoHook = new NexoDefaultHook();
+    private DefaultVaultHook vaultHook = new DefaultVaultHook();
     private ChestTransactionTracker chestTransactionTracker;
     private ListeningExecutorService executor;
     private ListeningExecutorService lookupExecutor;
@@ -77,7 +76,6 @@ public class StellarProtect extends JavaPlugin {
     private String completer;
     private MetricsLite bStats;
     private UpdateChecker updateChecker;
-    private Economy economy;
     private boolean isFolia;
 
     public StellarProtect() {
@@ -90,7 +88,6 @@ public class StellarProtect extends JavaPlugin {
         this.trackManager = new TrackManager();
         this.blocksManager = new BlocksManager();
         this.hooksManager = new HooksManager();
-        this.vaultHook = new VaultHook();
         this.protectDatabase = new ProtectDatabase();
         this.inspectHandler = new InspectHandler();
         this.eventLogicHandler = new EventVersionHandler();
@@ -114,7 +111,10 @@ public class StellarProtect extends JavaPlugin {
 
         this.protectDatabase.connect();
 
-        setupEconomy();
+        if (getServer().getPluginManager().isPluginEnabled("Vault")) {
+            this.vaultHook = new VaultHook();
+            this.vaultHook.setupEconomy();
+        }
         reload();
 
         this.executor = MoreExecutors.listeningDecorator(new ThreadPoolExecutor(configManager.getMaxCores(), configManager.getMaxCores(), 0L, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<>(1024)));
@@ -273,19 +273,6 @@ public class StellarProtect extends JavaPlugin {
             return new FoliaTaskHook(runnable);
         }
         return new BukkitTaskHook(runnable);
-    }
-
-    private void setupEconomy() {
-        if (Bukkit.getPluginManager().getPlugin("Vault") == null) {
-            return;
-        }
-
-        RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager().getRegistration(Economy.class);
-        if (economyProvider == null) {
-            return;
-        }
-
-        economy = economyProvider.getProvider();
     }
 
 }

@@ -27,6 +27,7 @@ public class ProtectNMS_v1_19_R4 extends ProtectNMS {
 
     @Override
     public int modelDataHashCode(ItemMeta itemMeta) {
+        if (itemMeta == null || !itemMeta.hasCustomModelData()) return 0;
         return itemMeta.getCustomModelData();
     }
 
