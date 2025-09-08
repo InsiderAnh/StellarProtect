@@ -33,5 +33,5 @@ public class BlockRestore_v1_21_R8 extends BlockRestore {
     public void previewRemove(Player player, Location location) {
         player.sendBlockChange(location, Material.AIR.createBlockData());
     }
-    
+
 }

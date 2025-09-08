@@ -6,6 +6,8 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.BrewEvent;
 import org.bukkit.event.world.PortalCreateEvent;
+import org.spigotmc.event.entity.EntityDismountEvent;
+import org.spigotmc.event.entity.EntityMountEvent;
 
 import java.util.Arrays;
 
@@ -25,6 +27,16 @@ public class BlockListener_v1_8_R3 implements Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onBrewEvent(BrewEvent event) {
         this.eventLogicHandler.onBrewEvent(event.getContents().getIngredient(), null, Arrays.asList(event.getContents().getContents()));
+    }
+
+    @EventHandler
+    public void onMount(EntityMountEvent event) {
+        this.eventLogicHandler.onMount(event.getMount(), event.getEntity());
+    }
+
+    @EventHandler
+    public void onDismount(EntityDismountEvent event) {
+        this.eventLogicHandler.onDismount(event.getDismounted(), event.getEntity());
     }
 
 }

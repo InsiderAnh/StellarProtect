@@ -4,7 +4,6 @@ import io.github.insideranh.stellarprotect.cache.LoggerCache;
 import io.github.insideranh.stellarprotect.data.PlayerProtect;
 import io.github.insideranh.stellarprotect.database.entries.players.PlayerHangingEntry;
 import io.github.insideranh.stellarprotect.database.entries.players.PlayerKillLogEntry;
-import io.github.insideranh.stellarprotect.database.entries.players.PlayerMountEntry;
 import io.github.insideranh.stellarprotect.database.entries.players.PlayerShootEntry;
 import io.github.insideranh.stellarprotect.enums.ActionType;
 import org.bukkit.entity.LivingEntity;
@@ -16,8 +15,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
-import org.spigotmc.event.entity.EntityDismountEvent;
-import org.spigotmc.event.entity.EntityMountEvent;
 
 public class EntityListener implements Listener {
 
@@ -67,34 +64,5 @@ public class EntityListener implements Listener {
         LoggerCache.addLog(hangingEntry);
     }
 
-    @EventHandler
-    public void onMount(EntityMountEvent event) {
-        if (!(event.getMount() instanceof Player)) return;
-
-        Player player = (Player) event.getMount();
-        if (ActionType.MOUNT.shouldSkipLog(player.getWorld().getName(), event.getEntity().getType().name())) return;
-
-        PlayerProtect playerProtect = PlayerProtect.getPlayer(player);
-        if (playerProtect == null) return;
-
-        PlayerMountEntry mountEntry = new PlayerMountEntry(playerProtect.getPlayerId(), player.getLocation(), event.getEntity(), true);
-
-        LoggerCache.addLog(mountEntry);
-    }
-
-    @EventHandler
-    public void onDismount(EntityDismountEvent event) {
-        if (!(event.getDismounted() instanceof Player)) return;
-
-        Player player = (Player) event.getDismounted();
-        if (ActionType.MOUNT.shouldSkipLog(player.getWorld().getName(), event.getEntity().getType().name())) return;
-
-        PlayerProtect playerProtect = PlayerProtect.getPlayer(player);
-        if (playerProtect == null) return;
-
-        PlayerMountEntry mountEntry = new PlayerMountEntry(playerProtect.getPlayerId(), player.getLocation(), event.getEntity(), false);
-
-        LoggerCache.addLog(mountEntry);
-    }
 
 }

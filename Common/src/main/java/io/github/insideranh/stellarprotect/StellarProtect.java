@@ -37,6 +37,7 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -258,6 +259,14 @@ public class StellarProtect extends JavaPlugin {
             loadNMS();
         }
         return Class.forName("io.github.insideranh.stellarprotect.nms." + completer + ".DataBlock_" + completer).asSubclass(DataBlock.class).getConstructor(Block.class).newInstance(block);
+    }
+
+    @SneakyThrows
+    public DataBlock getDataBlock(BlockState blockState) {
+        if (completer == null) {
+            loadNMS();
+        }
+        return Class.forName("io.github.insideranh.stellarprotect.nms." + completer + ".DataBlock_" + completer).asSubclass(DataBlock.class).getConstructor(BlockState.class).newInstance(blockState);
     }
 
     @SneakyThrows

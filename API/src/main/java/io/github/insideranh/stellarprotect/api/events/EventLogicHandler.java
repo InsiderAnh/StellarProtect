@@ -17,4 +17,8 @@ public interface EventLogicHandler {
 
     void onTotemEvent(Entity entity, String hand);
 
+    void onMount(Entity mount, Entity entity);
+
+    void onDismount(Entity dismounted, Entity entity);
+
 }

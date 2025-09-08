@@ -6,12 +6,15 @@ import io.github.insideranh.stellarprotect.database.entries.LogEntry;
 import io.github.insideranh.stellarprotect.database.entries.players.PlayerBlockLogEntry;
 import io.github.insideranh.stellarprotect.enums.ActionType;
 import io.github.insideranh.stellarprotect.managers.ConfigManager;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockFormEvent;
 import org.bukkit.event.block.BlockFromToEvent;
 
 public class BlockFormListener implements Listener {
@@ -19,6 +22,23 @@ public class BlockFormListener implements Listener {
     private final StellarProtect plugin = StellarProtect.getInstance();
     private final ConfigManager configManager = plugin.getConfigManager();
     private final int airOrdinal = Material.AIR.ordinal();
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onBlockForm(BlockFormEvent event) {
+        Block oldBlock = event.getBlock();
+        BlockState newState = event.getNewState();
+        Material newType = newState.getType();
+
+        try {
+            if (newType.equals(Material.OBSIDIAN) || newType.equals(Material.COBBLESTONE) || newType.name().endsWith("_CONCRETE_POWDER")) {
+                PlayerBlockLogEntry blockBreakEntry = new PlayerBlockLogEntry(-2L, newState, ActionType.BLOCK_PLACE);
+                Bukkit.broadcastMessage("BlockFormEvent: " + newType.name() + " old: " + oldBlock.getType().name() + " newStateBlock " + newState.getBlock().getType().name() + " newStateData " + newState.getBlockData().getAsString());
+                LoggerCache.addLog(blockBreakEntry);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onBlockFormTo(BlockFromToEvent event) {

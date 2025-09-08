@@ -5,6 +5,8 @@ import org.bukkit.block.BlockState;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDismountEvent;
+import org.bukkit.event.entity.EntityMountEvent;
 import org.bukkit.event.entity.EntityResurrectEvent;
 import org.bukkit.event.inventory.BrewEvent;
 import org.bukkit.event.inventory.SmithItemEvent;
@@ -39,6 +41,16 @@ public class BlockListener_v1_21_R3 implements Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onTotemEvent(EntityResurrectEvent event) {
         this.eventLogicHandler.onTotemEvent(event.getEntity(), event.getHand() == null ? "" : event.getHand().name());
+    }
+
+    @EventHandler
+    public void onMount(EntityMountEvent event) {
+        this.eventLogicHandler.onMount(event.getMount(), event.getEntity());
+    }
+
+    @EventHandler
+    public void onDismount(EntityDismountEvent event) {
+        this.eventLogicHandler.onDismount(event.getDismounted(), event.getEntity());
     }
 
 }

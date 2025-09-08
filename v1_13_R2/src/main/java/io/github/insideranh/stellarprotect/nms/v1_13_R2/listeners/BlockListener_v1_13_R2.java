@@ -7,6 +7,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityResurrectEvent;
 import org.bukkit.event.inventory.BrewEvent;
 import org.bukkit.event.world.PortalCreateEvent;
+import org.spigotmc.event.entity.EntityDismountEvent;
+import org.spigotmc.event.entity.EntityMountEvent;
 
 import java.util.Arrays;
 
@@ -31,6 +33,16 @@ public class BlockListener_v1_13_R2 implements Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onTotemEvent(EntityResurrectEvent event) {
         this.eventLogicHandler.onTotemEvent(event.getEntity(), event.getEntity().getType().name());
+    }
+
+    @EventHandler
+    public void onMount(EntityMountEvent event) {
+        this.eventLogicHandler.onMount(event.getMount(), event.getEntity());
+    }
+
+    @EventHandler
+    public void onDismount(EntityDismountEvent event) {
+        this.eventLogicHandler.onDismount(event.getDismounted(), event.getEntity());
     }
 
 }

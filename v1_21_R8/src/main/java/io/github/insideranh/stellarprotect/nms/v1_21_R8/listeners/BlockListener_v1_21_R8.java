@@ -7,6 +7,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDismountEvent;
+import org.bukkit.event.entity.EntityMountEvent;
 import org.bukkit.event.entity.EntityResurrectEvent;
 import org.bukkit.event.inventory.BrewEvent;
 import org.bukkit.event.inventory.SmithItemEvent;
@@ -66,6 +68,16 @@ public class BlockListener_v1_21_R8 implements Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onRaid(RaidFinishEvent event) {
         Raid raid = event.getRaid();
+    }
+
+    @EventHandler
+    public void onMount(EntityMountEvent event) {
+        this.eventLogicHandler.onMount(event.getMount(), event.getEntity());
+    }
+
+    @EventHandler
+    public void onDismount(EntityDismountEvent event) {
+        this.eventLogicHandler.onDismount(event.getDismounted(), event.getEntity());
     }
 
 }

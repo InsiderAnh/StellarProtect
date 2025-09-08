@@ -7,6 +7,7 @@ import io.github.insideranh.stellarprotect.data.PlayerProtect;
 import io.github.insideranh.stellarprotect.database.entries.entity.EntityResurrectEntry;
 import io.github.insideranh.stellarprotect.database.entries.players.PlayerBlockLogEntry;
 import io.github.insideranh.stellarprotect.database.entries.players.PlayerItemLogEntry;
+import io.github.insideranh.stellarprotect.database.entries.players.PlayerMountEntry;
 import io.github.insideranh.stellarprotect.enums.ActionType;
 import io.github.insideranh.stellarprotect.items.ItemReference;
 import io.github.insideranh.stellarprotect.utils.PlayerUtils;
@@ -60,6 +61,36 @@ public class EventVersionHandler implements EventLogicHandler {
 
         long playerId = PlayerUtils.getPlayerOrEntityId(entity.getType().name());
         LoggerCache.addLog(new EntityResurrectEntry(playerId, entity.getLocation(), hand, ActionType.TOTEM));
+    }
+
+    @Override
+    public void onMount(Entity mount, Entity entity) {
+        if (!(mount instanceof Player)) return;
+
+        Player player = (Player) mount;
+        if (ActionType.MOUNT.shouldSkipLog(player.getWorld().getName(), entity.getType().name())) return;
+
+        PlayerProtect playerProtect = PlayerProtect.getPlayer(player);
+        if (playerProtect == null) return;
+
+        PlayerMountEntry mountEntry = new PlayerMountEntry(playerProtect.getPlayerId(), player.getLocation(), entity, true);
+
+        LoggerCache.addLog(mountEntry);
+    }
+
+    @Override
+    public void onDismount(Entity dismounted, Entity entity) {
+        if (!(dismounted instanceof Player)) return;
+
+        Player player = (Player) dismounted;
+        if (ActionType.MOUNT.shouldSkipLog(player.getWorld().getName(), entity.getType().name())) return;
+
+        PlayerProtect playerProtect = PlayerProtect.getPlayer(player);
+        if (playerProtect == null) return;
+
+        PlayerMountEntry mountEntry = new PlayerMountEntry(playerProtect.getPlayerId(), player.getLocation(), entity, false);
+
+        LoggerCache.addLog(mountEntry);
     }
 
 }

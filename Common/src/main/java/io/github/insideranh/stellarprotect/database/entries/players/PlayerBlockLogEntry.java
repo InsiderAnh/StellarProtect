@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 import org.bson.Document;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 
 import java.sql.ResultSet;
 
@@ -37,6 +38,12 @@ public class PlayerBlockLogEntry extends LogEntry {
         if (jsonObject.has("nbId")) {
             this.nexoBlockId = jsonObject.get("nbId").getAsString();
         }
+    }
+
+    public PlayerBlockLogEntry(long playerId, BlockState block, ActionType actionType) {
+        super(playerId, actionType.getId(), block.getLocation(), System.currentTimeMillis());
+        BlockTemplate itemTemplate = blocksManager.getBlockTemplate(block.getBlock());
+        this.blockId = itemTemplate.getId();
     }
 
     public PlayerBlockLogEntry(long playerId, Block block, ActionType actionType) {

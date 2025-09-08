@@ -4,6 +4,7 @@ import io.github.insideranh.stellarprotect.blocks.DataBlock;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 import org.bukkit.block.data.BlockData;
 
 public class DataBlock_v1_21_R2 implements DataBlock {
@@ -18,6 +19,11 @@ public class DataBlock_v1_21_R2 implements DataBlock {
     }
 
     public DataBlock_v1_21_R2(Block block) {
+        this.blockData = block.getBlockData();
+        this.blockDataString = blockData.getAsString();
+    }
+
+    public DataBlock_v1_21_R2(BlockState block) {
         this.blockData = block.getBlockData();
         this.blockDataString = blockData.getAsString();
     }
