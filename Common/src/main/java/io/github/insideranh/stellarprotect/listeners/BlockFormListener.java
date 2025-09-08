@@ -31,14 +31,14 @@ public class BlockFormListener implements Listener {
 
         boolean isOldBlockAir = oldMaterial.ordinal() == airOrdinal;
         if (!isOldBlockAir) {
-            PlayerBlockLogEntry blockBreakEntry = new PlayerBlockLogEntry(userId, oldBlock, ActionType.BLOCK_BREAK);
+            PlayerBlockLogEntry blockBreakEntry = new PlayerBlockLogEntry(userId, oldBlock, ActionType.BLOCK_PLACE);
             LoggerCache.addLog(blockBreakEntry);
         }
 
         boolean isNewBlockAir = newBlock.getType().ordinal() == airOrdinal;
 
         if (!isNewBlockAir) {
-            PlayerBlockLogEntry blockBreakEntry = new PlayerBlockLogEntry(userId, newBlock, ActionType.BLOCK_BREAK);
+            PlayerBlockLogEntry blockBreakEntry = new PlayerBlockLogEntry(userId, oldBlock, ActionType.BLOCK_BREAK);
             LoggerCache.addLog(blockBreakEntry);
         }
     }
