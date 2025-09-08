@@ -6,6 +6,7 @@ import io.github.insideranh.stellarprotect.restore.BlockRestore;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 
 public class BlockRestore_v1_12_R2 extends BlockRestore {
 
@@ -27,6 +28,22 @@ public class BlockRestore_v1_12_R2 extends BlockRestore {
         } catch (NumberFormatException e) {
             e.printStackTrace();
         }
+    }
+
+    @SuppressWarnings("deprecation")
+    @Override
+    public void preview(Player player, Gson gson, Location location) {
+        JsonObject jsonObject = gson.fromJson(getData(), JsonObject.class);
+        Material material = Material.getMaterial(jsonObject.get("m").getAsString());
+        byte blockData = jsonObject.get("d").getAsByte();
+
+        player.sendBlockChange(location, material, blockData);
+    }
+
+    @SuppressWarnings("deprecation")
+    @Override
+    public void previewRemove(Player player, Location location) {
+        player.sendBlockChange(location, Material.AIR, (byte) 0);
     }
 
 }

@@ -4,8 +4,10 @@ import com.google.gson.Gson;
 import io.github.insideranh.stellarprotect.restore.BlockRestore;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.entity.Player;
 
 public class BlockRestore_v1_16_R5 extends BlockRestore {
 
@@ -19,6 +21,17 @@ public class BlockRestore_v1_16_R5 extends BlockRestore {
 
         Block block = location.getBlock();
         block.setBlockData(blockData);
+    }
+
+    @Override
+    public void preview(Player player, Gson gson, Location location) {
+        BlockData blockData = Bukkit.createBlockData(getData());
+        player.sendBlockChange(location, blockData);
+    }
+
+    @Override
+    public void previewRemove(Player player, Location location) {
+        player.sendBlockChange(location, Material.AIR.createBlockData());
     }
 
 }

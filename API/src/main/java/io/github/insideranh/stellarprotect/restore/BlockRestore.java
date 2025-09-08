@@ -5,6 +5,7 @@ import lombok.Getter;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 
 @Getter
 public abstract class BlockRestore {
@@ -16,6 +17,10 @@ public abstract class BlockRestore {
     }
 
     public abstract void reset(Gson gson, Location location);
+
+    public abstract void preview(Player player, Gson gson, Location location);
+
+    public abstract void previewRemove(Player player, Location location);
 
     public void remove(Location location) {
         Block block = location.getBlock();

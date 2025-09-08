@@ -16,6 +16,13 @@ messages:
   debugExtras: "&aDebug extras mode set to &7<state>"
   specifyRadius: "&cYou don't have radius specified, using default radius (10)."
 
+  rollback:
+    preview: "&aPreview: §e<progress>% §7(§e<now>/§e<total>§7) §eUse §e/restore confirm §eto apply the changes."
+    progress: "&bProgress: §e<progress>% §7(§e<now>/§e<total>§7)"
+    error: "&cError section <section>: <error>"
+    success: "&aRollback completed! §e<current>§a logs processed."
+    start: "&aStarting rollback of §e<total>§a logs in batches of §e<batch>§a..."
+
   help:
     headerTop: '&7&m+---------------------------------------+'
     title: '&8[!] &cStellarProtect &8[!]'

@@ -7,16 +7,15 @@ import io.github.insideranh.stellarprotect.arguments.TimeArg;
 import io.github.insideranh.stellarprotect.cache.keys.LocationCache;
 import io.github.insideranh.stellarprotect.commands.StellarArgument;
 import io.github.insideranh.stellarprotect.data.PlayerProtect;
+import io.github.insideranh.stellarprotect.data.RestoreSession;
 import io.github.insideranh.stellarprotect.database.entries.LogEntry;
 import io.github.insideranh.stellarprotect.enums.ActionType;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class RestoreArgument extends StellarArgument {
 
@@ -32,6 +31,18 @@ public class RestoreArgument extends StellarArgument {
         PlayerProtect playerProtect = PlayerProtect.getPlayer(player);
         if (playerProtect == null) return;
 
+        if (arguments.length == 1) {
+            String currentArg = arguments[0];
+            if (currentArg.equals("confirm")) {
+                TimeArg timeArg = playerProtect.getRestoreSession().getTimeArg();
+                RadiusArg radiusArg = playerProtect.getRestoreSession().getRadiusArg();
+                List<ActionType> actionTypes = playerProtect.getRestoreSession().getActionTypes().stream().map(ActionType::getById).collect(Collectors.toList());
+
+                executeRestore(player, playerProtect, true, timeArg, radiusArg, actionTypes);
+                return;
+            }
+        }
+
         TimeArg timeArg = ArgumentsParser.parseTime(arguments);
         RadiusArg radiusArg = ArgumentsParser.parseRadiusOrNull(arguments, player.getLocation());
         if (radiusArg == null) {
@@ -40,7 +51,7 @@ public class RestoreArgument extends StellarArgument {
         }
         List<ActionType> actionTypes = Arrays.asList(ActionType.BLOCK_BREAK, ActionType.BLOCK_PLACE, ActionType.INVENTORY_TRANSACTION);
 
-        executeRestore(player, sender, timeArg, radiusArg, actionTypes);
+        executeRestore(player, playerProtect, false, timeArg, radiusArg, actionTypes);
     }
 
     @Override
@@ -55,12 +66,16 @@ public class RestoreArgument extends StellarArgument {
             if (currentArg.startsWith("r:") || currentArg.startsWith("radius:")) {
                 return Arrays.asList("r:10", "r:20", "r:30", "r:40", "r:50");
             }
+
+            if (currentArg.contains("confirm")) {
+                return Collections.singletonList("confirm");
+            }
         }
 
-        return Arrays.asList("t:1h", "r:10");
+        return Arrays.asList("t:1h", "r:10", "confirm");
     }
 
-    public void executeRestore(Player player, CommandSender sender, TimeArg timeArg, RadiusArg radiusArg, List<ActionType> actionTypes) {
+    public void executeRestore(Player player, PlayerProtect playerProtect, boolean confirm, TimeArg timeArg, RadiusArg radiusArg, List<ActionType> actionTypes) {
         final int BATCH_SIZE = 1000;
         final int DELAY_TICKS = 2;
 
@@ -70,10 +85,13 @@ public class RestoreArgument extends StellarArgument {
                 return;
             }
 
-            player.sendMessage("§aIniciando rollback de §e" + totalLogs + "§a logs en lotes de §e" + BATCH_SIZE + "§a...");
+            player.sendMessage(plugin.getLangManager().get("messages.rollback.start").replace("<total>", String.valueOf(totalLogs)).replace("<batch>", String.valueOf(BATCH_SIZE)));
+            boolean preview = playerProtect.getRestoreSession() == null || !confirm;
+            if (preview) {
+                playerProtect.setRestoreSession(new RestoreSession(timeArg, radiusArg, actionTypes.stream().map(ActionType::getId).collect(Collectors.toList())));
+            }
 
-            processBatchRestore(sender, timeArg, radiusArg, actionTypes, 0, totalLogs, BATCH_SIZE, DELAY_TICKS);
-
+            processBatchRestore(player, preview, timeArg, radiusArg, actionTypes, 0, totalLogs, BATCH_SIZE, DELAY_TICKS);
         }).exceptionally(error -> {
             plugin.getLangManager().sendMessage(player, "messages.error");
             error.printStackTrace();
@@ -81,9 +99,9 @@ public class RestoreArgument extends StellarArgument {
         });
     }
 
-    private void processBatchRestore(CommandSender sender, TimeArg timeArg, RadiusArg radiusArg, List<ActionType> actionTypes, int currentSkip, long totalLogs, int batchSize, int delayTicks) {
+    private void processBatchRestore(Player player, boolean preview, TimeArg timeArg, RadiusArg radiusArg, List<ActionType> actionTypes, int currentSkip, long totalLogs, int batchSize, int delayTicks) {
         if (currentSkip >= totalLogs) {
-            sender.sendMessage("§a¡Rollback completado! Se procesaron §e" + totalLogs + "§a logs.");
+            player.sendMessage(plugin.getLangManager().get("messages.rollback.success").replace("<current>", String.valueOf(currentSkip)).replace("<total>", String.valueOf(totalLogs)));
             return;
         }
 
@@ -94,22 +112,28 @@ public class RestoreArgument extends StellarArgument {
 
                 if (processedInBatch > 0) {
                     plugin.getStellarTaskHook(() -> {
-                        plugin.getRestoreManager().rollback(sender, groupedLogs);
+                        if (preview) {
+                            plugin.getRestoreManager().preview(player, groupedLogs);
+                        } else {
+                            plugin.getRestoreManager().rollback(player, groupedLogs);
+                        }
 
                         int totalProcessed = currentSkip + processedInBatch;
                         double progress = (totalProcessed * 100.0) / totalLogs;
-                        sender.sendMessage(String.format("§bProgreso: §e%.1f%% §7(§e%d§7/§e%d§7)",
-                            progress, totalProcessed, totalLogs));
+                        if (preview) {
+                            player.sendMessage(plugin.getLangManager().get("messages.rollback.preview").replace("<progress>", String.valueOf(Math.round(progress))).replace("<now>", String.valueOf(totalProcessed)).replace("<total>", String.valueOf(totalLogs)));
+                        } else {
+                            player.sendMessage(plugin.getLangManager().get("messages.rollback.progress").replace("<progress>", String.valueOf(Math.round(progress))).replace("<now>", String.valueOf(totalProcessed)).replace("<total>", String.valueOf(totalLogs)));
+                        }
 
-                        plugin.getStellarTaskHook(() -> processBatchRestore(sender, timeArg, radiusArg, actionTypes,
-                            currentSkip + batchSize, totalLogs, batchSize, delayTicks)).runTask(delayTicks);
+                        plugin.getStellarTaskHook(() -> processBatchRestore(player, preview, timeArg, radiusArg, actionTypes, currentSkip + batchSize, totalLogs, batchSize, delayTicks)).runTask(delayTicks);
                     }).runTask();
                 } else {
-                    sender.sendMessage("§a¡Rollback completado! Se procesaron §e" + currentSkip + "§a logs.");
+                    player.sendMessage(plugin.getLangManager().get("messages.rollback.success").replace("<current>", String.valueOf(currentSkip)).replace("<total>", String.valueOf(totalLogs)));
                 }
             })
             .exceptionally(error -> {
-                sender.sendMessage("§cError en lote " + (currentSkip / batchSize + 1) + ": " + error.getMessage());
+                player.sendMessage(plugin.getLangManager().get("messages.rollback.error").replace("<section>", String.valueOf(currentSkip / batchSize + 1)).replace("<error>", error.getMessage()));
                 error.printStackTrace();
                 return null;
             });
