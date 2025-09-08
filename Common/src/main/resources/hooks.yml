@@ -5,3 +5,5 @@ hooks:
     enabled: true
   xplayerkits:
     enabled: true
+  itemsAdder:
+    enabled: true
