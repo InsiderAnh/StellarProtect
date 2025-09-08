@@ -5,6 +5,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -41,5 +42,7 @@ public abstract class ProtectNMS {
     public abstract ItemStack getItemInHand(Player player);
 
     public abstract int getHashBlockData(Block block);
+
+    public abstract int getHashBlockState(BlockState block);
 
 }

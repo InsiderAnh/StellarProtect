@@ -49,7 +49,7 @@ public class RestoreArgument extends StellarArgument {
             radiusArg = new RadiusArg(player.getLocation(), 10);
             plugin.getLangManager().sendMessage(player, "messages.specifyRadius");
         }
-        List<ActionType> actionTypes = Arrays.asList(ActionType.BLOCK_BREAK, ActionType.BLOCK_PLACE, ActionType.INVENTORY_TRANSACTION);
+        List<ActionType> actionTypes = Arrays.asList(ActionType.BLOCK_BREAK, ActionType.BLOCK_PLACE, ActionType.BUCKET_EMPTY, ActionType.BUCKET_FILL, ActionType.INVENTORY_TRANSACTION);
 
         executeRestore(player, playerProtect, false, timeArg, radiusArg, actionTypes);
     }

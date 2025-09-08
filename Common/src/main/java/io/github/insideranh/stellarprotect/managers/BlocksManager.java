@@ -6,6 +6,7 @@ import io.github.insideranh.stellarprotect.blocks.DataBlock;
 import io.github.insideranh.stellarprotect.maps.IntObjectMap;
 import lombok.Getter;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -44,6 +45,16 @@ public class BlocksManager {
         if (id != null) {
             return idToBlockTemplate.get(id);
         }
+        return createBlockTemplate(dataBlock, hashCode);
+    }
+
+    public BlockTemplate getBlockTemplate(BlockState block) {
+        int hashCode = plugin.getProtectNMS().getHashBlockState(block);
+        Integer id = blockHashToId.get(hashCode);
+        if (id != null) {
+            return idToBlockTemplate.get(id);
+        }
+        DataBlock dataBlock = plugin.getDataBlock(block);
         return createBlockTemplate(dataBlock, hashCode);
     }
 

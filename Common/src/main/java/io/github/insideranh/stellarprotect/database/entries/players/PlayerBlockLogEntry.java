@@ -9,6 +9,7 @@ import io.github.insideranh.stellarprotect.managers.BlocksManager;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import org.bson.Document;
+import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 
@@ -40,9 +41,15 @@ public class PlayerBlockLogEntry extends LogEntry {
         }
     }
 
-    public PlayerBlockLogEntry(long playerId, BlockState block, ActionType actionType) {
-        super(playerId, actionType.getId(), block.getLocation(), System.currentTimeMillis());
-        BlockTemplate itemTemplate = blocksManager.getBlockTemplate(block.getBlock());
+    public PlayerBlockLogEntry(long playerId, BlockState blockState, ActionType actionType) {
+        super(playerId, actionType.getId(), blockState.getLocation(), System.currentTimeMillis());
+        BlockTemplate itemTemplate = blocksManager.getBlockTemplate(blockState);
+        this.blockId = itemTemplate.getId();
+    }
+
+    public PlayerBlockLogEntry(long playerId, Location location, Block block, ActionType actionType) {
+        super(playerId, actionType.getId(), location, System.currentTimeMillis());
+        BlockTemplate itemTemplate = blocksManager.getBlockTemplate(block);
         this.blockId = itemTemplate.getId();
     }
 

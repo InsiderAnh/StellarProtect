@@ -20,7 +20,7 @@ messages:
     preview: "&aPreview: §e<progress>% §7(§e<now>/§e<total>§7) §eUse §e/restore confirm §eto apply the changes."
     progress: "&bProgress: §e<progress>% §7(§e<now>/§e<total>§7)"
     error: "&cError section <section>: <error>"
-    success: "&aRollback completed! §e<current>§a logs processed."
+    success: "&aRollback completed! §e<total>§a logs processed."
     start: "&aStarting rollback of §e<total>§a logs in batches of §e<batch>§a..."
 
   help:

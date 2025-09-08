@@ -6,7 +6,6 @@ import io.github.insideranh.stellarprotect.database.entries.LogEntry;
 import io.github.insideranh.stellarprotect.database.entries.players.PlayerBlockLogEntry;
 import io.github.insideranh.stellarprotect.enums.ActionType;
 import io.github.insideranh.stellarprotect.managers.ConfigManager;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -25,14 +24,12 @@ public class BlockFormListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onBlockForm(BlockFormEvent event) {
-        Block oldBlock = event.getBlock();
         BlockState newState = event.getNewState();
         Material newType = newState.getType();
 
         try {
-            if (newType.equals(Material.OBSIDIAN) || newType.equals(Material.COBBLESTONE) || newType.name().endsWith("_CONCRETE_POWDER")) {
+            if (newType.equals(Material.OBSIDIAN) || newType.equals(Material.COBBLESTONE) || newType.equals(Material.STONE) || newType.name().endsWith("_CONCRETE_POWDER")) {
                 PlayerBlockLogEntry blockBreakEntry = new PlayerBlockLogEntry(-2L, newState, ActionType.BLOCK_PLACE);
-                Bukkit.broadcastMessage("BlockFormEvent: " + newType.name() + " old: " + oldBlock.getType().name() + " newStateBlock " + newState.getBlock().getType().name() + " newStateData " + newState.getBlockData().getAsString());
                 LoggerCache.addLog(blockBreakEntry);
             }
         } catch (Exception e) {
@@ -46,19 +43,20 @@ public class BlockFormListener implements Listener {
         Block newBlock = event.getToBlock();
 
         Material oldMaterial = oldBlock.getType();
+        Material newMaterial = newBlock.getType();
         String oldBlockName = oldMaterial.name();
         long userId = getEntityId(oldBlockName, oldBlock.getLocation());
 
         boolean isOldBlockAir = oldMaterial.ordinal() == airOrdinal;
         if (!isOldBlockAir) {
-            PlayerBlockLogEntry blockBreakEntry = new PlayerBlockLogEntry(userId, oldBlock, ActionType.BLOCK_PLACE);
+            PlayerBlockLogEntry blockBreakEntry = new PlayerBlockLogEntry(userId, newBlock.getLocation(), oldBlock, ActionType.BLOCK_PLACE);
             LoggerCache.addLog(blockBreakEntry);
         }
 
-        boolean isNewBlockAir = newBlock.getType().ordinal() == airOrdinal;
+        boolean isNewBlockAir = newMaterial.ordinal() == airOrdinal;
 
         if (!isNewBlockAir) {
-            PlayerBlockLogEntry blockBreakEntry = new PlayerBlockLogEntry(userId, oldBlock, ActionType.BLOCK_BREAK);
+            PlayerBlockLogEntry blockBreakEntry = new PlayerBlockLogEntry(userId, newBlock, ActionType.BLOCK_BREAK);
             LoggerCache.addLog(blockBreakEntry);
         }
     }

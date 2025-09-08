@@ -46,6 +46,15 @@ public class ProtectNMS_v1_12_R2 extends ProtectNMS {
 
     @SuppressWarnings("deprecation")
     @Override
+    public int getHashBlockState(BlockState block) {
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("m", block.getType().name());
+        jsonObject.addProperty("d", block.getData().getData());
+        return jsonObject.toString().hashCode();
+    }
+
+    @SuppressWarnings("deprecation")
+    @Override
     public boolean canGrow(Block block) {
         BlockState state = block.getState();
         MaterialData data = state.getData();
