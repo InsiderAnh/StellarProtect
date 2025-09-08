@@ -6,7 +6,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class ItemsAdderDefaultHook {
 
-    public boolean isNexoListener(Block block, ItemStack itemStack) {
+    public boolean isItemsAdderListener(Block block, ItemStack itemStack) {
         return isItemsAdderBlock(block) || isItemsAdderFurniture(itemStack);
     }
 

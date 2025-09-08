@@ -17,6 +17,8 @@ import io.github.insideranh.stellarprotect.enums.MinecraftVersion;
 import io.github.insideranh.stellarprotect.hooks.ShopGUIHookListener;
 import io.github.insideranh.stellarprotect.hooks.StellarTaskHook;
 import io.github.insideranh.stellarprotect.hooks.XPlayerKitsListener;
+import io.github.insideranh.stellarprotect.hooks.itemsadder.ItemsAdderHook;
+import io.github.insideranh.stellarprotect.hooks.itemsadder.ItemsAdderHookListener;
 import io.github.insideranh.stellarprotect.hooks.nexo.NexoDefaultHook;
 import io.github.insideranh.stellarprotect.hooks.nexo.NexoHook;
 import io.github.insideranh.stellarprotect.hooks.nexo.NexoHookListener;
@@ -40,6 +42,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -64,7 +67,10 @@ public class StellarProtect extends JavaPlugin {
     private final InspectHandler inspectHandler;
     private final EventLogicHandler eventLogicHandler;
     private final DecorativeLogicHandler decorativeLogicHandler;
-    private NexoDefaultHook nexoHook = new NexoDefaultHook();
+    @Nullable
+    private NexoDefaultHook nexoHook;
+    @Nullable
+    private ItemsAdderHook itemsAdderHook;
     private DefaultVaultHook vaultHook = new DefaultVaultHook();
     private ChestTransactionTracker chestTransactionTracker;
     private ListeningExecutorService executor;
@@ -115,6 +121,8 @@ public class StellarProtect extends JavaPlugin {
         if (getServer().getPluginManager().isPluginEnabled("Vault")) {
             this.vaultHook = new VaultHook();
             this.vaultHook.setupEconomy();
+
+            getLogger().info("Vault detected, enabling Vault hook...");
         }
         reload();
 
@@ -168,6 +176,11 @@ public class StellarProtect extends JavaPlugin {
                 this.nexoHook = new NexoHook();
                 Bukkit.getPluginManager().registerEvents(new NexoHookListener(), this);
                 getLogger().info("Nexo detected, enabling Nexo hook...");
+            }
+            if (hooksManager.isItemsAdderHook() && getServer().getPluginManager().isPluginEnabled("ItemsAdder")) {
+                this.itemsAdderHook = new ItemsAdderHook();
+                Bukkit.getPluginManager().registerEvents(new ItemsAdderHookListener(), this);
+                getLogger().info("ItemsAdder detected, enabling ItemsAdder hook...");
             }
             if (hooksManager.isXPlayerKitsHook() && getServer().getPluginManager().isPluginEnabled("XPlayerKits")) {
                 Bukkit.getPluginManager().registerEvents(new XPlayerKitsListener(), this);

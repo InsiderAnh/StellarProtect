@@ -44,7 +44,10 @@ public class BlockListener implements Listener {
         PlayerProtect playerProtect = PlayerProtect.getPlayer(player);
         if (playerProtect == null) return;
 
-        if (plugin.getNexoHook().isNexoBlock(block)) {
+        if (plugin.getNexoHook() != null && plugin.getNexoHook().isNexoBlock(block)) {
+            return;
+        }
+        if (plugin.getItemsAdderHook() != null && plugin.getItemsAdderHook().isItemsAdderBlock(block)) {
             return;
         }
 
@@ -87,7 +90,10 @@ public class BlockListener implements Listener {
         PlayerProtect playerProtect = PlayerProtect.getPlayer(player);
         if (playerProtect == null) return;
 
-        if (plugin.getNexoHook().isNexoListener(block, plugin.getProtectNMS().getItemInHand(player))) {
+        if (plugin.getNexoHook() != null && plugin.getNexoHook().isNexoListener(block, plugin.getProtectNMS().getItemInHand(player))) {
+            return;
+        }
+        if (plugin.getItemsAdderHook() != null && plugin.getItemsAdderHook().isItemsAdderListener(block, plugin.getProtectNMS().getItemInHand(player))) {
             return;
         }
 

@@ -12,6 +12,7 @@ public class HooksManager {
 
     private boolean shopGuiHook;
     private boolean nexoHook;
+    private boolean itemsAdderHook;
     private boolean xPlayerKitsHook;
 
     public void load() {
@@ -23,6 +24,7 @@ public class HooksManager {
 
         shopGuiHook = config.getBoolean("hooks.shop_gui.enabled");
         nexoHook = config.getBoolean("hooks.nexo.enabled");
+        itemsAdderHook = config.getBoolean("hooks.itemsAdder.enabled");
         xPlayerKitsHook = config.getBoolean("hooks.xplayerkits.enabled");
     }
 

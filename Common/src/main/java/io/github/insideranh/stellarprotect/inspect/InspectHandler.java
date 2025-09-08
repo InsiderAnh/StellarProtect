@@ -69,7 +69,7 @@ public class InspectHandler {
 
         String messageKey = transaction.isAdded() ? "messages.actions.added_item" : "messages.actions.removed_item";
 
-        String materialOrNexoId = plugin.getNexoHook().getNexoItemStackId(item);
+        String materialOrNexoId = getMaterialOrNexoId(item);
         MinecraftItem minecraftItem = StringCleanerUtils.parseMinecraftData(materialOrNexoId);
 
         plugin.getLangManager().sendMessage(player, messageKey,
@@ -125,6 +125,16 @@ public class InspectHandler {
             itemsPerPage,
             (int) total
         );
+    }
+
+    private String getMaterialOrNexoId(ItemStack itemStack) {
+        if (plugin.getNexoHook() != null) {
+            return plugin.getNexoHook().getNexoItemStackId(itemStack);
+        }
+        if (plugin.getItemsAdderHook() != null) {
+            return plugin.getItemsAdderHook().getItemsAdderItemStackId(itemStack);
+        }
+        return itemStack.getType().name();
     }
 
     public interface ActionHandler {

@@ -37,7 +37,7 @@ public class TooltipUtils {
 
                 ItemTemplate itemTemplate = plugin.getItemsManager().getItemTemplate(key);
                 if (itemTemplate != null) {
-                    String materialOrNexoId = plugin.getNexoHook().getNexoItemStackId(itemTemplate.getBukkitItem());
+                    String materialOrNexoId = getMaterialOrNexoId(itemTemplate.getBukkitItem());
                     MinecraftItem minecraftItem = StringCleanerUtils.parseMinecraftData(materialOrNexoId);
 
                     builder.append("\n")
@@ -64,7 +64,7 @@ public class TooltipUtils {
 
                 ItemTemplate itemTemplate = plugin.getItemsManager().getItemTemplate(key);
                 if (itemTemplate != null) {
-                    String materialOrNexoId = plugin.getNexoHook().getNexoItemStackId(itemTemplate.getBukkitItem());
+                    String materialOrNexoId = getMaterialOrNexoId(itemTemplate.getBukkitItem());
                     MinecraftItem minecraftItem = StringCleanerUtils.parseMinecraftData(materialOrNexoId);
 
                     builder.append("\n")
@@ -79,6 +79,16 @@ public class TooltipUtils {
         }
 
         return builder.toString().replaceFirst("\n", "");
+    }
+
+    private static String getMaterialOrNexoId(ItemStack itemStack) {
+        if (plugin.getNexoHook() != null) {
+            return plugin.getNexoHook().getNexoItemStackId(itemStack);
+        }
+        if (plugin.getItemsAdderHook() != null) {
+            return plugin.getItemsAdderHook().getItemsAdderItemStackId(itemStack);
+        }
+        return itemStack.getType().name();
     }
 
 }
