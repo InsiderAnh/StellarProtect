@@ -50,6 +50,9 @@ public enum ActionCategory {
     HOOK_ACTIONS(10, "hook_actions", new ActionType[]{
         ActionType.SHOP_GUI, ActionType.FURNITURE_BREAK, ActionType.FURNITURE_PLACE, ActionType.X_KIT_EVENT
     }),
+    WORLD_ACTIONS(11, "world_actions", new ActionType[]{
+        ActionType.GROW_STRUCTURE
+    }),
     UNKNOWN_ACTIONS(50, "unknown_actions", ActionType.values());
 
     private final int id;

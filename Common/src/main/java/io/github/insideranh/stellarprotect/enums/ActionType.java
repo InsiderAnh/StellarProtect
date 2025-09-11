@@ -63,6 +63,8 @@ public enum ActionType {
     PLACE_ITEM(38),
     REMOVE_ITEM(39),
 
+    GROW_STRUCTURE(40),
+
     SHOP_GUI(80),
 
     // Nexo
