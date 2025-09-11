@@ -25,6 +25,11 @@ import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
 public class PlayerLogListener implements Listener {
 
     private final StellarProtect plugin = StellarProtect.getInstance();
@@ -39,11 +44,22 @@ public class PlayerLogListener implements Listener {
         if (playerProtect == null) return;
 
         DeathCause cause = DeathCause.getById(getCause(player));
+        List<ItemStack> drops = new LinkedList<>(event.getDrops());
 
-        PlayerDeathEntry deathEntry = new PlayerDeathEntry(playerProtect.getPlayerId(), player.getLocation(), cause.getId());
+        plugin.getExecutor().execute(() -> {
+            Map<Long, Integer> items = new HashMap<>();
+            for (ItemStack item : drops) {
+                if (item == null || item.getType().equals(Material.AIR)) continue;
 
-        LoggerCache.addLog(deathEntry);
-        PlayerCache.checkPattern(deathEntry);
+                ItemReference itemReference = plugin.getItemsManager().getItemReference(item);
+                items.put(itemReference.getTemplateId(), items.getOrDefault(itemReference.getTemplateId(), 0) + item.getAmount());
+            }
+
+            PlayerDeathEntry deathEntry = new PlayerDeathEntry(playerProtect.getPlayerId(), player.getLocation(), cause.getId(), items);
+
+            LoggerCache.addLog(deathEntry);
+            PlayerCache.checkPattern(deathEntry);
+        });
     }
 
     @EventHandler
