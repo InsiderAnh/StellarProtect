@@ -16,9 +16,9 @@ import java.util.Map;
 @Getter
 public class PlayerDeathEntry extends LogEntry {
 
+    private final byte cause;
     // ID item -> amount
     private Map<Long, Integer> drops = new HashMap<>();
-    private final byte cause;
 
     public PlayerDeathEntry(Document document, JsonObject jsonObject) {
         super(document);

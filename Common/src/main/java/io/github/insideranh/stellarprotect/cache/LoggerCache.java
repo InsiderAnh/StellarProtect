@@ -94,6 +94,7 @@ public class LoggerCache {
         configs[ActionCategory.SESSION_ACTIONS.ordinal()] = new CacheConfig(100, 10, 30 * 60 * 1000L);
         configs[ActionCategory.SIGN_ACTIONS.ordinal()] = new CacheConfig(100, 10, 30 * 60 * 1000L);
         configs[ActionCategory.HOOK_ACTIONS.ordinal()] = new CacheConfig(300, 10, 5 * 60 * 1000L);
+        configs[ActionCategory.WORLD_ACTIONS.ordinal()] = new CacheConfig(100, 2, 30 * 60 * 1000L);
         configs[ActionCategory.UNKNOWN_ACTIONS.ordinal()] = new CacheConfig(500, 10, 5 * 60 * 1000L);
 
         return configs;

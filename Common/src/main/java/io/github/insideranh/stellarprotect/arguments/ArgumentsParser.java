@@ -4,6 +4,7 @@ import com.mongodb.lang.Nullable;
 import io.github.insideranh.stellarprotect.StellarProtect;
 import io.github.insideranh.stellarprotect.enums.ActionType;
 import io.github.insideranh.stellarprotect.enums.TimesType;
+import io.github.insideranh.stellarprotect.utils.Debugger;
 import io.github.insideranh.stellarprotect.utils.PlayerUtils;
 import lombok.NonNull;
 import org.bukkit.Location;
@@ -58,7 +59,7 @@ public class ArgumentsParser {
     }
 
     public static List<ActionType> parseActionTypes(String[] arguments) {
-        String joined = String.join(" ", arguments).toLowerCase(Locale.ROOT).replace("\\", "").replace("'", "").replace(",", "");
+        String joined = String.join(" ", arguments).toLowerCase(Locale.ROOT).replace("\\", "").replace("'", "");
 
         List<ActionType> actionTypes = new ArrayList<>();
         for (String part : joined.split("\\s+")) {

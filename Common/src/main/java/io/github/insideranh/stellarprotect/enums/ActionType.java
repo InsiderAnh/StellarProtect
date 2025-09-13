@@ -2,6 +2,7 @@ package io.github.insideranh.stellarprotect.enums;
 
 import com.mongodb.lang.Nullable;
 import io.github.insideranh.stellarprotect.config.WorldConfigType;
+import io.github.insideranh.stellarprotect.utils.Debugger;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -63,7 +64,7 @@ public enum ActionType {
     PLACE_ITEM(38),
     REMOVE_ITEM(39),
 
-    GROW_STRUCTURE(40),
+    TREE_GROW(40),
 
     SHOP_GUI(80),
 
@@ -133,10 +134,8 @@ public enum ActionType {
     public static List<String> getAllNamesNoPrefix(@Nullable String filter) {
         List<String> names = new ArrayList<>();
         for (ActionType actionType : ActionType.values()) {
-            if (filter == null) continue;
-
             String name = actionType.name().toLowerCase();
-            if (name.contains(filter)) {
+            if (filter == null || name.contains(filter)) {
                 names.add(name);
             }
         }
@@ -146,10 +145,8 @@ public enum ActionType {
     public static List<String> getAllNames(@Nullable String filter) {
         List<String> names = new ArrayList<>();
         for (ActionType actionType : ActionType.values()) {
-            if (filter == null) continue;
-
             String name = "a:" + actionType.name().toLowerCase();
-            if (name.contains(filter)) {
+            if (filter == null || name.contains(filter)) {
                 names.add(name);
             }
         }

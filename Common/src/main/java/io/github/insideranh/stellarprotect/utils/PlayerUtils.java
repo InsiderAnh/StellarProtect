@@ -35,6 +35,7 @@ public class PlayerUtils {
         specialIds.put("=observer", -15L);
         specialIds.put("=decay", -16L);
         specialIds.put("=portal", -17L);
+        specialIds.put("=tree", -18L);
     }
 
     public static void loadEntityIds() {

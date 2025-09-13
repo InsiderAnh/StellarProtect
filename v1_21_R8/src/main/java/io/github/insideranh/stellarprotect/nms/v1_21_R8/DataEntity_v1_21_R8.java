@@ -4,7 +4,6 @@ import io.github.insideranh.stellarprotect.entities.DataEntity;
 import io.github.insideranh.stellarprotect.entities.DataEntityType;
 import org.bukkit.Color;
 import org.bukkit.DyeColor;
-import org.bukkit.Keyed;
 import org.bukkit.entity.Cat;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;

@@ -3,6 +3,7 @@ package io.github.insideranh.stellarprotect.commands.completers;
 import com.google.common.base.Joiner;
 import io.github.insideranh.stellarprotect.commands.StellarCompleter;
 import io.github.insideranh.stellarprotect.enums.ActionType;
+import io.github.insideranh.stellarprotect.utils.Debugger;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -132,7 +133,7 @@ public class LookupCompleter extends StellarCompleter {
 
         String lastAction = existingActions[existingActions.length - 1].trim();
 
-        for (String part : value.split(",")) {
+        for (String part : existingActions) {
             String partTrimmed = part.trim();
 
             if (partTrimmed.equals(lastAction)) continue;
@@ -143,7 +144,12 @@ public class LookupCompleter extends StellarCompleter {
         }
 
         for (String action : suggestions) {
-            if (!lastAction.isEmpty() && !action.startsWith(lastAction)) continue;
+            /*
+            if (!lastAction.isEmpty() && !action.startsWith(lastAction)) {
+                Debugger.debugExtras("Returned: " + action + " | " + lastAction + " | " + action.startsWith(lastAction));
+                continue;
+            }
+             */
 
             if (usedActions.isEmpty()) {
                 completions.add(usedPrefix + ":" + action);

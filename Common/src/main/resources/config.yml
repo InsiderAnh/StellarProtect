@@ -369,3 +369,11 @@ logs:
     # You can use 'none' no disable block types
     disable_types:
       - none
+  tree_grow:
+    enabled: true
+    # You can use 'all' to log all worlds
+    worlds:
+      - all
+    # You can use 'none' no disable block types
+    disable_types:
+      - none
