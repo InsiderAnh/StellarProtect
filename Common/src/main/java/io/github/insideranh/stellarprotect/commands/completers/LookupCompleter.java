@@ -3,7 +3,6 @@ package io.github.insideranh.stellarprotect.commands.completers;
 import com.google.common.base.Joiner;
 import io.github.insideranh.stellarprotect.commands.StellarCompleter;
 import io.github.insideranh.stellarprotect.enums.ActionType;
-import io.github.insideranh.stellarprotect.utils.Debugger;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;

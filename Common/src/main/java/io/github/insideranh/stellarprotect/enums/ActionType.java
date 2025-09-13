@@ -2,7 +2,6 @@ package io.github.insideranh.stellarprotect.enums;
 
 import com.mongodb.lang.Nullable;
 import io.github.insideranh.stellarprotect.config.WorldConfigType;
-import io.github.insideranh.stellarprotect.utils.Debugger;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -190,7 +189,7 @@ public enum ActionType {
                 return true;
             }
             for (String disabledType : worldConfig.getDisabledTypes()) {
-                if (disabledType.startsWith(typeLower)) {
+                if (typeLower.startsWith(disabledType)) {
                     return true;
                 }
             }
@@ -198,7 +197,7 @@ public enum ActionType {
         }
 
         for (String disabledType : disabledTypes) {
-            if (disabledType.startsWith(typeLower)) {
+            if (typeLower.startsWith(disabledType)) {
                 return true;
             }
         }
