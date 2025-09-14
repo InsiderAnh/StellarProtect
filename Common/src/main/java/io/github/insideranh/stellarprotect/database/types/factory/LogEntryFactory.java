@@ -81,6 +81,8 @@ public class LogEntryFactory {
         BLOCK_INTERACT(10, PlayerBlockLogEntry.class),
         BLOCK_BURN(15, PlayerBlockLogEntry.class),
         BLOCK_EXPLODE(16, PlayerBlockLogEntry.class),
+        TREE_GROW(40, PlayerBlockLogEntry.class),
+
         FURNITURE_BREAK(81, PlayerFurnitureLogEntry.class),
         FURNITURE_PLACE(82, PlayerFurnitureLogEntry.class),
 
@@ -113,6 +115,7 @@ public class LogEntryFactory {
         PLAYER_ECONOMY(36, PlayerEconomyEntry.class),
         PLACE_ITEM(38, PlayerPlaceRemoveItemLogEntry.class),
         REMOVE_ITEM(39, PlayerPlaceRemoveItemLogEntry.class),
+        BLOCK_SPREAD(41, PlayerBlockStateLogEntry.class),
 
         PLAYER_SHOP_GUI(80, PlayerShopGUIEntry.class),
 

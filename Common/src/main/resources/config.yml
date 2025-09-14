@@ -377,3 +377,11 @@ logs:
     # You can use 'none' no disable block types
     disable_types:
       - none
+  block_spread:
+    enabled: true
+    # You can use 'all' to log all worlds
+    worlds:
+      - all
+    # You can use 'none' no disable block types
+    disable_types:
+      - none

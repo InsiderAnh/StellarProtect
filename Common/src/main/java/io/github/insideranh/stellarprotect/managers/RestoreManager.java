@@ -5,6 +5,7 @@ import io.github.insideranh.stellarprotect.StellarProtect;
 import io.github.insideranh.stellarprotect.cache.keys.LocationCache;
 import io.github.insideranh.stellarprotect.database.entries.LogEntry;
 import io.github.insideranh.stellarprotect.database.entries.players.PlayerBlockLogEntry;
+import io.github.insideranh.stellarprotect.database.entries.players.PlayerBlockStateLogEntry;
 import io.github.insideranh.stellarprotect.enums.ActionType;
 import io.github.insideranh.stellarprotect.restore.BlockRestore;
 import io.github.insideranh.stellarprotect.utils.SerializerUtils;
@@ -36,16 +37,22 @@ public class RestoreManager {
                     } else if (blockLogEntry.getActionType() == ActionType.BLOCK_BREAK.getId()) {
                         plugin.getStellarTaskHook(() -> blockRestore.preview(sender, gson, location)).runTask(location);
                     }
+                } else if (logEntry instanceof PlayerBlockStateLogEntry) {
+                    PlayerBlockStateLogEntry blockStateLogEntry = (PlayerBlockStateLogEntry) logEntry;
+                    BlockRestore blockRestore = plugin.getBlockRestore(blockStateLogEntry.lastDataString());
+                    Location location = blockStateLogEntry.asBukkitLocation();
 
-                    processedCount++;
+                    plugin.getStellarTaskHook(() -> blockRestore.preview(sender, gson, location)).runTask(location);
+                }
 
-                    if (processedCount % MAX_PER_TICK == 0) {
-                        try {
-                            Thread.sleep(1);
-                        } catch (InterruptedException e) {
-                            Thread.currentThread().interrupt();
-                            break;
-                        }
+                processedCount++;
+
+                if (processedCount % MAX_PER_TICK == 0) {
+                    try {
+                        Thread.sleep(1);
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                        break;
                     }
                 }
             }
@@ -69,16 +76,22 @@ public class RestoreManager {
                     } else if (blockLogEntry.getActionType() == ActionType.BLOCK_BREAK.getId()) {
                         plugin.getStellarTaskHook(() -> blockRestore.reset(gson, location)).runTask(location);
                     }
+                } else if (logEntry instanceof PlayerBlockStateLogEntry) {
+                    PlayerBlockStateLogEntry blockStateLogEntry = (PlayerBlockStateLogEntry) logEntry;
+                    BlockRestore blockRestore = plugin.getBlockRestore(blockStateLogEntry.lastDataString());
+                    Location location = blockStateLogEntry.asBukkitLocation();
 
-                    processedCount++;
+                    plugin.getStellarTaskHook(() -> blockRestore.reset(gson, location)).runTask(location);
+                }
 
-                    if (processedCount % MAX_PER_TICK == 0) {
-                        try {
-                            Thread.sleep(1);
-                        } catch (InterruptedException e) {
-                            Thread.currentThread().interrupt();
-                            break;
-                        }
+                processedCount++;
+
+                if (processedCount % MAX_PER_TICK == 0) {
+                    try {
+                        Thread.sleep(1);
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                        break;
                     }
                 }
             }

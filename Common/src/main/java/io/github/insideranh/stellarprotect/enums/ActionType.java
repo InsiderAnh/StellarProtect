@@ -64,6 +64,7 @@ public enum ActionType {
     REMOVE_ITEM(39),
 
     TREE_GROW(40),
+    BLOCK_SPREAD(41),
 
     SHOP_GUI(80),
 

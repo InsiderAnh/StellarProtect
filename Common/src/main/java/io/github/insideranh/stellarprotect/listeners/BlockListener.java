@@ -6,6 +6,7 @@ import io.github.insideranh.stellarprotect.blocks.adjacents.AdjacentType;
 import io.github.insideranh.stellarprotect.cache.LoggerCache;
 import io.github.insideranh.stellarprotect.data.PlayerProtect;
 import io.github.insideranh.stellarprotect.database.entries.players.PlayerBlockLogEntry;
+import io.github.insideranh.stellarprotect.database.entries.players.PlayerBlockStateLogEntry;
 import io.github.insideranh.stellarprotect.database.entries.players.PlayerItemLogEntry;
 import io.github.insideranh.stellarprotect.database.entries.players.PlayerTameEntry;
 import io.github.insideranh.stellarprotect.enums.ActionType;
@@ -70,20 +71,20 @@ public class BlockListener implements Listener {
     public void onBlockSpread(BlockSpreadEvent event) {
         if (event.isCancelled()) return;
 
+        BlockState blockState = event.getBlock().getState();
         BlockState newState = event.getNewState();
         Material newMaterial = newState.getType();
-        if (BlockTracker.isVineState(newMaterial)) {
-            processBlockStatePlace(newState, null, PlayerUtils.getPlayerOrEntityId("=vine"));
-        } else if (BlockTracker.isSculkState(newMaterial)) {
-            processBlockStatePlace(newState, null, PlayerUtils.getPlayerOrEntityId("=sculk"));
-        } else if (BlockTracker.isChorusState(newMaterial)) {
-            processBlockStatePlace(newState, null, PlayerUtils.getPlayerOrEntityId("=chorus"));
+        if (BlockTracker.isChorusState(newMaterial)) {
+            processBlockStatePlace(blockState, newState, PlayerUtils.getEntityByDirectId("=chorus"));
         } else if (BlockTracker.isAmethystState(newMaterial)) {
-            processBlockStatePlace(newState, null, PlayerUtils.getPlayerOrEntityId("=amethyst"));
+            processBlockStatePlace(blockState, newState, PlayerUtils.getEntityByDirectId("=amethyst"));
         } else if (BlockTracker.isBambooState(newMaterial)) {
-            processBlockStatePlace(newState, null, PlayerUtils.getPlayerOrEntityId("=bamboo"));
+            processBlockStatePlace(blockState, newState, PlayerUtils.getEntityByDirectId("=bamboo"));
+        } else if (BlockTracker.isSculkState(newMaterial)) {
+            processBlockStatePlace(blockState, newState, PlayerUtils.getEntityByDirectId("=sculk"));
+        } else if (BlockTracker.isVineState(newMaterial)) {
+            processBlockStatePlace(blockState, newState, PlayerUtils.getEntityByDirectId("=vine"));
         }
-        //plugin.getLogger().info("Block spread event " + newMaterial + " data: " + plugin.getDataBlock(event.getNewState()).getBlockDataString());
     }
 
     void processBlockBreak(Block block, @Nullable Player player, long defaultId) {
@@ -117,13 +118,11 @@ public class BlockListener implements Listener {
         LoggerCache.addLog(new PlayerBlockLogEntry(playerId, block, ActionType.BLOCK_BREAK));
     }
 
-    void processBlockStatePlace(BlockState blockState, @Nullable Player player, long defaultId) {
-        if (blockState.getType().equals(Material.AIR) || ActionType.BLOCK_PLACE.shouldSkipLog(blockState.getWorld().getName(), blockState.getType().name()))
+    void processBlockStatePlace(BlockState blockState, BlockState newState, long playerId) {
+        if (newState.getType().equals(Material.AIR) || ActionType.BLOCK_SPREAD.shouldSkipLog(newState.getWorld().getName(), newState.getType().name()))
             return;
 
-        long playerId = getPlayerId(player, defaultId);
-
-        LoggerCache.addLog(new PlayerBlockLogEntry(playerId, blockState, ActionType.BLOCK_PLACE));
+        LoggerCache.addLog(new PlayerBlockStateLogEntry(playerId, blockState, newState, ActionType.BLOCK_SPREAD));
     }
 
     void processBlockPlace(Block block, @Nullable Player player, long defaultId) {

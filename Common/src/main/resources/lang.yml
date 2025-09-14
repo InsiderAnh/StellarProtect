@@ -147,6 +147,10 @@ messages:
       &7<time> &8| &d<player>&f received kit &8| &d(<data>)
     x_kit_claim: |-
       &7<time> &8| &d<player>&f claimed kit &8| &d(<data>)
+    tree_grow: |-
+      &7<time> &8| &d<player>&f tree grow &8| &6(<data>)
+    block_spread: |-
+      &7<time> &8| &d<player>&f spread &8| &d(<data>)
   tooltips:
     item_details:
       displayName:
