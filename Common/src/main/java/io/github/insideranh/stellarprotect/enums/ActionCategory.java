@@ -51,7 +51,7 @@ public enum ActionCategory {
         ActionType.SHOP_GUI, ActionType.FURNITURE_BREAK, ActionType.FURNITURE_PLACE, ActionType.X_KIT_EVENT
     }),
     WORLD_ACTIONS(11, "world_actions", new ActionType[]{
-        ActionType.TREE_GROW
+        ActionType.TREE_GROW, ActionType.BLOCK_SPREAD
     }),
     UNKNOWN_ACTIONS(50, "unknown_actions", ActionType.values());
 
