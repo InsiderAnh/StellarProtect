@@ -6,6 +6,7 @@ import io.github.insideranh.stellarprotect.enums.ActionType;
 import io.github.insideranh.stellarprotect.listeners.handlers.GenericHandler;
 import io.github.insideranh.stellarprotect.trackers.BlockTracker;
 import lombok.NonNull;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -13,7 +14,7 @@ import org.bukkit.inventory.ItemStack;
 public class PlayerToggleHandler extends GenericHandler {
 
     @Override
-    public GenericHandler canHandle(@NonNull Block block, @NonNull String blockType, @NonNull String itemType) {
+    public GenericHandler canHandle(@NonNull Block block, @NonNull Material blockType, @NonNull String itemType) {
         if (BlockTracker.isToggleableState(blockType)) {
             return this;
         }
