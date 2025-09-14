@@ -59,9 +59,9 @@ public enum AdjacentType {
     );
 
     private static final byte[] bitCache = new byte[Material.values().length];
-    private static final byte UP_FLAG = 1;
-    private static final byte DOWN_FLAG = 2;
-    private static final byte SIDE_FLAG = 3;
+    private static final byte UP_FLAG = 1;   // 00000001
+    private static final byte DOWN_FLAG = 2; // 00000010
+    private static final byte SIDE_FLAG = 4; // 00000100
     private static boolean initialized = false;
     private final List<String> blocks = new ArrayList<>();
 
