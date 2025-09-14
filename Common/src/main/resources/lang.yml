@@ -151,6 +151,8 @@ messages:
       &7<time> &8| &d<player>&f tree grow &8| &6(<data>)
     block_spread: |-
       &7<time> &8| &d<player>&f spread &8| &d(<data>)
+    armor_stand_manipulate: |-
+      &7<time> &8| &d<player>&f armor stand &8| &d(<data>) &7| &a[View]
   tooltips:
     item_details:
       displayName:
@@ -210,3 +212,16 @@ game_modes:
   1: "Creative"
   2: "Adventure"
   3: "Spectator"
+menus:
+  view_stand:
+    title: "Armor Stand Item"
+    new_item:
+      nameItem: "&aNew Item"
+      loreItem: |-
+        &7➤➤➤
+    old_item:
+      nameItem: "&cOld Item"
+      loreItem: |-
+        &7➤➤➤
+    none:
+      nameItem: "&cNo Item"

@@ -116,6 +116,7 @@ public class LogEntryFactory {
         PLACE_ITEM(38, PlayerPlaceRemoveItemLogEntry.class),
         REMOVE_ITEM(39, PlayerPlaceRemoveItemLogEntry.class),
         BLOCK_SPREAD(41, PlayerBlockStateLogEntry.class),
+        ARMOR_STAND_MANIPULATE(42, PlayerArmorStandManipulateEntry.class),
 
         PLAYER_SHOP_GUI(80, PlayerShopGUIEntry.class),
 

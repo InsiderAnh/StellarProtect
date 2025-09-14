@@ -171,6 +171,7 @@ public class InspectHandler {
             handlers.put(ActionType.FURNITURE_PLACE, furnitureActionHandler);
 
             handlers.put(ActionType.X_KIT_EVENT, new XKitEventActionHandler());
+            handlers.put(ActionType.ARMOR_STAND_MANIPULATE, new ArmorStandManipulateActionHandler());
         }
 
         public static ActionHandler getHandler(ActionType actionType) {
@@ -191,6 +192,35 @@ public class InspectHandler {
                     .replace("<time>", TimeUtils.formatMillisAsAgo(logEntry.getCreatedAt()))
                     .replace("<player>", PlayerCache.getName(logEntry.getPlayerId()))
                     .replace("<data>", furnitureEntry.getNexoBlockId())
+            );
+        }
+
+    }
+
+    public static class ArmorStandManipulateActionHandler implements ActionHandler {
+
+        @Override
+        public void handle(Player player, LogEntry logEntry, StellarProtect plugin) {
+            PlayerArmorStandManipulateEntry armorStandEntry = (PlayerArmorStandManipulateEntry) logEntry;
+            PlayerProtect playerProtect = PlayerProtect.getPlayer(player);
+            if (playerProtect == null) return;
+
+            String messageKey = "messages.actions.armor_stand_manipulate";
+
+            playerProtect.getPosibleLogs().put(armorStandEntry.hashCode(), armorStandEntry);
+
+            ItemTemplate itemTemplate = plugin.getItemsManager().getItemTemplate(armorStandEntry.getNewItemId() != -1 ? armorStandEntry.getNewItemId() : armorStandEntry.getOldItemId());
+            ItemStack item = itemTemplate.getBukkitItem();
+            String cleanName = StringCleanerUtils.parseMinecraftData(item.getType().name()).getCleanName();
+
+            plugin.getProtectNMS().sendActionTitle(player,
+                plugin.getLangManager().get("messages.actions." + messageKey),
+                "",
+                "/spt view stand " + armorStandEntry.hashCode(),
+                text -> text
+                    .replace("<time>", TimeUtils.formatMillisAsAgo(logEntry.getCreatedAt()))
+                    .replace("<player>", PlayerCache.getName(logEntry.getPlayerId()))
+                    .replace("<data>", cleanName)
             );
         }
 

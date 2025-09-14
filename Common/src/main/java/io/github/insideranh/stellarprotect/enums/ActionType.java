@@ -65,6 +65,7 @@ public enum ActionType {
 
     TREE_GROW(40),
     BLOCK_SPREAD(41),
+    ARMOR_STAND_MANIPULATE(42),
 
     SHOP_GUI(80),
 

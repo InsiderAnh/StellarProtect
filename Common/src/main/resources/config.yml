@@ -385,3 +385,11 @@ logs:
     # You can use 'none' no disable block types
     disable_types:
       - none
+  armor_stand_manipulate:
+    enabled: true
+    # You can use 'all' to log all worlds
+    worlds:
+      - all
+    # You can use 'none' no disable block types
+    disable_types:
+      - none

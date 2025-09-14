@@ -1,11 +1,14 @@
 package io.github.insideranh.stellarprotect.listeners;
 
+import io.github.insideranh.stellarprotect.StellarProtect;
 import io.github.insideranh.stellarprotect.cache.LoggerCache;
 import io.github.insideranh.stellarprotect.data.PlayerProtect;
+import io.github.insideranh.stellarprotect.database.entries.players.PlayerArmorStandManipulateEntry;
 import io.github.insideranh.stellarprotect.database.entries.players.PlayerHangingEntry;
 import io.github.insideranh.stellarprotect.database.entries.players.PlayerKillLogEntry;
 import io.github.insideranh.stellarprotect.database.entries.players.PlayerShootEntry;
 import io.github.insideranh.stellarprotect.enums.ActionType;
+import io.github.insideranh.stellarprotect.items.ItemReference;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -15,8 +18,12 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
+import org.bukkit.event.player.PlayerArmorStandManipulateEvent;
+import org.bukkit.inventory.ItemStack;
 
 public class EntityListener implements Listener {
+
+    private final StellarProtect plugin = StellarProtect.getInstance();
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onEntityDeath(EntityDeathEvent event) {
@@ -64,5 +71,24 @@ public class EntityListener implements Listener {
         LoggerCache.addLog(hangingEntry);
     }
 
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onArmorStand(PlayerArmorStandManipulateEvent event) {
+        Player player = event.getPlayer();
+
+        PlayerProtect playerProtect = PlayerProtect.getPlayer(player);
+        if (playerProtect == null) return;
+
+        if (ActionType.ARMOR_STAND_MANIPULATE.shouldSkipLog(player.getWorld().getName(), event.getSlot().name()))
+            return;
+
+        ItemStack playerItem = event.getPlayerItem();
+        ItemStack armorStandItem = event.getArmorStandItem();
+        int slot = event.getSlot().ordinal();
+
+        ItemReference newItemReference = plugin.getItemsManager().getItemReference(playerItem);
+        ItemReference oldItemReference = plugin.getItemsManager().getItemReference(armorStandItem);
+
+        LoggerCache.addLog(new PlayerArmorStandManipulateEntry(playerProtect.getPlayerId(), player.getLocation(), oldItemReference, newItemReference, slot));
+    }
 
 }
