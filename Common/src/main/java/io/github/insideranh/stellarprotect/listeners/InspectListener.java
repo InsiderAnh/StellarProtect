@@ -13,7 +13,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 public class InspectListener implements Listener {
@@ -37,24 +36,16 @@ public class InspectListener implements Listener {
         Location blockLocation = block.getLocation();
         playerProtect.setInspectSession(new InspectSession(blockLocation, 0, 10, WorldUtils.isValidChestBlock(block.getType())));
 
-        if (WorldUtils.isValidChestBlock(block.getType()) && event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
+        if (WorldUtils.isValidChestBlock(block.getType()) && action.equals(Action.RIGHT_CLICK_BLOCK)) {
             plugin.getInspectHandler().handleChestInspection(player, blockLocation, 1, 0, 10);
         } else {
-            plugin.getInspectHandler().handleBlockInspection(player, blockLocation, 1, 0, 10);
+            if (event.hasItem() && event.getItem().getType().isBlock()) {
+                Block blockFace = block.getRelative(event.getBlockFace());
+                plugin.getInspectHandler().handleBlockInspection(player, blockFace.getLocation(), 1, 0, 10);
+            } else {
+                plugin.getInspectHandler().handleBlockInspection(player, blockLocation, 1, 0, 10);
+            }
         }
-    }
-
-    @EventHandler
-    public void onPlace(BlockPlaceEvent event) {
-        Player player = event.getPlayer();
-        PlayerProtect playerProtect = PlayerProtect.getPlayer(player);
-        if (cantInspect(playerProtect, event)) return;
-
-        Block block = event.getBlockPlaced();
-        Location blockLocation = block.getLocation();
-        playerProtect.setInspectSession(new InspectSession(blockLocation, 0, 10, WorldUtils.isValidChestBlock(block.getType())));
-
-        plugin.getInspectHandler().handleBlockInspection(player, blockLocation, 1, 0, 10);
     }
 
     @EventHandler

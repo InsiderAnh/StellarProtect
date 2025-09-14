@@ -18,12 +18,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.block.LeavesDecayEvent;
+import org.bukkit.event.block.*;
 import org.bukkit.event.entity.EntityTameEvent;
 import org.bukkit.event.inventory.FurnaceExtractEvent;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -36,13 +35,41 @@ public class BlockListener implements Listener {
         if (event.isCancelled()) return;
 
         Block block = event.getBlock();
+        Player player = event.getPlayer();
+
+        processBlockBreak(block, player, -2L);
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onBlockIgnite(BlockIgniteEvent event) {
+        if (event.isCancelled()) return;
+
+        processBlockPlace(event.getBlock(), null, PlayerUtils.getPlayerOrEntityId("=fire"));
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onBlockBurn(BlockBurnEvent event) {
+        if (event.isCancelled()) return;
+
+        processBlockBreak(event.getBlock(), null, PlayerUtils.getPlayerOrEntityId("=fire"));
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onBlockPlace(BlockPlaceEvent event) {
+        if (event.isCancelled()) return;
+
+        Block block = event.getBlock();
+        Player player = event.getPlayer();
+
+        processBlockPlace(block, player, -2L);
+    }
+
+    void processBlockBreak(Block block, @Nullable Player player, long defaultId) {
         Material material = block.getType();
         if (block.getType().equals(Material.AIR) || ActionType.BLOCK_BREAK.shouldSkipLog(block.getWorld().getName(), material.name()))
             return;
 
-        Player player = event.getPlayer();
-        PlayerProtect playerProtect = PlayerProtect.getPlayer(player);
-        if (playerProtect == null) return;
+        long playerId = getPlayerId(player, defaultId);
 
         if (plugin.getNexoHook() != null && plugin.getNexoHook().isNexoBlock(block)) {
             return;
@@ -54,18 +81,43 @@ public class BlockListener implements Listener {
         if (AdjacentType.isUp(material)) {
             List<Block> affectedBlocks = AdjacentTracker.getAffectedBlocksAbove(block);
             for (Block affectedBlock : affectedBlocks) {
-                LoggerCache.addLog(new PlayerBlockLogEntry(playerProtect.getPlayerId(), affectedBlock, ActionType.BLOCK_BREAK));
+                LoggerCache.addLog(new PlayerBlockLogEntry(playerId, affectedBlock, ActionType.BLOCK_BREAK));
             }
         }
 
         if (AdjacentType.isSide(material)) {
             List<Block> affectedBlocks = AdjacentTracker.getAffectedBlocksSide(block);
             for (Block affectedBlock : affectedBlocks) {
-                LoggerCache.addLog(new PlayerBlockLogEntry(playerProtect.getPlayerId(), affectedBlock, ActionType.BLOCK_BREAK));
+                LoggerCache.addLog(new PlayerBlockLogEntry(playerId, affectedBlock, ActionType.BLOCK_BREAK));
             }
         }
 
-        LoggerCache.addLog(new PlayerBlockLogEntry(playerProtect.getPlayerId(), block, ActionType.BLOCK_BREAK));
+        LoggerCache.addLog(new PlayerBlockLogEntry(playerId, block, ActionType.BLOCK_BREAK));
+    }
+
+    void processBlockPlace(Block block, @Nullable Player player, long defaultId) {
+        if (block.getType().equals(Material.AIR) || ActionType.BLOCK_PLACE.shouldSkipLog(block.getWorld().getName(), block.getType().name()))
+            return;
+
+        long playerId = getPlayerId(player, defaultId);
+
+        if (plugin.getNexoHook() != null && plugin.getNexoHook().isNexoListener(block, plugin.getProtectNMS().getItemInHand(player))) {
+            return;
+        }
+        if (plugin.getItemsAdderHook() != null && plugin.getItemsAdderHook().isItemsAdderListener(block, plugin.getProtectNMS().getItemInHand(player))) {
+            return;
+        }
+
+        LoggerCache.addLog(new PlayerBlockLogEntry(playerId, block, ActionType.BLOCK_PLACE));
+    }
+
+    long getPlayerId(@Nullable Player player, long defaultId) {
+        if (player == null) return defaultId;
+
+        PlayerProtect playerProtect = PlayerProtect.getPlayer(player);
+        if (playerProtect == null) return defaultId;
+
+        return playerProtect.getPlayerId();
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
@@ -76,28 +128,6 @@ public class BlockListener implements Listener {
         if (ActionType.BLOCK_BREAK.shouldSkipLog(block.getWorld().getName(), "=decay")) return;
 
         LoggerCache.addLog(new PlayerBlockLogEntry(PlayerUtils.getEntityByDirectId("=decay"), block, ActionType.BLOCK_BREAK));
-    }
-
-    @EventHandler(priority = EventPriority.MONITOR)
-    public void onBlockPlace(BlockPlaceEvent event) {
-        if (event.isCancelled()) return;
-
-        Block block = event.getBlock();
-        if (block.getType().equals(Material.AIR) || ActionType.BLOCK_PLACE.shouldSkipLog(block.getWorld().getName(), block.getType().name()))
-            return;
-
-        Player player = event.getPlayer();
-        PlayerProtect playerProtect = PlayerProtect.getPlayer(player);
-        if (playerProtect == null) return;
-
-        if (plugin.getNexoHook() != null && plugin.getNexoHook().isNexoListener(block, plugin.getProtectNMS().getItemInHand(player))) {
-            return;
-        }
-        if (plugin.getItemsAdderHook() != null && plugin.getItemsAdderHook().isItemsAdderListener(block, plugin.getProtectNMS().getItemInHand(player))) {
-            return;
-        }
-
-        LoggerCache.addLog(new PlayerBlockLogEntry(playerProtect.getPlayerId(), block, ActionType.BLOCK_PLACE));
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
