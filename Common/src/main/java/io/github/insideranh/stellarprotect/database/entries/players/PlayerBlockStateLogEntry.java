@@ -38,7 +38,7 @@ public class PlayerBlockStateLogEntry extends LogEntry {
     }
 
     public PlayerBlockStateLogEntry(long playerId, BlockState blockState, BlockState newState, ActionType actionType) {
-        super(playerId, actionType.getId(), newState.getLocation(), System.currentTimeMillis());
+        super(playerId, actionType.getId(), blockState.getLocation(), System.currentTimeMillis());
         BlockTemplate lastTemplate = blocksManager.getBlockTemplate(blockState);
         BlockTemplate newTemplate = blocksManager.getBlockTemplate(newState);
         this.lastBlockId = lastTemplate.getId();
@@ -49,6 +49,14 @@ public class PlayerBlockStateLogEntry extends LogEntry {
         super(playerId, actionType.getId(), location, System.currentTimeMillis());
         BlockTemplate lastTemplate = blocksManager.getBlockTemplate(block);
         BlockTemplate newTemplate = blocksManager.getBlockTemplate(newBlock);
+        this.lastBlockId = lastTemplate.getId();
+        this.newBlockId = newTemplate.getId();
+    }
+
+    public PlayerBlockStateLogEntry(long playerId, Location location, BlockState blockState, BlockState newState, ActionType actionType) {
+        super(playerId, actionType.getId(), location, System.currentTimeMillis());
+        BlockTemplate lastTemplate = blocksManager.getBlockTemplate(blockState);
+        BlockTemplate newTemplate = blocksManager.getBlockTemplate(newState);
         this.lastBlockId = lastTemplate.getId();
         this.newBlockId = newTemplate.getId();
     }

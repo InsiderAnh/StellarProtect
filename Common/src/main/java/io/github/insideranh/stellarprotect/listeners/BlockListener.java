@@ -13,6 +13,7 @@ import io.github.insideranh.stellarprotect.enums.ActionType;
 import io.github.insideranh.stellarprotect.items.ItemReference;
 import io.github.insideranh.stellarprotect.trackers.BlockTracker;
 import io.github.insideranh.stellarprotect.utils.PlayerUtils;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
@@ -74,17 +75,22 @@ public class BlockListener implements Listener {
         BlockState blockState = event.getBlock().getState();
         BlockState newState = event.getNewState();
         Material newMaterial = newState.getType();
+        long playerId;
         if (BlockTracker.isChorusState(newMaterial)) {
-            processBlockStatePlace(blockState, newState, PlayerUtils.getEntityByDirectId("=chorus"));
+            playerId = PlayerUtils.getEntityByDirectId("=chorus");
         } else if (BlockTracker.isAmethystState(newMaterial)) {
-            processBlockStatePlace(blockState, newState, PlayerUtils.getEntityByDirectId("=amethyst"));
+            playerId = PlayerUtils.getEntityByDirectId("=amethyst");
         } else if (BlockTracker.isBambooState(newMaterial)) {
-            processBlockStatePlace(blockState, newState, PlayerUtils.getEntityByDirectId("=bamboo"));
+            playerId = PlayerUtils.getEntityByDirectId("=bamboo");
         } else if (BlockTracker.isSculkState(newMaterial)) {
-            processBlockStatePlace(blockState, newState, PlayerUtils.getEntityByDirectId("=sculk"));
+            playerId = PlayerUtils.getEntityByDirectId("=sculk");
         } else if (BlockTracker.isVineState(newMaterial)) {
-            processBlockStatePlace(blockState, newState, PlayerUtils.getEntityByDirectId("=vine"));
+            playerId = PlayerUtils.getEntityByDirectId("=vine");
+        } else {
+            return;
         }
+
+        processBlockStatePlace(event.getBlock().getLocation(), blockState, newState, playerId);
     }
 
     void processBlockBreak(Block block, @Nullable Player player, long defaultId) {
@@ -118,11 +124,11 @@ public class BlockListener implements Listener {
         LoggerCache.addLog(new PlayerBlockLogEntry(playerId, block, ActionType.BLOCK_BREAK));
     }
 
-    void processBlockStatePlace(BlockState blockState, BlockState newState, long playerId) {
+    void processBlockStatePlace(Location location, BlockState blockState, BlockState newState, long playerId) {
         if (newState.getType().equals(Material.AIR) || ActionType.BLOCK_SPREAD.shouldSkipLog(newState.getWorld().getName(), newState.getType().name()))
             return;
 
-        LoggerCache.addLog(new PlayerBlockStateLogEntry(playerId, blockState, newState, ActionType.BLOCK_SPREAD));
+        LoggerCache.addLog(new PlayerBlockStateLogEntry(playerId, location, blockState, newState, ActionType.BLOCK_SPREAD));
     }
 
     void processBlockPlace(Block block, @Nullable Player player, long defaultId) {
