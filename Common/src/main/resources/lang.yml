@@ -76,7 +76,7 @@ messages:
     craft: |-
       &7<time> &8| &d<player>&f craft &8| &d(<data>)
     crop_grow: |-
-      &7<time> &8| &d<player>&f grow &8| &d(<data>)
+      &7<time> &8| &d<player>&f grow &8| &6(<data>)
     kill_entity: |-
       &7<time> &8| &d<player>&f kill &8| &d(<data>)
     interact: |-

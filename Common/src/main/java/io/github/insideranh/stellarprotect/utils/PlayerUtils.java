@@ -36,6 +36,11 @@ public class PlayerUtils {
         specialIds.put("=decay", -16L);
         specialIds.put("=portal", -17L);
         specialIds.put("=tree", -18L);
+        specialIds.put("=vine", -19L);
+        specialIds.put("=sculk", -20L);
+        specialIds.put("=chorus", -21L);
+        specialIds.put("=bamboo", -22L);
+        specialIds.put("=amethyst", -23L);
     }
 
     public static void loadEntityIds() {

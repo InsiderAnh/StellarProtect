@@ -1,6 +1,7 @@
 package io.github.insideranh.stellarprotect.trackers;
 
 import org.bukkit.Material;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -10,6 +11,11 @@ public class BlockTracker {
     private static final byte[] bitCache = new byte[Material.values().length];
     private static final byte TOGGLEABLE_FLAG = 1;
     private static final byte PLACEABLE_FLAG = 2;
+    private static final byte VINE_FLAG = 3;
+    private static final byte SCULK_FLAG = 4;
+    private static final byte CHORUS_FLAG = 5;
+    private static final byte BAMBOO_FLAG = 6;
+    private static final byte AMETHYST_FLAG = 7;
     private static boolean initialized = false;
 
     public static void initializeCache() {
@@ -51,6 +57,24 @@ public class BlockTracker {
         placeableList.add("LAVA_CAULDRON");
         placeableList.add("POWDER_SNOW_CAULDRON");
 
+        List<String> VINES = new ArrayList<>();
+        VINES.add("VINE");
+        VINES.add("TWISTING_VINES");
+        VINES.add("WEEPING_VINES");
+
+        List<String> SCULK = new ArrayList<>();
+        SCULK.add("SCULK");
+        SCULK.add("SCULK_VEIN");
+
+        List<String> CHORUS = new ArrayList<>();
+        CHORUS.add("CHORUS_FLOWER");
+
+        List<String> BAMBOO = new ArrayList<>();
+        BAMBOO.add("BAMBOO");
+
+        List<String> AMETHYST = new ArrayList<>();
+        AMETHYST.add("SMALL_AMETHYST_BUD");
+
         for (String block : toggleableList) {
             try {
                 Material material = Material.valueOf(block);
@@ -67,6 +91,46 @@ public class BlockTracker {
             }
         }
 
+        for (String block : VINES) {
+            try {
+                Material material = Material.valueOf(block);
+                bitCache[material.ordinal()] |= VINE_FLAG;
+            } catch (IllegalArgumentException ignored) {
+            }
+        }
+
+        for (String block : SCULK) {
+            try {
+                Material material = Material.valueOf(block);
+                bitCache[material.ordinal()] |= SCULK_FLAG;
+            } catch (IllegalArgumentException ignored) {
+            }
+        }
+
+        for (String block : CHORUS) {
+            try {
+                Material material = Material.valueOf(block);
+                bitCache[material.ordinal()] |= CHORUS_FLAG;
+            } catch (IllegalArgumentException ignored) {
+            }
+        }
+
+        for (String block : BAMBOO) {
+            try {
+                Material material = Material.valueOf(block);
+                bitCache[material.ordinal()] |= BAMBOO_FLAG;
+            } catch (IllegalArgumentException ignored) {
+            }
+        }
+
+        for (String block : AMETHYST) {
+            try {
+                Material material = Material.valueOf(block);
+                bitCache[material.ordinal()] |= AMETHYST_FLAG;
+            } catch (IllegalArgumentException ignored) {
+            }
+        }
+
         initialized = true;
     }
 
@@ -75,27 +139,34 @@ public class BlockTracker {
         return (bitCache[ordinal] & TOGGLEABLE_FLAG) != 0;
     }
 
-    public static boolean isToggleableState(String block) {
-        try {
-            Material material = Material.valueOf(block.toUpperCase());
-            return isToggleableState(material);
-        } catch (IllegalArgumentException e) {
-            return false;
-        }
-    }
-
     public static boolean isPlaceableState(Material material) {
         int ordinal = material.ordinal();
         return (bitCache[ordinal] & PLACEABLE_FLAG) != 0;
     }
 
-    public static boolean isPlaceableState(String block) {
-        try {
-            Material material = Material.valueOf(block.toUpperCase());
-            return isPlaceableState(material);
-        } catch (IllegalArgumentException e) {
-            return false;
-        }
+    public static boolean isSculkState(Material material) {
+        int ordinal = material.ordinal();
+        return (bitCache[ordinal] & SCULK_FLAG) != 0;
+    }
+
+    public static boolean isVineState(Material material) {
+        int ordinal = material.ordinal();
+        return (bitCache[ordinal] & VINE_FLAG) != 0;
+    }
+
+    public static boolean isChorusState(Material material) {
+        int ordinal = material.ordinal();
+        return (bitCache[ordinal] & CHORUS_FLAG) != 0;
+    }
+
+    public static boolean isAmethystState(Material material) {
+        int ordinal = material.ordinal();
+        return (bitCache[ordinal] & AMETHYST_FLAG) != 0;
+    }
+
+    public static boolean isBambooState(Material material) {
+        int ordinal = material.ordinal();
+        return (bitCache[ordinal] & BAMBOO_FLAG) != 0;
     }
 
 }

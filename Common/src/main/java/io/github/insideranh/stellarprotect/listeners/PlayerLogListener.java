@@ -157,11 +157,11 @@ public class PlayerLogListener implements Listener {
         Block block = event.getClickedBlock();
 
         ItemStack item = event.getItem();
-        String blockType = block.getType().name();
+        Material blockType = block.getType();
 
         GenericHandler genericHandler = Handlers.canHandle(block, blockType, item);
         if (genericHandler != null) {
-            if (ActionType.INTERACT.shouldSkipLog(block.getWorld().getName(), blockType)) return;
+            if (ActionType.INTERACT.shouldSkipLog(block.getWorld().getName(), blockType.name())) return;
 
             genericHandler.handle(player, playerProtect.getPlayerId(), block, item);
         }

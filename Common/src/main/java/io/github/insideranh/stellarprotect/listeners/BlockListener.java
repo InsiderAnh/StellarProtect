@@ -10,9 +10,11 @@ import io.github.insideranh.stellarprotect.database.entries.players.PlayerItemLo
 import io.github.insideranh.stellarprotect.database.entries.players.PlayerTameEntry;
 import io.github.insideranh.stellarprotect.enums.ActionType;
 import io.github.insideranh.stellarprotect.items.ItemReference;
+import io.github.insideranh.stellarprotect.trackers.BlockTracker;
 import io.github.insideranh.stellarprotect.utils.PlayerUtils;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 import org.bukkit.entity.Animals;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -64,6 +66,26 @@ public class BlockListener implements Listener {
         processBlockPlace(block, player, -2L);
     }
 
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onBlockSpread(BlockSpreadEvent event) {
+        if (event.isCancelled()) return;
+
+        BlockState newState = event.getNewState();
+        Material newMaterial = newState.getType();
+        if (BlockTracker.isVineState(newMaterial)) {
+            processBlockStatePlace(newState, null, PlayerUtils.getPlayerOrEntityId("=vine"));
+        } else if (BlockTracker.isSculkState(newMaterial)) {
+            processBlockStatePlace(newState, null, PlayerUtils.getPlayerOrEntityId("=sculk"));
+        } else if (BlockTracker.isChorusState(newMaterial)) {
+            processBlockStatePlace(newState, null, PlayerUtils.getPlayerOrEntityId("=chorus"));
+        } else if (BlockTracker.isAmethystState(newMaterial)) {
+            processBlockStatePlace(newState, null, PlayerUtils.getPlayerOrEntityId("=amethyst"));
+        } else if (BlockTracker.isBambooState(newMaterial)) {
+            processBlockStatePlace(newState, null, PlayerUtils.getPlayerOrEntityId("=bamboo"));
+        }
+        //plugin.getLogger().info("Block spread event " + newMaterial + " data: " + plugin.getDataBlock(event.getNewState()).getBlockDataString());
+    }
+
     void processBlockBreak(Block block, @Nullable Player player, long defaultId) {
         Material material = block.getType();
         if (block.getType().equals(Material.AIR) || ActionType.BLOCK_BREAK.shouldSkipLog(block.getWorld().getName(), material.name()))
@@ -93,6 +115,15 @@ public class BlockListener implements Listener {
         }
 
         LoggerCache.addLog(new PlayerBlockLogEntry(playerId, block, ActionType.BLOCK_BREAK));
+    }
+
+    void processBlockStatePlace(BlockState blockState, @Nullable Player player, long defaultId) {
+        if (blockState.getType().equals(Material.AIR) || ActionType.BLOCK_PLACE.shouldSkipLog(blockState.getWorld().getName(), blockState.getType().name()))
+            return;
+
+        long playerId = getPlayerId(player, defaultId);
+
+        LoggerCache.addLog(new PlayerBlockLogEntry(playerId, blockState, ActionType.BLOCK_PLACE));
     }
 
     void processBlockPlace(Block block, @Nullable Player player, long defaultId) {
