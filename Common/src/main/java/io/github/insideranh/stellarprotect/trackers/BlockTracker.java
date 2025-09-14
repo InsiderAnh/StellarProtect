@@ -9,13 +9,13 @@ import java.util.List;
 public class BlockTracker {
 
     private static final byte[] bitCache = new byte[Material.values().length];
-    private static final byte TOGGLEABLE_FLAG = 1;
-    private static final byte PLACEABLE_FLAG = 2;
-    private static final byte VINE_FLAG = 3;
-    private static final byte SCULK_FLAG = 4;
-    private static final byte CHORUS_FLAG = 5;
-    private static final byte BAMBOO_FLAG = 6;
-    private static final byte AMETHYST_FLAG = 7;
+    private static final byte TOGGLEABLE_FLAG = 1;    // 00000001
+    private static final byte PLACEABLE_FLAG = 2;     // 00000010
+    private static final byte VINE_FLAG = 4;          // 00000100
+    private static final byte SCULK_FLAG = 8;         // 00001000
+    private static final byte CHORUS_FLAG = 16;       // 00010000
+    private static final byte BAMBOO_FLAG = 32;       // 00100000
+    private static final byte AMETHYST_FLAG = 64;     // 01000000
     private static boolean initialized = false;
 
     public static void initializeCache() {
