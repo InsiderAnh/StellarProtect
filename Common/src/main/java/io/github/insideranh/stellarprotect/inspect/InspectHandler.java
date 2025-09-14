@@ -214,8 +214,8 @@ public class InspectHandler {
             String cleanName = StringCleanerUtils.parseMinecraftData(item.getType().name()).getCleanName();
 
             plugin.getProtectNMS().sendActionTitle(player,
-                plugin.getLangManager().get("messages.actions." + messageKey),
-                "",
+                plugin.getLangManager().get(messageKey),
+                plugin.getLangManager().get("messages.tooltips.armor_stand_manipulate"),
                 "/spt view stand " + armorStandEntry.hashCode(),
                 text -> text
                     .replace("<time>", TimeUtils.formatMillisAsAgo(logEntry.getCreatedAt()))

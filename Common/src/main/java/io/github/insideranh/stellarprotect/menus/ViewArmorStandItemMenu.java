@@ -57,23 +57,20 @@ public class ViewArmorStandItemMenu extends AInventory {
             .build();
         ItemStack noneItem = new ItemUtils(Material.BARRIER)
             .displayName(plugin.getLangManager().get("menus.view_stand.none.nameItem"))
-            .lore(plugin.getLangManager().get("menus.view_stand.none.loreItem"))
             .build();
 
-        ItemTemplate oldItemTemplate = StellarProtect.getInstance().getItemsManager().getItemTemplate(manipulateEntry.getOldItemId());
-        if (oldItemTemplate == null) return;
-        ItemTemplate newItemTemplate = StellarProtect.getInstance().getItemsManager().getItemTemplate(manipulateEntry.getNewItemId());
-        if (newItemTemplate == null) return;
+        ItemTemplate oldItemTemplate = plugin.getItemsManager().getItemTemplate(manipulateEntry.getOldItemId());
+        ItemTemplate newItemTemplate = plugin.getItemsManager().getItemTemplate(manipulateEntry.getNewItemId());
 
         inventory.setItem(0, oldItem);
-        if (manipulateEntry.getOldItemId() == -1) {
+        if (manipulateEntry.getOldItemId() == -1L) {
             inventory.setItem(1, noneItem);
         } else {
             inventory.setItem(1, oldItemTemplate.getBukkitItem());
         }
 
         inventory.setItem(3, newItem);
-        if (manipulateEntry.getNewItemId() == -1) {
+        if (manipulateEntry.getNewItemId() == -1L) {
             inventory.setItem(4, noneItem);
         } else {
             inventory.setItem(4, newItemTemplate.getBukkitItem());

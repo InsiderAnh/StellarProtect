@@ -152,8 +152,9 @@ messages:
     block_spread: |-
       &7<time> &8| &d<player>&f spread &8| &d(<data>)
     armor_stand_manipulate: |-
-      &7<time> &8| &d<player>&f armor stand &8| &d(<data>) &7| &a[View]
+      &7<time> &8| &d<player>&f armorstand &8| &d(<data>) &7| &a[View]
   tooltips:
+    armor_stand_manipulate: "&fClick to see changes!"
     item_details:
       displayName:
         - "&7"
