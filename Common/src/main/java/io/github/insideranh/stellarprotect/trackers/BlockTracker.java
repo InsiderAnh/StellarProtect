@@ -1,23 +1,23 @@
 package io.github.insideranh.stellarprotect.trackers;
 
+import org.bukkit.Material;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class BlockTracker {
 
-    private static final int[] TOGGLEABLE_HASHES;
-    private static final int[] PLACEABLE_HASHES;
+    private static final byte[] bitCache = new byte[Material.values().length];
+    private static final byte TOGGLEABLE_FLAG = 1;
+    private static final byte PLACEABLE_FLAG = 2;
+    private static boolean initialized = false;
 
-    private static final boolean[] TOGGLEABLE_CACHE = new boolean[8192];
-    private static final boolean[] PLACEABLE_CACHE = new boolean[4096];
+    public static void initializeCache() {
+        if (initialized) return;
 
-    private static final boolean[] TOGGLEABLE_CACHED = new boolean[8192];
-    private static final boolean[] PLACEABLE_CACHED = new boolean[4096];
+        Arrays.fill(bitCache, (byte) 0);
 
-    static {
         List<String> toggleableList = new ArrayList<>();
-        List<String> placeableList = new ArrayList<>();
-
         String[] doorMats = {"ACACIA", "BIRCH", "DARK_OAK", "JUNGLE", "OAK", "SPRUCE", "CHERRY", "BAMBOO", "MANGROVE", "CRIMSON", "WARPED", "IRON"};
         String[] fenceMats = {"ACACIA", "BIRCH", "DARK_OAK", "JUNGLE", "OAK", "SPRUCE", "CHERRY", "BAMBOO", "MANGROVE", "CRIMSON", "WARPED"};
         String[] buttonMats = {"ACACIA", "BIRCH", "DARK_OAK", "JUNGLE", "OAK", "SPRUCE", "CHERRY", "BAMBOO", "MANGROVE", "CRIMSON", "WARPED", "STONE", "POLISHED_BLACKSTONE"};
@@ -39,6 +39,7 @@ public class BlockTracker {
         toggleableList.add("REPEATER");
         toggleableList.add("COMPARATOR");
 
+        List<String> placeableList = new ArrayList<>();
         placeableList.add("COMPOSTER");
         placeableList.add("CHISELED_BOOKSHELF");
         placeableList.add("CAMPFIRE");
@@ -50,73 +51,51 @@ public class BlockTracker {
         placeableList.add("LAVA_CAULDRON");
         placeableList.add("POWDER_SNOW_CAULDRON");
 
-        TOGGLEABLE_HASHES = toggleableList.stream()
-            .mapToInt(String::hashCode)
-            .sorted()
-            .toArray();
-
-        PLACEABLE_HASHES = placeableList.stream()
-            .mapToInt(String::hashCode)
-            .sorted()
-            .toArray();
-    }
-
-    private static boolean binarySearchHash(int[] sortedHashes, int hash) {
-        int low = 0;
-        int high = sortedHashes.length - 1;
-
-        while (low <= high) {
-            int mid = (low + high) >>> 1;
-            int midVal = sortedHashes[mid];
-
-            if (midVal < hash) {
-                low = mid + 1;
-            } else if (midVal > hash) {
-                high = mid - 1;
-            } else {
-                return true;
+        for (String block : toggleableList) {
+            try {
+                Material material = Material.valueOf(block);
+                bitCache[material.ordinal()] |= TOGGLEABLE_FLAG;
+            } catch (IllegalArgumentException ignored) {
             }
         }
-        return false;
+
+        for (String block : placeableList) {
+            try {
+                Material material = Material.valueOf(block);
+                bitCache[material.ordinal()] |= PLACEABLE_FLAG;
+            } catch (IllegalArgumentException ignored) {
+            }
+        }
+
+        initialized = true;
+    }
+
+    public static boolean isToggleableState(Material material) {
+        int ordinal = material.ordinal();
+        return (bitCache[ordinal] & TOGGLEABLE_FLAG) != 0;
     }
 
     public static boolean isToggleableState(String block) {
-        int hash = block.hashCode();
-        int cacheIdx = hash & 8191;
-
-        if (TOGGLEABLE_CACHED[cacheIdx]) {
-            return TOGGLEABLE_CACHE[cacheIdx];
+        try {
+            Material material = Material.valueOf(block.toUpperCase());
+            return isToggleableState(material);
+        } catch (IllegalArgumentException e) {
+            return false;
         }
+    }
 
-        boolean result = binarySearchHash(TOGGLEABLE_HASHES, hash);
-
-        if (!result && !block.equals(block.toUpperCase())) {
-            result = binarySearchHash(TOGGLEABLE_HASHES, block.toUpperCase().hashCode());
-        }
-
-        TOGGLEABLE_CACHE[cacheIdx] = result;
-        TOGGLEABLE_CACHED[cacheIdx] = true;
-
-        return result;
+    public static boolean isPlaceableState(Material material) {
+        int ordinal = material.ordinal();
+        return (bitCache[ordinal] & PLACEABLE_FLAG) != 0;
     }
 
     public static boolean isPlaceableState(String block) {
-        int hash = block.hashCode();
-        int cacheIdx = hash & 4095;
-
-        if (PLACEABLE_CACHED[cacheIdx]) {
-            return PLACEABLE_CACHE[cacheIdx];
+        try {
+            Material material = Material.valueOf(block.toUpperCase());
+            return isPlaceableState(material);
+        } catch (IllegalArgumentException e) {
+            return false;
         }
-
-        boolean result = binarySearchHash(PLACEABLE_HASHES, hash);
-        if (!result && !block.equals(block.toUpperCase())) {
-            result = binarySearchHash(PLACEABLE_HASHES, block.toUpperCase().hashCode());
-        }
-
-        PLACEABLE_CACHE[cacheIdx] = result;
-        PLACEABLE_CACHED[cacheIdx] = true;
-
-        return result;
     }
 
 }

@@ -33,6 +33,7 @@ import io.github.insideranh.stellarprotect.listeners.versions.DecorativeEventHan
 import io.github.insideranh.stellarprotect.listeners.versions.EventVersionHandler;
 import io.github.insideranh.stellarprotect.managers.*;
 import io.github.insideranh.stellarprotect.restore.BlockRestore;
+import io.github.insideranh.stellarprotect.trackers.BlockTracker;
 import io.github.insideranh.stellarprotect.trackers.ChestTransactionTracker;
 import io.github.insideranh.stellarprotect.utils.UpdateChecker;
 import lombok.Getter;
@@ -111,7 +112,10 @@ public class StellarProtect extends JavaPlugin {
         this.lookupExecutor = MoreExecutors.listeningDecorator(new ThreadPoolExecutor(2, 2, 0L, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<>(1024)));
         this.joinExecutor = MoreExecutors.listeningDecorator(new ThreadPoolExecutor(2, 2, 0L, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<>(1024)));
 
-        this.lookupExecutor.execute(AdjacentType::initializeCache);
+        this.lookupExecutor.execute(() -> {
+            AdjacentType.initializeCache();
+            BlockTracker.initializeCache();
+        });
 
         this.configManager.load();
         this.hooksManager.load();
