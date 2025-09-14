@@ -17,7 +17,7 @@ messages:
   specifyRadius: "&cYou don't have radius specified, using default radius (10)."
 
   rollback:
-    preview: "&aPreview: §e<progress>% §7(§e<now>/§e<total>§7) §eUse §e/restore confirm §eto apply the changes."
+    preview: "&aPreview: §e<progress>% §7(§e<now>/§e<total>§7) §eUse §e/spt restore confirm §eto apply the changes."
     progress: "&bProgress: §e<progress>% §7(§e<now>/§e<total>§7)"
     error: "&cError section <section>: <error>"
     success: "&aRollback completed! §e<total>§a logs processed."
