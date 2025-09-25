@@ -16,6 +16,7 @@ import io.github.insideranh.stellarprotect.database.ProtectDatabase;
 import io.github.insideranh.stellarprotect.enums.MinecraftVersion;
 import io.github.insideranh.stellarprotect.hooks.ShopGUIHookListener;
 import io.github.insideranh.stellarprotect.hooks.StellarTaskHook;
+import io.github.insideranh.stellarprotect.hooks.WorldEditHook;
 import io.github.insideranh.stellarprotect.hooks.XPlayerKitsListener;
 import io.github.insideranh.stellarprotect.hooks.itemsadder.ItemsAdderHook;
 import io.github.insideranh.stellarprotect.hooks.itemsadder.ItemsAdderHookListener;
@@ -72,6 +73,8 @@ public class StellarProtect extends JavaPlugin {
     private NexoDefaultHook nexoHook;
     @Nullable
     private ItemsAdderHook itemsAdderHook;
+    @Nullable
+    private WorldEditHook worldEditHook;
     private DefaultVaultHook vaultHook = new DefaultVaultHook();
     private ChestTransactionTracker chestTransactionTracker;
     private ListeningExecutorService executor;
@@ -189,6 +192,10 @@ public class StellarProtect extends JavaPlugin {
             if (hooksManager.isXPlayerKitsHook() && getServer().getPluginManager().isPluginEnabled("XPlayerKits")) {
                 Bukkit.getPluginManager().registerEvents(new XPlayerKitsListener(), this);
                 getLogger().info("XPlayerKits detected, enabling XPlayerKits hook...");
+            }
+            if (hooksManager.isWorldEditHook() && getServer().getPluginManager().isPluginEnabled("WorldEdit")) {
+                this.worldEditHook = new WorldEditHook();
+                getLogger().info("WorldEdit detected, enabling WorldEdit hook...");
             }
         }).runTask(10);
     }

@@ -520,10 +520,10 @@ public class LoggerRepositoryMySQL implements LoggerRepository {
 
         QueryBuilder queryBuilder = buildBaseQuery(databaseFilters);
 
-        String dataQuery = "SELECT ple.*, p.name, p.uuid " + queryBuilder.getFromAndWhere() +
+        String dataQuery = "SELECT ple.*, p.name, p.uuid " + queryBuilder.getDataQuery() +
             " ORDER BY ple.created_at DESC LIMIT ? OFFSET ?";
 
-        String countQuery = "SELECT COUNT(*) " + queryBuilder.getFromAndWhere();
+        String countQuery = "SELECT COUNT(*) " + queryBuilder.getCountQuery();
 
         long totalCount = 0;
 
@@ -551,7 +551,7 @@ public class LoggerRepositoryMySQL implements LoggerRepository {
 
     public long countLogs(DatabaseFilters databaseFilters) {
         QueryBuilder queryBuilder = buildBaseQuery(databaseFilters);
-        String countQuery = "SELECT COUNT(*) " + queryBuilder.getFromAndWhere();
+        String countQuery = "SELECT COUNT(*) " + queryBuilder.getCountQuery();
 
         try (Connection connection = getConnection()) {
             return executeCountQuery(connection, countQuery, queryBuilder.getParameters());
@@ -569,8 +569,10 @@ public class LoggerRepositoryMySQL implements LoggerRepository {
             .addTimeFilter(databaseFilters.getTimeFilter())
             .addRadiusFilter(databaseFilters.getRadiusFilter())
             .addUsersFilter(databaseFilters.getUserFilters())
-            .addWordsFilter(databaseFilters.getAllIncludeFilters())
-            .addWordsExcludeFilter(databaseFilters.getAllExcludeFilters())
+            .allIncludeFilters(databaseFilters.getAllIncludeFilters())
+            .allExcludeFilters(databaseFilters.getAllExcludeFilters())
+            .allIncludeFilters(databaseFilters.getIncludeMaterialFilters())
+            .allExcludeFilters(databaseFilters.getExcludeMaterialFilters())
             .addActionTypesFilter(databaseFilters.getActionTypesFilter());
     }
 
@@ -627,6 +629,7 @@ public class LoggerRepositoryMySQL implements LoggerRepository {
     }
 
     private static class QueryBuilder {
+
         private final List<String> whereConditions = new ArrayList<>();
         private final List<Object> parameters = new ArrayList<>();
         private final String tablesLogEntries;
@@ -648,9 +651,15 @@ public class LoggerRepositoryMySQL implements LoggerRepository {
 
         public QueryBuilder addRadiusFilter(RadiusArg radiusArg) {
             if (radiusArg != null) {
+                if (radiusArg.getWorldId() != -1) {
+                    whereConditions.add("ple.world_id = ?");
+                }
                 whereConditions.add("ple.x BETWEEN ? AND ?");
                 whereConditions.add("ple.y BETWEEN ? AND ?");
                 whereConditions.add("ple.z BETWEEN ? AND ?");
+                if (radiusArg.getWorldId() != -1) {
+                    parameters.add(radiusArg.getWorldId());
+                }
                 parameters.add(radiusArg.getMinX());
                 parameters.add(radiusArg.getMaxX());
                 parameters.add(radiusArg.getMinY());
@@ -661,22 +670,11 @@ public class LoggerRepositoryMySQL implements LoggerRepository {
             return this;
         }
 
-        public QueryBuilder addUsersFilter(UsersArg usersArg) {
-            if (usersArg != null && usersArg.getUserIds() != null && !usersArg.getUserIds().isEmpty()) {
-                String placeholders = usersArg.getUserIds().stream()
-                    .map(id -> "?")
-                    .collect(Collectors.joining(","));
-                whereConditions.add("ple.player_id IN (" + placeholders + ")");
-                parameters.addAll(usersArg.getUserIds());
-            }
-            return this;
-        }
-
-        public QueryBuilder addWordsFilter(List<Long> worldsFilter) {
-            if (worldsFilter != null && !worldsFilter.isEmpty()) {
+        public QueryBuilder allIncludeFilters(List<Long> materialFilters) {
+            if (materialFilters != null && !materialFilters.isEmpty()) {
                 List<String> jsonConditions = new ArrayList<>();
 
-                for (Long wordId : worldsFilter) {
+                for (Long wordId : materialFilters) {
                     List<String> worldConditions = new ArrayList<>();
 
                     worldConditions.add("ple.extra_json LIKE ?");
@@ -696,26 +694,37 @@ public class LoggerRepositoryMySQL implements LoggerRepository {
             return this;
         }
 
-        public QueryBuilder addWordsExcludeFilter(List<Long> worldsExcludeFilter) {
-            if (worldsExcludeFilter != null && !worldsExcludeFilter.isEmpty()) {
+        public QueryBuilder allExcludeFilters(List<Long> materialFilters) {
+            if (materialFilters != null && !materialFilters.isEmpty()) {
                 List<String> excludeConditions = new ArrayList<>();
 
-                for (Long wordId : worldsExcludeFilter) {
+                for (Long materialId : materialFilters) {
                     List<String> worldExcludeConditions = new ArrayList<>();
 
                     worldExcludeConditions.add("ple.extra_json NOT LIKE ?");
-                    parameters.add("%\"id\":" + wordId + ",%");
+                    parameters.add("%\"id\":" + materialId + ",%");
 
                     worldExcludeConditions.add("ple.extra_json NOT LIKE ?");
-                    parameters.add("%\"ai\":{%\"" + wordId + "\":%");
+                    parameters.add("%\"ai\":{%\"" + materialId + "\":%");
 
                     worldExcludeConditions.add("ple.extra_json NOT LIKE ?");
-                    parameters.add("%\"ri\":{%\"" + wordId + "\":%");
+                    parameters.add("%\"ri\":{%\"" + materialId + "\":%");
 
                     excludeConditions.add("(" + String.join(" AND ", worldExcludeConditions) + ")");
                 }
 
                 whereConditions.add("(" + String.join(" AND ", excludeConditions) + ")");
+            }
+            return this;
+        }
+
+        public QueryBuilder addUsersFilter(UsersArg usersArg) {
+            if (usersArg != null && usersArg.getUserIds() != null && !usersArg.getUserIds().isEmpty()) {
+                String placeholders = usersArg.getUserIds().stream()
+                    .map(id -> "?")
+                    .collect(Collectors.joining(","));
+                whereConditions.add("ple.player_id IN (" + placeholders + ")");
+                parameters.addAll(usersArg.getUserIds());
             }
             return this;
         }
@@ -731,7 +740,12 @@ public class LoggerRepositoryMySQL implements LoggerRepository {
             return this;
         }
 
-        public String getFromAndWhere() {
+        public String getCountQuery() {
+            String whereClause = whereConditions.isEmpty() ? "" : " WHERE " + String.join(" AND ", whereConditions);
+            return "FROM " + tablesLogEntries + " ple " + whereClause;
+        }
+
+        public String getDataQuery() {
             String whereClause = whereConditions.isEmpty() ? "" : " WHERE " + String.join(" AND ", whereConditions);
             return "FROM " + tablesLogEntries + " ple " +
                 "JOIN " + tablesPlayers + " p ON ple.player_id = p.id" + whereClause;

@@ -449,8 +449,8 @@ public class ChestTransactionTracker implements Listener {
 
         private int hashItem(ItemStack item) {
             int hash = item.getType().ordinal();
-            if (item.hasItemMeta()) {
-                ItemMeta meta = item.getItemMeta();
+            ItemMeta meta = item.getItemMeta();
+            if (meta != null) {
                 int customModelData = protectNMS.modelDataHashCode(meta);
                 if (meta.hasDisplayName()) {
                     hash = hash * 31 + meta.getDisplayName().hashCode();

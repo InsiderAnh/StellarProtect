@@ -627,9 +627,15 @@ public class LoggerRepositorySQL implements LoggerRepository {
 
         public QueryBuilder addRadiusFilter(RadiusArg radiusArg) {
             if (radiusArg != null) {
+                if (radiusArg.getWorldId() != -1) {
+                    whereConditions.add("ple.world_id = ?");
+                }
                 whereConditions.add("ple.x BETWEEN ? AND ?");
                 whereConditions.add("ple.y BETWEEN ? AND ?");
                 whereConditions.add("ple.z BETWEEN ? AND ?");
+                if (radiusArg.getWorldId() != -1) {
+                    parameters.add(radiusArg.getWorldId());
+                }
                 parameters.add(radiusArg.getMinX());
                 parameters.add(radiusArg.getMaxX());
                 parameters.add(radiusArg.getMinY());

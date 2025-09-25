@@ -37,7 +37,7 @@ public class LookupArgument extends StellarArgument {
 
         PageArg pageArg = ArgumentsParser.parsePage(arguments);
         TimeArg timeArg = ArgumentsParser.parseTime(arguments);
-        RadiusArg radiusArg = ArgumentsParser.parseRadiusOrNull(arguments, player.getLocation());
+        RadiusArg radiusArg = ArgumentsParser.parseRadiusOrNull(player, arguments, player.getLocation());
         List<ActionType> actionTypesArg = ArgumentsParser.parseActionTypes(arguments);
         List<String> includesArg = ArgumentsParser.parseIncludesMaterials(arguments);
         List<String> excludesArg = ArgumentsParser.parseExcludesMaterials(arguments);

@@ -14,6 +14,7 @@ public class HooksManager {
     private boolean nexoHook;
     private boolean itemsAdderHook;
     private boolean xPlayerKitsHook;
+    private boolean worldEditHook;
 
     public void load() {
         if (config == null) {
@@ -26,6 +27,7 @@ public class HooksManager {
         nexoHook = config.getBoolean("hooks.nexo.enabled");
         itemsAdderHook = config.getBoolean("hooks.itemsAdder.enabled");
         xPlayerKitsHook = config.getBoolean("hooks.xplayerkits.enabled");
+        worldEditHook = config.getBoolean("hooks.worldedit.enabled");
     }
 
 }

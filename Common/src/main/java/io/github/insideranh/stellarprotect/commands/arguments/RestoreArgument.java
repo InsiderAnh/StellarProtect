@@ -44,9 +44,9 @@ public class RestoreArgument extends StellarArgument {
         }
 
         TimeArg timeArg = ArgumentsParser.parseTime(arguments);
-        RadiusArg radiusArg = ArgumentsParser.parseRadiusOrNull(arguments, player.getLocation());
+        RadiusArg radiusArg = ArgumentsParser.parseRadiusOrNull(player, arguments, player.getLocation());
         if (radiusArg == null) {
-            radiusArg = new RadiusArg(player.getLocation(), 10);
+            radiusArg = new RadiusArg(player.getLocation(), 10, -1);
             plugin.getLangManager().sendMessage(player, "messages.specifyRadius");
         }
         List<ActionType> actionTypes = Arrays.asList(ActionType.BLOCK_BREAK, ActionType.BLOCK_PLACE, ActionType.BUCKET_EMPTY, ActionType.BUCKET_FILL, ActionType.BLOCK_SPREAD, ActionType.INVENTORY_TRANSACTION);

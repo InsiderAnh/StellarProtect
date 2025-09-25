@@ -6,6 +6,7 @@ import org.bukkit.Location;
 @Getter
 public class RadiusArg {
 
+    private final int worldId;
     private final double radius;
     private final double minX;
     private final double maxX;
@@ -14,11 +15,12 @@ public class RadiusArg {
     private final double minZ;
     private final double maxZ;
 
-    public RadiusArg(Location location, double radius) {
-        this(radius, location.getBlockX() - radius, location.getBlockX() + radius, location.getBlockY() - radius, location.getBlockY() + radius, location.getBlockZ() - radius, location.getBlockZ() + radius);
+    public RadiusArg(Location location, double radius, int worldId) {
+        this(worldId, radius, location.getBlockX() - radius, location.getBlockX() + radius, location.getBlockY() - radius, location.getBlockY() + radius, location.getBlockZ() - radius, location.getBlockZ() + radius);
     }
 
-    public RadiusArg(double radius, double minX, double maxX, double minY, double maxY, double minZ, double maxZ) {
+    public RadiusArg(int worldId, double radius, double minX, double maxX, double minY, double maxY, double minZ, double maxZ) {
+        this.worldId = worldId;
         this.radius = radius;
         this.minX = minX;
         this.maxX = maxX;

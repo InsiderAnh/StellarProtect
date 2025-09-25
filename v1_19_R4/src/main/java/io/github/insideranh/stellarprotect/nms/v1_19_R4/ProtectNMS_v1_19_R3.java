@@ -24,7 +24,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.function.Function;
 
-public class ProtectNMS_v1_19_R4 extends ProtectNMS {
+public class ProtectNMS_v1_19_R3 extends ProtectNMS {
 
     @Override
     public int modelDataHashCode(ItemMeta itemMeta) {

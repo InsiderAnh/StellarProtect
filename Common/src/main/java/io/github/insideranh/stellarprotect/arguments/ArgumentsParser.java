@@ -5,8 +5,10 @@ import io.github.insideranh.stellarprotect.StellarProtect;
 import io.github.insideranh.stellarprotect.enums.ActionType;
 import io.github.insideranh.stellarprotect.enums.TimesType;
 import io.github.insideranh.stellarprotect.utils.PlayerUtils;
+import io.github.insideranh.stellarprotect.utils.WorldUtils;
 import lombok.NonNull;
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -116,11 +118,13 @@ public class ArgumentsParser {
     }
 
     public static @NonNull TimeArg parseTime(String[] arguments) {
-        String joined = String.join(" ", arguments).toLowerCase(Locale.ROOT).replace("\\", "").replace("'", "").replace(",", "");
+        String joined = String.join(" ", arguments).toLowerCase(Locale.ROOT).replace("\\", "").replace("'", "");
 
         for (String part : joined.split("\\s+")) {
             if (part.startsWith("t:") || part.startsWith("time:")) {
                 String timeSegment = part.replaceFirst("^(t:|time:)", "");
+                timeSegment = timeSegment.replace(",", "");
+
                 String[] rangeParts = timeSegment.split("-");
 
                 if (rangeParts.length == 0) {
@@ -130,8 +134,8 @@ public class ArgumentsParser {
                 String startString = rangeParts[0];
                 String endString = rangeParts.length > 1 ? rangeParts[1] : "";
 
-                long startDurationMs = parseDuration(rangeParts[0]) * 1000L;
-                long endDurationMs = rangeParts.length > 1 ? parseDuration(rangeParts[1]) * 1000L : 0;
+                long startDurationMs = parseEnhancedDuration(rangeParts[0]) * 1000L;
+                long endDurationMs = rangeParts.length > 1 ? parseEnhancedDuration(rangeParts[1]) * 1000L : 0;
 
                 long timeStart = System.currentTimeMillis() - startDurationMs;
                 long timeEnd = endDurationMs > 0 ? System.currentTimeMillis() - endDurationMs : System.currentTimeMillis();
@@ -146,6 +150,51 @@ public class ArgumentsParser {
             }
         }
         return new TimeArg("", "", 0, System.currentTimeMillis());
+    }
+
+    private static long parseEnhancedDuration(String duration) {
+        if (duration == null || duration.isEmpty()) {
+            return 0;
+        }
+
+        duration = duration.toLowerCase().trim();
+        long totalSeconds = 0;
+
+        Pattern pattern = Pattern.compile("(\\d*\\.?\\d+)([wdhms])");
+        Matcher matcher = pattern.matcher(duration);
+
+        while (matcher.find()) {
+            double value = Double.parseDouble(matcher.group(1));
+            String unit = matcher.group(2);
+
+            switch (unit) {
+                case "w":
+                    totalSeconds += (long) (value * 7 * 24 * 3600);
+                    break;
+                case "d":
+                    totalSeconds += (long) (value * 24 * 3600);
+                    break;
+                case "h":
+                    totalSeconds += (long) (value * 3600);
+                    break;
+                case "m":
+                    totalSeconds += (long) (value * 60);
+                    break;
+                case "s":
+                    totalSeconds += (long) value;
+                    break;
+            }
+        }
+
+        if (totalSeconds == 0) {
+            try {
+                totalSeconds = (long) Double.parseDouble(duration);
+            } catch (NumberFormatException e) {
+                return 0;
+            }
+        }
+
+        return totalSeconds;
     }
 
     public static @NonNull PageArg parsePage(String[] arguments) {
@@ -204,25 +253,76 @@ public class ArgumentsParser {
         return CompletableFuture.completedFuture(new UsersArg());
     }
 
-    public static @Nullable RadiusArg parseRadiusOrNull(String[] arguments, @NonNull Location location) {
-        String joined = String.join(" ", arguments).toLowerCase(Locale.ROOT).replace("\\", "").replace("'", "").replace(",", "");
+
+    public static @Nullable RadiusArg parseRadiusOrNull(Player player, String[] arguments, @NonNull Location location) {
+        String joined = String.join(" ", arguments).toLowerCase(Locale.ROOT).replace("\\", "").replace("'", "");
 
         for (String part : joined.split("\\s+")) {
             if (part.startsWith("r:") || part.startsWith("radius:")) {
                 String radiusSegment = part.replaceFirst("^(r:|radius:)", "");
                 if (radiusSegment.isEmpty()) continue;
 
+                int worldId;
+                String[] radiusParts;
+
+                if (radiusSegment.startsWith("#")) {
+                    if (radiusSegment.startsWith("#we") && StellarProtect.getInstance().getWorldEditHook() != null) {
+                        return StellarProtect.getInstance().getWorldEditHook().getRadiusArgWorldEdit(player);
+                    }
+
+                    if (radiusSegment.equals("#global")) {
+                        return new RadiusArg(-1, Double.MAX_VALUE,
+                            Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY,
+                            Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY,
+                            Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
+                    }
+
+                    String[] worldParts = radiusSegment.substring(1).split(",");
+                    String worldName = worldParts[0];
+                    worldId = WorldUtils.searchWorldId(worldName);
+
+                    if (worldParts.length > 1) {
+                        radiusParts = new String[worldParts.length - 1];
+                        System.arraycopy(worldParts, 1, radiusParts, 0, worldParts.length - 1);
+                    } else {
+                        return new RadiusArg(worldId, Double.MAX_VALUE,
+                            Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY,
+                            Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY,
+                            Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
+                    }
+                } else {
+                    worldId = WorldUtils.searchWorldId(location.getWorld().getName());
+                    radiusParts = radiusSegment.split(",");
+                }
+
                 try {
-                    double radius = Double.parseDouble(radiusSegment);
-                    return new RadiusArg(radius,
-                        location.getBlockX() - radius,
-                        location.getBlockX() + radius,
-                        location.getBlockY() - radius,
-                        location.getBlockY() + radius,
-                        location.getBlockZ() - radius,
-                        location.getBlockZ() + radius);
+                    double radiusX, radiusY, radiusZ;
+
+                    radiusX = radiusParts.length > 0 ?  Double.parseDouble(radiusParts[0].trim()) : 10;
+
+                    if (radiusParts.length >= 3) {
+                        radiusY = Double.parseDouble(radiusParts[1].trim());
+                        radiusZ = Double.parseDouble(radiusParts[2].trim());
+                    } else if (radiusParts.length == 2) {
+                        radiusY = Double.parseDouble(radiusParts[1].trim());
+                        radiusZ = radiusX;
+                    } else {
+                        radiusY = radiusX;
+                        radiusZ = radiusX;
+                    }
+
+                    double maxRadius = Math.max(Math.max(radiusX, radiusY), radiusZ);
+
+                    return new RadiusArg(worldId, maxRadius,
+                        location.getBlockX() - radiusX,
+                        location.getBlockX() + radiusX,
+                        location.getBlockY() - radiusY,
+                        location.getBlockY() + radiusY,
+                        location.getBlockZ() - radiusZ,
+                        location.getBlockZ() + radiusZ);
+
                 } catch (NumberFormatException e) {
-                    e.printStackTrace();
+                    System.err.println("Error parsing radius values: " + String.join(",", radiusParts));
                 }
             }
         }

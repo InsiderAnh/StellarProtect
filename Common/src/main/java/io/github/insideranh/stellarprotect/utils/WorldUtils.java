@@ -26,6 +26,15 @@ public class WorldUtils {
         worldIds.put(world, id);
     }
 
+    public static int searchWorldId(String world) {
+        for (String worldId : worldIds.keySet()) {
+            if (worldId.equalsIgnoreCase(world)) {
+                return worldIds.get(worldId);
+            }
+        }
+        return -1;
+    }
+
     public static int getShortId(String world) {
         if (worldIds.containsKey(world)) {
             return worldIds.get(world);

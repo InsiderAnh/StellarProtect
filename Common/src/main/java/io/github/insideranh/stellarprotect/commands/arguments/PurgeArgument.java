@@ -34,7 +34,7 @@ public class PurgeArgument extends StellarArgument {
         if (playerProtect == null) return;
 
         TimeArg timeArg = ArgumentsParser.parseTime(arguments);
-        RadiusArg radiusArg = ArgumentsParser.parseRadiusOrNull(arguments, player.getLocation());
+        RadiusArg radiusArg = ArgumentsParser.parseRadiusOrNull(player, arguments, player.getLocation());
         List<ActionType> actionTypesArg = ArgumentsParser.parseActionTypes(arguments);
         plugin.getLangManager().sendMessage(sender, "messages.purging");
 

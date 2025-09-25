@@ -7,3 +7,5 @@ hooks:
     enabled: true
   itemsAdder:
     enabled: true
+  worldedit:
+    enabled: true

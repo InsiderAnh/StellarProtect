@@ -9,9 +9,9 @@ import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
 
-public class BlockRestore_v1_19_R4 extends BlockRestore {
+public class BlockRestore_v1_19_R3 extends BlockRestore {
 
-    public BlockRestore_v1_19_R4(String data) {
+    public BlockRestore_v1_19_R3(String data) {
         super(data);
     }
 

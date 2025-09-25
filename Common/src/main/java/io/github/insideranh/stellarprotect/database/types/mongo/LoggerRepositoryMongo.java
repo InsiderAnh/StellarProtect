@@ -457,6 +457,9 @@ public class LoggerRepositoryMongo implements LoggerRepository {
         }
 
         if (radiusArg != null) {
+            if (radiusArg.getWorldId() != -1) {
+                filters.add(Filters.eq("world_id", radiusArg.getWorldId()));
+            }
             filters.add(Filters.gte("x", radiusArg.getMinX()));
             filters.add(Filters.lte("x", radiusArg.getMaxX()));
             filters.add(Filters.gte("y", radiusArg.getMinY()));

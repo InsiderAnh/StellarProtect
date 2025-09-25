@@ -8,7 +8,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-public class ColorUtils_v1_19_R4 extends ColorUtils {
+public class ColorUtils_v1_19_R3 extends ColorUtils {
 
     private final Pattern pattern = Pattern.compile("&?#[a-fA-F0-9]{6}");
 
