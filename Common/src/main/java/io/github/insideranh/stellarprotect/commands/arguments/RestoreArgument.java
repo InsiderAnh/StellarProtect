@@ -2,12 +2,12 @@ package io.github.insideranh.stellarprotect.commands.arguments;
 
 import io.github.insideranh.stellarprotect.StellarProtect;
 import io.github.insideranh.stellarprotect.arguments.ArgumentsParser;
+import io.github.insideranh.stellarprotect.arguments.HashTagsArg;
 import io.github.insideranh.stellarprotect.arguments.RadiusArg;
 import io.github.insideranh.stellarprotect.arguments.TimeArg;
 import io.github.insideranh.stellarprotect.cache.keys.LocationCache;
 import io.github.insideranh.stellarprotect.commands.StellarArgument;
 import io.github.insideranh.stellarprotect.data.PlayerProtect;
-import io.github.insideranh.stellarprotect.data.RestoreSession;
 import io.github.insideranh.stellarprotect.database.entries.LogEntry;
 import io.github.insideranh.stellarprotect.enums.ActionType;
 import org.bukkit.command.CommandSender;
@@ -31,18 +31,7 @@ public class RestoreArgument extends StellarArgument {
         PlayerProtect playerProtect = PlayerProtect.getPlayer(player);
         if (playerProtect == null) return;
 
-        if (arguments.length == 1) {
-            String currentArg = arguments[0];
-            if (currentArg.equals("confirm")) {
-                TimeArg timeArg = playerProtect.getRestoreSession().getTimeArg();
-                RadiusArg radiusArg = playerProtect.getRestoreSession().getRadiusArg();
-                List<ActionType> actionTypes = playerProtect.getRestoreSession().getActionTypes().stream().map(ActionType::getById).collect(Collectors.toList());
-
-                executeRestore(player, playerProtect, true, timeArg, radiusArg, actionTypes);
-                return;
-            }
-        }
-
+        HashTagsArg hashTagsArg = new HashTagsArg(arguments);
         TimeArg timeArg = ArgumentsParser.parseTime(arguments);
         RadiusArg radiusArg = ArgumentsParser.parseRadiusOrNull(player, arguments, player.getLocation());
         if (radiusArg == null) {
@@ -51,7 +40,7 @@ public class RestoreArgument extends StellarArgument {
         }
         List<ActionType> actionTypes = Arrays.asList(ActionType.BLOCK_BREAK, ActionType.BLOCK_PLACE, ActionType.BUCKET_EMPTY, ActionType.BUCKET_FILL, ActionType.BLOCK_SPREAD, ActionType.INVENTORY_TRANSACTION);
 
-        executeRestore(player, playerProtect, false, timeArg, radiusArg, actionTypes);
+        executeRestore(player, hashTagsArg.isPreview(), hashTagsArg.isVerbose(), hashTagsArg.isSilent(), timeArg, radiusArg, actionTypes);
     }
 
     @Override
@@ -60,22 +49,18 @@ public class RestoreArgument extends StellarArgument {
             String currentArg = arguments[arguments.length - 1];
 
             if (currentArg.startsWith("t:") || currentArg.startsWith("time:")) {
-                return Arrays.asList("t:1h", "t:1d", "t:1w", "t:1mo");
+                return Arrays.asList("t:1h-2h", "t:1d", "t:1w", "t:1mo");
             }
 
             if (currentArg.startsWith("r:") || currentArg.startsWith("radius:")) {
-                return Arrays.asList("r:10", "r:20", "r:30", "r:40", "r:50");
-            }
-
-            if (currentArg.contains("confirm")) {
-                return Collections.singletonList("confirm");
+                return Arrays.asList("r:10", "r:20", "r:#world", "r:10,10,10");
             }
         }
 
-        return Arrays.asList("t:1h", "r:10", "confirm");
+        return Arrays.asList("t:1h", "r:10", "#session", "#preview", "#verbose", "#silent", "#count");
     }
 
-    public void executeRestore(Player player, PlayerProtect playerProtect, boolean confirm, TimeArg timeArg, RadiusArg radiusArg, List<ActionType> actionTypes) {
+    public void executeRestore(Player player, boolean preview, boolean verbose, boolean silent, TimeArg timeArg, RadiusArg radiusArg, List<ActionType> actionTypes) {
         final int BATCH_SIZE = 1000;
         final int DELAY_TICKS = 2;
 
@@ -85,13 +70,15 @@ public class RestoreArgument extends StellarArgument {
                 return;
             }
 
-            player.sendMessage(plugin.getLangManager().get("messages.rollback.start").replace("<total>", String.valueOf(totalLogs)).replace("<batch>", String.valueOf(BATCH_SIZE)));
-            boolean preview = playerProtect.getRestoreSession() == null || !confirm;
-            if (preview) {
-                playerProtect.setRestoreSession(new RestoreSession(timeArg, radiusArg, actionTypes.stream().map(ActionType::getId).collect(Collectors.toList())));
+            if (!silent) {
+                if (verbose) {
+                    player.sendMessage(plugin.getLangManager().get("messages.rollback.start-verbose").replace("<total>", String.valueOf(totalLogs)).replace("<batch>", String.valueOf(BATCH_SIZE)));
+                } else {
+                    player.sendMessage(plugin.getLangManager().get("messages.rollback.start").replace("<total>", String.valueOf(totalLogs)).replace("<batch>", String.valueOf(BATCH_SIZE)));
+                }
             }
 
-            processBatchRestore(player, preview, timeArg, radiusArg, actionTypes, 0, totalLogs, BATCH_SIZE, DELAY_TICKS);
+            processBatchRestore(player, preview, verbose, silent, timeArg, radiusArg, actionTypes, 0, totalLogs, BATCH_SIZE, DELAY_TICKS);
         }).exceptionally(error -> {
             plugin.getLangManager().sendMessage(player, "messages.error");
             error.printStackTrace();
@@ -99,9 +86,11 @@ public class RestoreArgument extends StellarArgument {
         });
     }
 
-    private void processBatchRestore(Player player, boolean preview, TimeArg timeArg, RadiusArg radiusArg, List<ActionType> actionTypes, int currentSkip, long totalLogs, int batchSize, int delayTicks) {
+    private void processBatchRestore(Player player, boolean preview, boolean verbose, boolean silent, TimeArg timeArg, RadiusArg radiusArg, List<ActionType> actionTypes, int currentSkip, long totalLogs, int batchSize, int delayTicks) {
         if (currentSkip >= totalLogs) {
-            player.sendMessage(plugin.getLangManager().get("messages.rollback.success").replace("<current>", String.valueOf(currentSkip)).replace("<total>", String.valueOf(totalLogs)));
+            if (!silent) {
+                player.sendMessage(plugin.getLangManager().get("messages.rollback.success").replace("<current>", String.valueOf(currentSkip)).replace("<total>", String.valueOf(totalLogs)));
+            }
             return;
         }
 
@@ -113,23 +102,36 @@ public class RestoreArgument extends StellarArgument {
                 if (processedInBatch > 0) {
                     plugin.getStellarTaskHook(() -> {
                         if (preview) {
-                            plugin.getRestoreManager().preview(player, groupedLogs);
+                            plugin.getRestoreManager().preview(player, groupedLogs, verbose, silent);
                         } else {
-                            plugin.getRestoreManager().rollback(player, groupedLogs);
+                            plugin.getRestoreManager().rollback(player, groupedLogs, verbose, silent);
                         }
 
                         int totalProcessed = currentSkip + processedInBatch;
                         double progress = (totalProcessed * 100.0) / totalLogs;
-                        if (preview) {
-                            player.sendMessage(plugin.getLangManager().get("messages.rollback.preview").replace("<progress>", String.valueOf(Math.round(progress))).replace("<now>", String.valueOf(totalProcessed)).replace("<total>", String.valueOf(totalLogs)));
-                        } else {
-                            player.sendMessage(plugin.getLangManager().get("messages.rollback.progress").replace("<progress>", String.valueOf(Math.round(progress))).replace("<now>", String.valueOf(totalProcessed)).replace("<total>", String.valueOf(totalLogs)));
+
+                        if (!silent) {
+                            if (preview) {
+                                if (verbose) {
+                                    player.sendMessage(plugin.getLangManager().get("messages.rollback.preview-verbose").replace("<progress>", String.valueOf(Math.round(progress))).replace("<now>", String.valueOf(totalProcessed)).replace("<total>", String.valueOf(totalLogs)));
+                                } else {
+                                    player.sendMessage(plugin.getLangManager().get("messages.rollback.preview").replace("<progress>", String.valueOf(Math.round(progress))).replace("<now>", String.valueOf(totalProcessed)).replace("<total>", String.valueOf(totalLogs)));
+                                }
+                            } else {
+                                if (verbose) {
+                                    player.sendMessage(plugin.getLangManager().get("messages.rollback.progress-verbose").replace("<progress>", String.valueOf(Math.round(progress))).replace("<now>", String.valueOf(totalProcessed)).replace("<total>", String.valueOf(totalLogs)));
+                                } else {
+                                    player.sendMessage(plugin.getLangManager().get("messages.rollback.progress").replace("<progress>", String.valueOf(Math.round(progress))).replace("<now>", String.valueOf(totalProcessed)).replace("<total>", String.valueOf(totalLogs)));
+                                }
+                            }
                         }
 
-                        plugin.getStellarTaskHook(() -> processBatchRestore(player, preview, timeArg, radiusArg, actionTypes, currentSkip + batchSize, totalLogs, batchSize, delayTicks)).runTask(delayTicks);
+                        plugin.getStellarTaskHook(() -> processBatchRestore(player, preview, verbose, silent, timeArg, radiusArg, actionTypes, currentSkip + batchSize, totalLogs, batchSize, delayTicks)).runTask(delayTicks);
                     }).runTask();
                 } else {
-                    player.sendMessage(plugin.getLangManager().get("messages.rollback.success").replace("<current>", String.valueOf(currentSkip)).replace("<total>", String.valueOf(totalLogs)));
+                    if (!silent) {
+                        player.sendMessage(plugin.getLangManager().get("messages.rollback.success").replace("<current>", String.valueOf(currentSkip)).replace("<total>", String.valueOf(totalLogs)));
+                    }
                 }
             })
             .exceptionally(error -> {

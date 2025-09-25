@@ -271,10 +271,10 @@ public class ArgumentsParser {
                     }
 
                     if (radiusSegment.equals("#global")) {
-                        return new RadiusArg(-1, Double.MAX_VALUE,
-                            Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY,
-                            Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY,
-                            Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
+                        return new RadiusArg(-1, 100000,
+                            location.getBlockX() - 100000, location.getBlockX() + 100000,
+                            location.getBlockY() - 100000, location.getBlockY() + 100000,
+                            location.getBlockZ() - 100000, location.getBlockZ() + 100000);
                     }
 
                     String[] worldParts = radiusSegment.substring(1).split(",");
@@ -285,10 +285,10 @@ public class ArgumentsParser {
                         radiusParts = new String[worldParts.length - 1];
                         System.arraycopy(worldParts, 1, radiusParts, 0, worldParts.length - 1);
                     } else {
-                        return new RadiusArg(worldId, Double.MAX_VALUE,
-                            Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY,
-                            Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY,
-                            Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
+                        return new RadiusArg(worldId, 10000,
+                            location.getBlockX() - 10000, location.getBlockX() + 10000,
+                            location.getBlockY() - 10000, location.getBlockY() + 10000,
+                            location.getBlockZ() - 10000, location.getBlockZ() + 10000);
                     }
                 } else {
                     worldId = WorldUtils.searchWorldId(location.getWorld().getName());

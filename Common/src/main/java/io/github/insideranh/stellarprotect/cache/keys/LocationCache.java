@@ -36,6 +36,11 @@ public class LocationCache {
         return minX <= this.x && maxX >= this.x && minY <= this.y && maxY >= this.y && minZ <= this.z && maxZ >= this.z;
     }
 
+    public boolean isInside(int worldId, double minX, double maxX, double minY, double maxY, double minZ, double maxZ) {
+        if (worldId > 0 && worldId != this.worldId) return false;
+        return minX <= this.x && maxX >= this.x && minY <= this.y && maxY >= this.y && minZ <= this.z && maxZ >= this.z;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;

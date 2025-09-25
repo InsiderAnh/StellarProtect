@@ -165,24 +165,6 @@ public class LoggerCache {
         return ActionCategory.SYSTEM_ACTIONS;
     }
 
-    public static void loadLog(LogEntry logEntry) {
-        ActionCategory category = ActionCategory.fromActionTypes(ActionType.getById(logEntry.getActionType()));
-        int categoryOrdinal = category.ordinal();
-        LocationCache location = logEntry.asLocation();
-
-        ConcurrentHashMap<LocationCache, LogRingBuffer> categoryCache = cachedLogsByCategory[categoryOrdinal];
-        LogRingBuffer buffer = categoryCache.get(location);
-        if (buffer == null) {
-            CacheConfig config = CATEGORY_CONFIGS_ARRAY[categoryOrdinal];
-            buffer = new LogRingBuffer(config.maxLogsPerLocation);
-            LogRingBuffer existing = categoryCache.putIfAbsent(location, buffer);
-            if (existing != null) {
-                buffer = existing;
-            }
-        }
-        buffer.add(logEntry);
-    }
-
     public static List<LogEntry> getFlushLogsToDatabase() {
         ArrayList<LogEntry> allBatch = LOG_LIST_POOL.get();
         allBatch.clear();
@@ -352,6 +334,7 @@ public class LoggerCache {
 
             categoryCache.forEach((locationCache, ringBuffer) -> {
                 if (radiusArg != null && !locationCache.isInside(
+                    radiusArg.getWorldId(),
                     radiusArg.getMinX(), radiusArg.getMaxX(),
                     radiusArg.getMinY(), radiusArg.getMaxY(),
                     radiusArg.getMinZ(), radiusArg.getMaxZ())) {
