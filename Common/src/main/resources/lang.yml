@@ -5,6 +5,7 @@ messages:
   noLogs: "&cNo logs found."
   noMoreLogs: "&cNo more logs found."
   noActiveRestoreSession: "&cNo active restore session found."
+  invalidLog: "&cThis log is invalid, please use /spt restore r:<radius> #session again."
   noPlayer: "&cYour data is not loaded yet."
   loadingLookup: "&aLoading logs..."
   pagesNav: "&dPages "
