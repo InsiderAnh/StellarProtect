@@ -62,6 +62,7 @@ public class StellarProtect extends JavaPlugin {
     private final CacheManager cacheManager;
     private final ItemsManager itemsManager;
     private final RestoreManager restoreManager;
+    private final RestoreSessionManager restoreSessionManager;
     private final TrackManager trackManager;
     private final BlocksManager blocksManager;
     private final ProtectDatabase protectDatabase;
@@ -96,6 +97,7 @@ public class StellarProtect extends JavaPlugin {
         this.cacheManager = new CacheManager();
         this.itemsManager = new ItemsManager();
         this.restoreManager = new RestoreManager();
+        this.restoreSessionManager = new RestoreSessionManager();
         this.trackManager = new TrackManager();
         this.blocksManager = new BlocksManager();
         this.hooksManager = new HooksManager();

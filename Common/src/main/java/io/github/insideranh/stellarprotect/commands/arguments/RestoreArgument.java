@@ -8,13 +8,17 @@ import io.github.insideranh.stellarprotect.arguments.TimeArg;
 import io.github.insideranh.stellarprotect.cache.keys.LocationCache;
 import io.github.insideranh.stellarprotect.commands.StellarArgument;
 import io.github.insideranh.stellarprotect.data.PlayerProtect;
+import io.github.insideranh.stellarprotect.data.RestoreSession;
 import io.github.insideranh.stellarprotect.database.entries.LogEntry;
 import io.github.insideranh.stellarprotect.enums.ActionType;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class RestoreArgument extends StellarArgument {
@@ -38,7 +42,22 @@ public class RestoreArgument extends StellarArgument {
             radiusArg = new RadiusArg(player.getLocation(), 10, -1);
             plugin.getLangManager().sendMessage(player, "messages.specifyRadius");
         }
-        List<ActionType> actionTypes = Arrays.asList(ActionType.BLOCK_BREAK, ActionType.BLOCK_PLACE, ActionType.BUCKET_EMPTY, ActionType.BUCKET_FILL, ActionType.BLOCK_SPREAD, ActionType.INVENTORY_TRANSACTION);
+        List<ActionType> actionTypes = Arrays.asList(
+            ActionType.BLOCK_BREAK,
+            ActionType.BLOCK_PLACE,
+            ActionType.BUCKET_EMPTY,
+            ActionType.BUCKET_FILL,
+            ActionType.BLOCK_SPREAD,
+            ActionType.INVENTORY_TRANSACTION
+        );
+
+        if (hashTagsArg.isSession()) {
+            RestoreSession session = new RestoreSession(player, timeArg, radiusArg, actionTypes.stream().map(ActionType::getId).collect(Collectors.toList()), hashTagsArg.isVerbose(), hashTagsArg.isSilent());
+            playerProtect.setRestoreSession(session);
+
+            plugin.getRestoreSessionManager().showRestoreSession(session);
+            return;
+        }
 
         executeRestore(player, hashTagsArg.isPreview(), hashTagsArg.isVerbose(), hashTagsArg.isSilent(), timeArg, radiusArg, actionTypes);
     }
@@ -129,9 +148,7 @@ public class RestoreArgument extends StellarArgument {
                         plugin.getStellarTaskHook(() -> processBatchRestore(player, preview, verbose, silent, timeArg, radiusArg, actionTypes, currentSkip + batchSize, totalLogs, batchSize, delayTicks)).runTask(delayTicks);
                     }).runTask();
                 } else {
-                    if (!silent) {
-                        player.sendMessage(plugin.getLangManager().get("messages.rollback.success").replace("<current>", String.valueOf(currentSkip)).replace("<total>", String.valueOf(totalLogs)));
-                    }
+                    player.sendMessage(plugin.getLangManager().get("messages.rollback.success").replace("<current>", String.valueOf(currentSkip)).replace("<total>", String.valueOf(totalLogs)));
                 }
             })
             .exceptionally(error -> {

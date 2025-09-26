@@ -176,7 +176,7 @@ public class LoggerRepositoryMySQL implements LoggerRepository {
                 connection.setAutoCommit(false);
 
                 try (PreparedStatement playerStmt = connection.prepareStatement(
-                    "INSERT INTO " + stellarProtect.getConfigManager().getTablesLogEntries() + " (player_id, world_id, x, y, z, action_type, extra_json, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
+                    "INSERT INTO " + stellarProtect.getConfigManager().getTablesLogEntries() + " (player_id, world_id, x, y, z, action_type, restored, extra_json, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
                 )) {
                     for (LogEntry playerLog : logEntries) {
                         String extraJson = playerLog.toSaveJson();
@@ -187,8 +187,9 @@ public class LoggerRepositoryMySQL implements LoggerRepository {
                         playerStmt.setDouble(4, playerLog.getY());
                         playerStmt.setDouble(5, playerLog.getZ());
                         playerStmt.setInt(6, playerLog.getActionType());
-                        playerStmt.setString(7, extraJson);
-                        playerStmt.setLong(8, playerLog.getCreatedAt());
+                        playerStmt.setByte(7, playerLog.getRestored());
+                        playerStmt.setString(8, extraJson);
+                        playerStmt.setLong(9, playerLog.getCreatedAt());
                         playerStmt.addBatch();
                     }
 
@@ -206,6 +207,41 @@ public class LoggerRepositoryMySQL implements LoggerRepository {
             }
 
             Debugger.debugSave("Saved " + logEntries.size() + " log entries in " + (System.currentTimeMillis() - start) + "ms");
+        });
+    }
+
+    @Override
+    public void update(List<LogEntry> logEntries) {
+        long start = System.currentTimeMillis();
+        Debugger.debugSave("Updating log entries...");
+
+        stellarProtect.getExecutor().execute(() -> {
+            try (Connection connection = getConnection()) {
+                connection.setAutoCommit(false);
+
+                try (PreparedStatement playerStmt = connection.prepareStatement(
+                    "UPDATE " + stellarProtect.getConfigManager().getTablesLogEntries() + " SET restored = ? WHERE id = ?"
+                )) {
+                    for (LogEntry playerLog : logEntries) {
+                        playerStmt.setByte(1, playerLog.getRestored());
+                        playerStmt.setLong(2, playerLog.getId());
+                        playerStmt.addBatch();
+                    }
+
+                    playerStmt.executeBatch();
+                    connection.commit();
+                } catch (Exception e) {
+                    connection.rollback();
+                    Debugger.debugSave("Failed to save log entries. Trying again...");
+                } finally {
+                    connection.setAutoCommit(true);
+                }
+
+            } catch (Exception e) {
+                Debugger.debugSave("Failed to update log entries. Trying again...");
+            }
+
+            Debugger.debugSave("Updated " + logEntries.size() + " log entries in " + (System.currentTimeMillis() - start) + "ms");
         });
     }
 

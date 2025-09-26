@@ -3,6 +3,8 @@ messages:
   reloaded: "&aPlugin reloaded correctly."
   onlyPlayer: "&cThis command can only be used by players."
   noLogs: "&cNo logs found."
+  noMoreLogs: "&cNo more logs found."
+  noActiveRestoreSession: "&cNo active restore session found."
   noPlayer: "&cYour data is not loaded yet."
   loadingLookup: "&aLoading logs..."
   pagesNav: "&dPages "
@@ -15,6 +17,43 @@ messages:
   debugLog: "&aDebug log mode set to &7<state>"
   debugExtras: "&aDebug extras mode set to &7<state>"
   specifyRadius: "&cYou don't have radius specified, using default radius (10)."
+  error: "&cA error occurred while processing this command. Report in discord."
+  sessions:
+    title: "&6=== Restore Sessions ==="
+    subtitle: "&7Click in the buttons to manage individual logs."
+    restore: |-
+      &aRestore action
+      &7Click to restore the action.
+    undo: |-
+      &cUndo action
+      &7Click to revert the action.
+    restoreall: "&8[&6Restore All&8]"
+    next: " &8[&eNext Page&8]"
+    exit: " &8[&cExit&8]"
+    restoreall-tip: |-
+      &7Restore all actions
+      &7Restore all visible logs in this session.
+    next-tip: |-
+      &7Next page
+      &7View the next logs.
+    exit-tip: |-
+      &7Exit
+      &7Close the session.
+    restored: "&aLog restored successfully!"
+    undone: "&cLog undone successfully!"
+    amount-restored: "&a<amount> logs restored successfully!"
+    block_break: |-
+      &7<time> &8| &d<player>&f break &8| &d(<data>)
+    block_place: |-
+      &7<time> &8| &d<player>&f place &8| &d(<data>)
+    block_spread: |-
+      &7<time> &8| &d<player>&f spread &8| &d(<data>)
+    inventory_transaction: |-
+      &7<time> &8| &d<player>&f inventory transaction &8| &a[View]
+    bucket_empty: |-
+      &7<time> &8| &d<player>&f bucket empty &8| &d(<data>)
+    bucket_fill: |-
+      &7<time> &8| &d<player>&f bucket fill &8| &d(<data>)
 
   rollback:
     preview: "&aPreview: §e<progress>% §7(§e<now>/§e<total>§7) §eUse §e/spt restore confirm §eto apply the changes."

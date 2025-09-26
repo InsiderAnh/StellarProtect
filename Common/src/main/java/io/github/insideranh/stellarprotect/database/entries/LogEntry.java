@@ -1,6 +1,7 @@
 package io.github.insideranh.stellarprotect.database.entries;
 
 import io.github.insideranh.stellarprotect.cache.keys.LocationCache;
+import io.github.insideranh.stellarprotect.utils.PlayerUtils;
 import io.github.insideranh.stellarprotect.utils.WorldUtils;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -14,7 +15,7 @@ import java.util.Objects;
 @Getter
 public class LogEntry {
 
-    // Last ID = 5
+    protected final long id;
     protected final long playerId;
     protected final int worldId;
     protected final double x;
@@ -22,8 +23,10 @@ public class LogEntry {
     protected final double z;
     protected final int actionType;
     protected final long createdAt;
+    private byte restored;
 
     public LogEntry(Document document) {
+        this.id = document.containsKey("id") ? document.getLong("id") : -2L;
         this.playerId = document.containsKey("player_id") ? document.getLong("player_id") : -2L;
         this.worldId = document.getInteger("world_id");
         this.x = document.getDouble("x");
@@ -31,10 +34,12 @@ public class LogEntry {
         this.z = document.getDouble("z");
         this.actionType = document.getInteger("action_type");
         this.createdAt = document.getLong("created_at");
+        this.restored = (byte) document.getInteger("restored", 0);
     }
 
     @SneakyThrows
     public LogEntry(ResultSet resultSet) {
+        this.id = resultSet.getLong("id");
         this.playerId = resultSet.getLong("player_id");
         this.worldId = resultSet.getInt("world_id");
         this.x = resultSet.getDouble("x");
@@ -42,9 +47,11 @@ public class LogEntry {
         this.z = resultSet.getDouble("z");
         this.actionType = resultSet.getInt("action_type");
         this.createdAt = resultSet.getLong("created_at");
+        this.restored = resultSet.getByte("restored");
     }
 
     public LogEntry(long playerId, int actionType, int worldId, double x, double y, double z, long createdAt) {
+        this.id = PlayerUtils.getNextLogId();
         this.playerId = playerId;
         this.worldId = worldId;
         this.x = Math.round(x * 100.0) / 100.0;
@@ -55,6 +62,7 @@ public class LogEntry {
     }
 
     public LogEntry(long playerId, int actionType, Location location, long createdAt) {
+        this.id = PlayerUtils.getNextLogId();
         this.playerId = playerId;
         this.actionType = actionType;
         this.worldId = WorldUtils.getShortId(location.getWorld().getName());
@@ -90,6 +98,14 @@ public class LogEntry {
 
     public String toSaveJson() {
         return "";
+    }
+
+    public boolean isRestored() {
+        return restored != 0;
+    }
+
+    public void setRestored(boolean restored) {
+        this.restored = (byte) (restored ? 1 : 0);
     }
 
     @Override

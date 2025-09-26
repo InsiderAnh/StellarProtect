@@ -20,6 +20,8 @@ public interface LoggerRepository {
 
     void save(List<LogEntry> logEntries);
 
+    void update(List<LogEntry> logEntries);
+
     void purgeLogs(@NonNull DatabaseFilters databaseFilters, Consumer<Long> onFinished);
 
     CompletableFuture<CallbackLookup<List<ItemLogEntry>, Long>> getChestTransactions(@NonNull Location location, int skip, int limit);

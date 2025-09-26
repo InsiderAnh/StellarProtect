@@ -21,6 +21,8 @@ public class PlayerBlockLogEntry extends LogEntry {
     private static final BlocksManager blocksManager = StellarProtect.getInstance().getBlocksManager();
     private final int blockId;
     private String nexoBlockId;
+    private byte extraType;
+    private String extraData;
 
     public PlayerBlockLogEntry(Document document, JsonObject jsonObject) {
         super(document);
@@ -28,6 +30,12 @@ public class PlayerBlockLogEntry extends LogEntry {
         this.blockId = getBlockId(jsonObject);
         if (jsonObject.has("nbId")) {
             this.nexoBlockId = jsonObject.get("nbId").getAsString();
+        }
+        if (jsonObject.has("xt")) {
+            this.extraType = jsonObject.get("xt").getAsByte();
+        }
+        if (jsonObject.has("xd")) {
+            this.extraData = jsonObject.get("xd").getAsString();
         }
     }
 
@@ -87,13 +95,18 @@ public class PlayerBlockLogEntry extends LogEntry {
 
     @Override
     public String toSaveJson() {
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("b", blockId);
         if (nexoBlockId != null) {
-            JsonObject jsonObject = new JsonObject();
-            jsonObject.addProperty("b", blockId);
             jsonObject.addProperty("nbId", nexoBlockId);
-            return jsonObject.toString();
         }
-        return "{\"b\":\"" + blockId + "\"}";
+        if (extraType != 0) {
+            jsonObject.addProperty("xt", extraType);
+        }
+        if (extraData != null) {
+            jsonObject.addProperty("xd", extraData);
+        }
+        return jsonObject.toString();
     }
 
 }

@@ -81,12 +81,14 @@ public class LoggerRepositoryMongo implements LoggerRepository {
 
                 for (LogEntry logEntry : logEntries) {
                     String extraJson = logEntry.toSaveJson();
-                    Document doc = new Document("world_id", logEntry.getWorldId())
+                    Document doc = new Document("id", logEntry.getId())
+                        .append("world_id", logEntry.getWorldId())
                         .append("player_id", logEntry.getPlayerId())
                         .append("x", logEntry.getX())
                         .append("y", logEntry.getY())
                         .append("z", logEntry.getZ())
                         .append("action_type", logEntry.getActionType())
+                        .append("restored", logEntry.getRestored())
                         .append("extra_json", extraJson)
                         .append("created_at", logEntry.getCreatedAt());
 
@@ -99,6 +101,30 @@ public class LoggerRepositoryMongo implements LoggerRepository {
                 Debugger.debugSave("Saved " + result.getInsertedCount() + " log entries in " + (System.currentTimeMillis() - start) + "ms");
             } catch (Exception e) {
                 Debugger.debugSave("Failed to save log entries. Trying again...");
+            }
+        });
+    }
+
+    @Override
+    public void update(List<LogEntry> logEntries) {
+        long start = System.currentTimeMillis();
+        Debugger.debugSave("Updating log entries...");
+
+        stellarProtect.getExecutor().execute(() -> {
+            try {
+                List<WriteModel<Document>> playerOps = new ArrayList<>(logEntries.size());
+
+                for (LogEntry playerLog : logEntries) {
+                    playerOps.add(new ReplaceOneModel<>(new Document("id", playerLog.getId()), new Document("id", playerLog.getId())
+                        .append("restored", playerLog.getRestored())));
+                }
+
+                BulkWriteOptions options = new BulkWriteOptions().ordered(false).bypassDocumentValidation(true);
+                BulkWriteResult result = this.logEntries.bulkWrite(playerOps, options);
+
+                Debugger.debugSave("Updated " + result.getMatchedCount() + " log entries in " + (System.currentTimeMillis() - start) + "ms");
+            } catch (Exception e) {
+                Debugger.debugSave("Failed to update log entries. Trying again...");
             }
         });
     }

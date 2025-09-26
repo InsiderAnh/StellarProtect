@@ -26,6 +26,7 @@ public class MemoryArgument extends StellarArgument {
 
             HashMap<Long, ItemTemplateLight> idToTemplate = new HashMap<>();
             for (ItemTemplate item : plugin.getItemsManager().getItemCache().items()) {
+                if (item == null) continue;
                 ItemTemplateLight light = new ItemTemplateLight(item.getId(), item.getBase64(), item.getDisplayName(), item.getLore(), item.getTypeName(), item.getDisplayNameLower(), item.getLoreLower(), item.getTypeNameLower());
                 idToTemplate.put(item.getId(), light);
             }
@@ -45,12 +46,13 @@ public class MemoryArgument extends StellarArgument {
 
                 sender.sendMessage(plugin.getLangManager().get(messageKey));
 
+                GraphLayout layout = GraphLayout.parseInstance(item.getObject());
                 if (footprint) {
                     sender.sendMessage(plugin.getLangManager().get("messages.memory.footprint"));
-                    sender.sendMessage(GraphLayout.parseInstance(item.getObject()).toFootprint());
+                    sender.sendMessage(layout.toFootprint());
                 }
 
-                long sizeInBytes = GraphLayout.parseInstance(item.getObject()).totalSize();
+                long sizeInBytes = layout.totalSize();
                 String formattedSize = formatMemorySize(sizeInBytes);
 
                 sender.sendMessage(plugin.getLangManager().get("messages.memory.total") + " " + formattedSize);

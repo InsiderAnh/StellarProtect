@@ -3,13 +3,11 @@ package io.github.insideranh.stellarprotect.database.types;
 import io.github.insideranh.stellarprotect.StellarProtect;
 import io.github.insideranh.stellarprotect.database.repositories.*;
 import io.github.insideranh.stellarprotect.database.types.sql.*;
+import io.github.insideranh.stellarprotect.utils.PlayerUtils;
 import lombok.Getter;
 
 import java.io.File;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 @Getter
 public class SQLConnection implements DatabaseConnection {
@@ -68,6 +66,7 @@ public class SQLConnection implements DatabaseConnection {
                     "y DECIMAL(8, 2)," +
                     "z DECIMAL(8, 2)," +
                     "action_type INT," +
+                    "restored TINYINT DEFAULT 0," +
                     "extra_json TEXT," +
                     "created_at BIGINT," +
                     "FOREIGN KEY (player_id) REFERENCES " + playersTable + "(id)," +
@@ -94,6 +93,12 @@ public class SQLConnection implements DatabaseConnection {
                     "block_data TEXT" +
                     ")");
 
+                ResultSet resultSet = statement.executeQuery("SELECT COUNT(*) FROM " + logEntriesTable);
+                if (resultSet.next()) {
+                    long count = resultSet.getLong("COUNT(*)");
+                    PlayerUtils.setNextLogId(count);
+                    stellarProtect.getLogger().info("Next log ID: " + count);
+                }
             } catch (Exception exception) {
                 stellarProtect.getLogger().warning("Error on connect to SQLite database " + exception.getMessage());
                 exception.printStackTrace();
@@ -156,17 +161,20 @@ public class SQLConnection implements DatabaseConnection {
     }
 
     public void updateTables() {
+        String logEntries = stellarProtect.getConfigManager().getTablesLogEntries();
         String players = stellarProtect.getConfigManager().getTablesPlayers();
         String itemTemplates = stellarProtect.getConfigManager().getTablesItemTemplates();
         try (Statement stmt = connection.createStatement()) {
             stmt.execute("ALTER TABLE " + players + " ADD COLUMN realname VARCHAR(36);");
-        } catch (SQLException ex) {
-            stellarProtect.getLogger().info("The realname column already exists, ignoring...");
+        } catch (SQLException ignored) {
         }
         try (Statement stmt = connection.createStatement()) {
             stmt.execute("ALTER TABLE " + itemTemplates + " ADD COLUMN hash INTEGER;");
-        } catch (SQLException ex) {
-            stellarProtect.getLogger().info("The hash column already exists, ignoring...");
+        } catch (SQLException ignored) {
+        }
+        try (Statement stmt = connection.createStatement()) {
+            stmt.execute("ALTER TABLE " + logEntries + " ADD COLUMN restored TINYINT DEFAULT 0;");
+        } catch (SQLException ignored) {
         }
     }
 

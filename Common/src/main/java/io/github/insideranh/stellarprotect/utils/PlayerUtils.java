@@ -3,6 +3,7 @@ package io.github.insideranh.stellarprotect.utils;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import io.github.insideranh.stellarprotect.StellarProtect;
+import io.github.insideranh.stellarprotect.cache.PlayerCache;
 import io.github.insideranh.stellarprotect.data.PlayerProtect;
 import lombok.NonNull;
 import org.bukkit.command.CommandSender;
@@ -15,6 +16,7 @@ import java.util.concurrent.atomic.AtomicLong;
 public class PlayerUtils {
 
     private static final BiMap<String, Long> specialIds = HashBiMap.create();
+    private static long lastLogId = 0;
 
     // ID = -1 = Console
     static {
@@ -41,6 +43,14 @@ public class PlayerUtils {
         specialIds.put("=chorus", -21L);
         specialIds.put("=bamboo", -22L);
         specialIds.put("=amethyst", -23L);
+    }
+
+    public static long getNextLogId() {
+        return ++lastLogId;
+    }
+
+    public static void setNextLogId(long id) {
+        lastLogId = id;
     }
 
     public static void loadEntityIds() {
@@ -102,6 +112,13 @@ public class PlayerUtils {
             return specialIds.get(keyId);
         }
         return -2L;
+    }
+
+    public static String getNameOfEntity(long entityId) {
+        if (entityId < 0) {
+            return getEntityType(entityId);
+        }
+        return PlayerCache.getName(entityId);
     }
 
     @NonNull

@@ -86,6 +86,7 @@ public class MySQLConnection implements DatabaseConnection {
                         "y DECIMAL(8, 2)," +
                         "z DECIMAL(8, 2)," +
                         "action_type INT," +
+                        "restored TINYINT DEFAULT 0," +
                         "extra_json TEXT," +
                         "created_at BIGINT" +
                         ")");
@@ -162,6 +163,7 @@ public class MySQLConnection implements DatabaseConnection {
     }
 
     public void updateTables() {
+        String logEntries = stellarProtect.getConfigManager().getTablesLogEntries();
         String players = stellarProtect.getConfigManager().getTablesPlayers();
         String itemTemplates = stellarProtect.getConfigManager().getTablesItemTemplates();
         try (Connection connection = dataSource.getConnection()) {
@@ -170,6 +172,9 @@ public class MySQLConnection implements DatabaseConnection {
             }
             try (Statement stmt = connection.createStatement()) {
                 stmt.execute("ALTER TABLE " + itemTemplates + " ADD COLUMN hash BIGINT;");
+            }
+            try (Statement stmt = connection.createStatement()) {
+                stmt.execute("ALTER TABLE " + logEntries + " ADD COLUMN restored TINYINT DEFAULT 0;");
             }
         } catch (SQLException ex) {
             stellarProtect.getLogger().info("The realname and hash column already exists, ignoring...");

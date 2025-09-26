@@ -1,7 +1,6 @@
 package io.github.insideranh.stellarprotect.inspect;
 
 import io.github.insideranh.stellarprotect.StellarProtect;
-import io.github.insideranh.stellarprotect.cache.PlayerCache;
 import io.github.insideranh.stellarprotect.data.PlayerProtect;
 import io.github.insideranh.stellarprotect.database.entries.LogEntry;
 import io.github.insideranh.stellarprotect.database.entries.economy.PlayerEconomyEntry;
@@ -14,10 +13,7 @@ import io.github.insideranh.stellarprotect.database.entries.world.CropGrowLogEnt
 import io.github.insideranh.stellarprotect.enums.ActionType;
 import io.github.insideranh.stellarprotect.items.ItemTemplate;
 import io.github.insideranh.stellarprotect.items.MinecraftItem;
-import io.github.insideranh.stellarprotect.utils.LocationUtils;
-import io.github.insideranh.stellarprotect.utils.StringCleanerUtils;
-import io.github.insideranh.stellarprotect.utils.TimeUtils;
-import io.github.insideranh.stellarprotect.utils.TooltipUtils;
+import io.github.insideranh.stellarprotect.utils.*;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -75,7 +71,7 @@ public class InspectHandler {
         plugin.getLangManager().sendMessage(player, messageKey,
             text -> text
                 .replace("<time>", TimeUtils.formatMillisAsAgo(transaction.getCreatedAt()))
-                .replace("<player>", PlayerCache.getName(transaction.getPlayerId()))
+                .replace("<player>", PlayerUtils.getNameOfEntity(transaction.getPlayerId()))
                 .replace("<data>", minecraftItem.getCleanName())
                 .replace("<amount>", String.valueOf(transaction.getAmount()))
         );
@@ -107,7 +103,7 @@ public class InspectHandler {
         plugin.getLangManager().sendMessage(player, "messages.actions." + actionType.name().toLowerCase(),
             text -> text
                 .replace("<time>", TimeUtils.formatMillisAsAgo(logEntry.getCreatedAt()))
-                .replace("<player>", PlayerCache.getName(logEntry.getPlayerId()))
+                .replace("<player>", PlayerUtils.getNameOfEntity(logEntry.getPlayerId()))
                 .replace("<data>", data)
         );
     }
@@ -190,7 +186,7 @@ public class InspectHandler {
             plugin.getLangManager().sendMessage(player, messageKey,
                 text -> text
                     .replace("<time>", TimeUtils.formatMillisAsAgo(logEntry.getCreatedAt()))
-                    .replace("<player>", PlayerCache.getName(logEntry.getPlayerId()))
+                    .replace("<player>", PlayerUtils.getNameOfEntity(logEntry.getPlayerId()))
                     .replace("<data>", furnitureEntry.getNexoBlockId())
             );
         }
@@ -219,7 +215,7 @@ public class InspectHandler {
                 "/spt view stand " + armorStandEntry.hashCode(),
                 text -> text
                     .replace("<time>", TimeUtils.formatMillisAsAgo(logEntry.getCreatedAt()))
-                    .replace("<player>", PlayerCache.getName(logEntry.getPlayerId()))
+                    .replace("<player>", PlayerUtils.getNameOfEntity(logEntry.getPlayerId()))
                     .replace("<data>", cleanName)
             );
         }
@@ -236,7 +232,7 @@ public class InspectHandler {
             plugin.getLangManager().sendMessage(player, messageKey,
                 text -> text
                     .replace("<time>", TimeUtils.formatMillisAsAgo(logEntry.getCreatedAt()))
-                    .replace("<player>", PlayerCache.getName(logEntry.getPlayerId()))
+                    .replace("<player>", PlayerUtils.getNameOfEntity(logEntry.getPlayerId()))
                     .replace("<data>", eventEntry.getKitId())
             );
         }
@@ -251,7 +247,7 @@ public class InspectHandler {
             plugin.getLangManager().sendMessage(player, "messages.actions.crop_grow",
                 text -> text
                     .replace("<time>", TimeUtils.formatMillisAsAgo(logEntry.getCreatedAt()))
-                    .replace("<player>", PlayerCache.getName(logEntry.getPlayerId()))
+                    .replace("<player>", PlayerUtils.getNameOfEntity(logEntry.getPlayerId()))
                     .replace("<data>", plugin.getLangManager().get("messages.actions.growAge", replace -> replace.replace("<age>", String.valueOf(growAgeEntry.getAge()))))
             );
         }
@@ -266,7 +262,7 @@ public class InspectHandler {
             plugin.getLangManager().sendMessage(player, "messages.actions." + (xpEntry.getDifference() > 0 ? "add_xp" : "remove_xp"),
                 text -> text
                     .replace("<time>", TimeUtils.formatMillisAsAgo(logEntry.getCreatedAt()))
-                    .replace("<player>", PlayerCache.getName(logEntry.getPlayerId()))
+                    .replace("<player>", PlayerUtils.getNameOfEntity(logEntry.getPlayerId()))
                     .replace("<amount>", String.valueOf(xpEntry.getDifference()))
             );
         }
@@ -282,7 +278,7 @@ public class InspectHandler {
             plugin.getLangManager().sendMessage(player, "messages.actions." + messageKey,
                 text -> text
                     .replace("<time>", TimeUtils.formatMillisAsAgo(logEntry.getCreatedAt()))
-                    .replace("<player>", PlayerCache.getName(logEntry.getPlayerId()))
+                    .replace("<player>", PlayerUtils.getNameOfEntity(logEntry.getPlayerId()))
                     .replace("<amount>", StringCleanerUtils.formatEconomy(economyEntry.getDifference()))
             );
         }
@@ -324,7 +320,7 @@ public class InspectHandler {
                 "/spt view inventory " + logEntry.hashCode(),
                 text -> text
                     .replace("<time>", TimeUtils.formatMillisAsAgo(logEntry.getCreatedAt()))
-                    .replace("<player>", PlayerCache.getName(logEntry.getPlayerId()))
+                    .replace("<player>", PlayerUtils.getNameOfEntity(logEntry.getPlayerId()))
                     .replace("<added>", String.valueOf(inventoryTransactionEntry.getAdded().size()))
                     .replace("<removed>", String.valueOf(inventoryTransactionEntry.getRemoved().size()))
             );
@@ -340,7 +336,7 @@ public class InspectHandler {
                 plugin.getLangManager().sendMessage(player, "messages.actions.login_session",
                     text -> text
                         .replace("<time>", TimeUtils.formatMillisAsAgo(logEntry.getCreatedAt()))
-                        .replace("<player>", PlayerCache.getName(logEntry.getPlayerId()))
+                        .replace("<player>", PlayerUtils.getNameOfEntity(logEntry.getPlayerId()))
                 );
             } else {
                 plugin.getProtectNMS().sendActionTitle(player,
@@ -350,7 +346,7 @@ public class InspectHandler {
                     "",
                     text -> text
                         .replace("<time>", TimeUtils.formatMillisAsAgo(logEntry.getCreatedAt()))
-                        .replace("<player>", PlayerCache.getName(logEntry.getPlayerId()))
+                        .replace("<player>", PlayerUtils.getNameOfEntity(logEntry.getPlayerId()))
                 );
             }
         }
@@ -376,7 +372,7 @@ public class InspectHandler {
                 "",
                 text -> text
                     .replace("<time>", TimeUtils.formatMillisAsAgo(logEntry.getCreatedAt()))
-                    .replace("<player>", PlayerCache.getName(logEntry.getPlayerId()))
+                    .replace("<player>", PlayerUtils.getNameOfEntity(logEntry.getPlayerId()))
                     .replace("<data>", minecraftItem.getCleanName())
             );
         }
@@ -393,7 +389,7 @@ public class InspectHandler {
             plugin.getLangManager().sendMessage(player, "messages.actions." + login,
                 text -> text
                     .replace("<time>", TimeUtils.formatMillisAsAgo(logEntry.getCreatedAt()))
-                    .replace("<player>", PlayerCache.getName(logEntry.getPlayerId()))
+                    .replace("<player>", PlayerUtils.getNameOfEntity(logEntry.getPlayerId()))
                     .replace("<shoot>", sessionEntry.getShootEntityType())
                     .replace("<data>", minecraftItem.getCleanName())
             );
@@ -412,7 +408,7 @@ public class InspectHandler {
             plugin.getLangManager().sendMessage(player, "messages.actions." + login,
                 text -> text
                     .replace("<time>", TimeUtils.formatMillisAsAgo(logEntry.getCreatedAt()))
-                    .replace("<player>", PlayerCache.getName(logEntry.getPlayerId()))
+                    .replace("<player>", PlayerUtils.getNameOfEntity(logEntry.getPlayerId()))
                     .replace("<data>", minecraftItem.getCleanName())
             );
         }
@@ -434,7 +430,7 @@ public class InspectHandler {
                 "",
                 text -> text
                     .replace("<time>", TimeUtils.formatMillisAsAgo(logEntry.getCreatedAt()))
-                    .replace("<player>", PlayerCache.getName(logEntry.getPlayerId()))
+                    .replace("<player>", PlayerUtils.getNameOfEntity(logEntry.getPlayerId()))
                     .replace("<lastGameMode>", lastGameMode)
                     .replace("<newGameMode>", newGameMode)
             );
@@ -453,7 +449,7 @@ public class InspectHandler {
                 "",
                 text -> text
                     .replace("<time>", TimeUtils.formatMillisAsAgo(logEntry.getCreatedAt()))
-                    .replace("<player>", PlayerCache.getName(logEntry.getPlayerId()))
+                    .replace("<player>", PlayerUtils.getNameOfEntity(logEntry.getPlayerId()))
                     .replace("<line1>", signEntry.getLine(0))
                     .replace("<line2>", signEntry.getLine(1))
                     .replace("<line3>", signEntry.getLine(2))

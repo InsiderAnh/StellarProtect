@@ -24,6 +24,7 @@ public class PlayerProtect {
 
     private LookupSession lookupSession;
     private InspectSession inspectSession;
+    private RestoreSession restoreSession;
 
     private boolean inspect;
 

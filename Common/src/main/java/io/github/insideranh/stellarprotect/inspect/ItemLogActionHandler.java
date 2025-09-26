@@ -1,12 +1,12 @@
 package io.github.insideranh.stellarprotect.inspect;
 
 import io.github.insideranh.stellarprotect.StellarProtect;
-import io.github.insideranh.stellarprotect.cache.PlayerCache;
 import io.github.insideranh.stellarprotect.data.PlayerProtect;
 import io.github.insideranh.stellarprotect.database.entries.LogEntry;
 import io.github.insideranh.stellarprotect.database.entries.players.PlayerItemLogEntry;
 import io.github.insideranh.stellarprotect.enums.ActionType;
 import io.github.insideranh.stellarprotect.items.ItemTemplate;
+import io.github.insideranh.stellarprotect.utils.PlayerUtils;
 import io.github.insideranh.stellarprotect.utils.StringCleanerUtils;
 import io.github.insideranh.stellarprotect.utils.TimeUtils;
 import io.github.insideranh.stellarprotect.utils.TooltipUtils;
@@ -43,6 +43,8 @@ public class ItemLogActionHandler implements InspectHandler.ActionHandler {
         if (playerProtect == null) return;
 
         ItemDetails itemDetails = buildItemDetails(itemLogEntry, plugin);
+        if (itemDetails == null) return;
+
         String tooltipBody = buildTooltipBody(itemDetails, plugin);
 
         playerProtect.getPosibleLogs().put(itemLogEntry.hashCode(), itemLogEntry);
@@ -52,6 +54,8 @@ public class ItemLogActionHandler implements InspectHandler.ActionHandler {
 
     private ItemDetails buildItemDetails(PlayerItemLogEntry itemLogEntry, StellarProtect plugin) {
         ItemTemplate itemTemplate = plugin.getItemsManager().getItemTemplate(itemLogEntry.getItemReferenceId());
+        if (itemTemplate == null) return null;
+
         ItemStack item = itemTemplate.getBukkitItem();
         String cleanName = StringCleanerUtils.parseMinecraftData(item.getType().name()).getCleanName();
 
@@ -118,7 +122,7 @@ public class ItemLogActionHandler implements InspectHandler.ActionHandler {
             "/spt view item " + logEntry.hashCode(),
             text -> text
                 .replace("<time>", TimeUtils.formatMillisAsAgo(logEntry.getCreatedAt()))
-                .replace("<player>", PlayerCache.getName(logEntry.getPlayerId()))
+                .replace("<player>", PlayerUtils.getNameOfEntity(logEntry.getPlayerId()))
                 .replace("<data>", itemDetails.getCleanName())
         );
     }

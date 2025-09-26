@@ -3,6 +3,7 @@ package io.github.insideranh.stellarprotect.commands;
 import io.github.insideranh.stellarprotect.StellarProtect;
 import io.github.insideranh.stellarprotect.commands.arguments.PurgeArgument;
 import io.github.insideranh.stellarprotect.commands.arguments.RestoreArgument;
+import io.github.insideranh.stellarprotect.commands.arguments.RestoreSessionArgument;
 import io.github.insideranh.stellarprotect.commands.arguments.TeleportArgument;
 import io.github.insideranh.stellarprotect.commands.arguments.basic.DebugArgument;
 import io.github.insideranh.stellarprotect.commands.arguments.basic.MemoryArgument;
@@ -41,6 +42,7 @@ public class StellarProtectCMD implements TabExecutor {
         arguments.put("restore", new RestoreArgument());
         arguments.put("teleport", new TeleportArgument());
         arguments.put("view", new ViewArgument());
+        arguments.put("rs", new RestoreSessionArgument());
 
         completes.put("lookup", new LookupCompleter());
     }
@@ -55,6 +57,12 @@ public class StellarProtectCMD implements TabExecutor {
             return false;
         }
         switch (args[0].toLowerCase()) {
+            case "rs":
+                if (hasBlockedPermission(sender, "rollback")) {
+                    return false;
+                }
+                arguments.get("rs").onCommand(sender, Arrays.copyOfRange(args, 1, args.length));
+                break;
             case "reload":
                 if (hasBlockedPermission(sender, "admin")) {
                     return false;
@@ -162,6 +170,8 @@ public class StellarProtectCMD implements TabExecutor {
         }
         String arg = args[0].toLowerCase();
         switch (arg) {
+            case "rs":
+                return arguments.get("rs").onTabComplete(sender, Arrays.copyOfRange(args, 1, args.length));
             case "inspect":
             case "i": {
                 return arguments.get("inspect").onTabComplete(sender, Arrays.copyOfRange(args, 1, args.length));

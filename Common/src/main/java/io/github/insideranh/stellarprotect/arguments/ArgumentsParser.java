@@ -298,7 +298,7 @@ public class ArgumentsParser {
                 try {
                     double radiusX, radiusY, radiusZ;
 
-                    radiusX = radiusParts.length > 0 ?  Double.parseDouble(radiusParts[0].trim()) : 10;
+                    radiusX = radiusParts.length > 0 ? Double.parseDouble(radiusParts[0].trim()) : 10;
 
                     if (radiusParts.length >= 3) {
                         radiusY = Double.parseDouble(radiusParts[1].trim());
