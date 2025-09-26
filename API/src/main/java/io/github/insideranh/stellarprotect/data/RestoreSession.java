@@ -57,6 +57,10 @@ public class RestoreSession {
         return processedLogHashes.containsKey(logHash);
     }
 
+    public Object getProcessedLog(int logHash) {
+        return processedLogHashes.get(logHash);
+    }
+
     public Object getRestoredLog(int logHash) {
         return restoredLogHashes.get(logHash);
     }

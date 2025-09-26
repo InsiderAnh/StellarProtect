@@ -163,13 +163,13 @@ public class RestoreSessionManager {
     }
 
     public void restoreIndividualLog(RestoreSession session, int logHash) {
-        LogEntry log = (LogEntry) session.getRestoredLog(logHash);
+        LogEntry log = (LogEntry) session.getProcessedLog(logHash);
         if (!session.isRestored(logHash)) {
             plugin.getRestoreManager().restore(log, session.getPlayer(), session.isVerbose());
         }
 
-        log.setRestored(true);
         session.markAsRestored(logHash, log);
+        log.setRestored(true);
 
         if (!session.isSilent()) {
             session.getPlayer().sendMessage(plugin.getLangManager().get("messages.sessions.restored"));
@@ -179,9 +179,9 @@ public class RestoreSessionManager {
     }
 
     public void undoIndividualRestore(RestoreSession session, int logHash) {
-        LogEntry log = (LogEntry) session.getRestoredLog(logHash);
-        log.setRestored(false);
+        LogEntry log = (LogEntry) session.getProcessedLog(logHash);
         session.unmarkRestored(logHash);
+        log.setRestored(false);
 
         if (!session.isSilent()) {
             session.getPlayer().sendMessage(plugin.getLangManager().get("messages.sessions.undone"));
