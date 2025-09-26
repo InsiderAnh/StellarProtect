@@ -10,6 +10,8 @@ softdepend:
   - ItemsAdder
   - XPlayerKits
   - Vault
+  - WorldEdit
+  - FastAsyncWorldEdit
 commands:
   stellarprotect:
     aliases:
