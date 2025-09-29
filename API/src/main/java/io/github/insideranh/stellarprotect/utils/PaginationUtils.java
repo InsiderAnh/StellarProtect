@@ -1,6 +1,5 @@
 package io.github.insideranh.stellarprotect.utils;
 
-
 import io.github.insideranh.stellarprotect.data.InspectSession;
 import io.github.insideranh.stellarprotect.data.PlayerProtect;
 import net.md_5.bungee.api.chat.ClickEvent;

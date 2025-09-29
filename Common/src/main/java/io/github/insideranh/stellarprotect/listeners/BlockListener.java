@@ -137,10 +137,10 @@ public class BlockListener implements Listener {
 
         long playerId = getPlayerId(player, defaultId);
 
-        if (plugin.getNexoHook() != null && plugin.getNexoHook().isNexoListener(block, plugin.getProtectNMS().getItemInHand(player))) {
+        if (plugin.getNexoHook() != null && player != null && plugin.getNexoHook().isNexoListener(block, plugin.getProtectNMS().getItemInHand(player))) {
             return;
         }
-        if (plugin.getItemsAdderHook() != null && plugin.getItemsAdderHook().isItemsAdderListener(block, plugin.getProtectNMS().getItemInHand(player))) {
+        if (plugin.getItemsAdderHook() != null && player != null && plugin.getItemsAdderHook().isItemsAdderListener(block, plugin.getProtectNMS().getItemInHand(player))) {
             return;
         }
 
