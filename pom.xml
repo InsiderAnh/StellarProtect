@@ -32,6 +32,7 @@
         <module>v1_21_R7</module>
         <module>v1_21_R8</module>
         <module>v1_21_R9</module>
+        <module>v1_21_R10</module>
     </modules>
 
     <properties>
