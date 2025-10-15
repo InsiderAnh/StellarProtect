@@ -27,16 +27,6 @@ import java.util.function.Function;
 public class ProtectNMS_v1_13_R2 extends ProtectNMS {
 
     @Override
-    public int getHashBlockData(Block block) {
-        return block.getBlockData().hashCode();
-    }
-
-    @Override
-    public int getHashBlockState(BlockState block) {
-        return block.getBlockData().hashCode();
-    }
-
-    @Override
     public int modelDataHashCode(ItemMeta itemMeta) {
         return 0;
     }
@@ -60,6 +50,11 @@ public class ProtectNMS_v1_13_R2 extends ProtectNMS {
 
     @Override
     public String getBlockData(Block block) {
+        return block.getBlockData().getAsString();
+    }
+
+    @Override
+    public String getBlockData(BlockState block) {
         return block.getBlockData().getAsString();
     }
 

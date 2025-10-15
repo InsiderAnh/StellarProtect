@@ -21,6 +21,8 @@ public abstract class ProtectNMS {
 
     public abstract String getBlockData(Block block);
 
+    public abstract String getBlockData(BlockState block);
+
     public abstract String[] getSignLines(Block block);
 
     public abstract Location getBlockLocation(Player player, Inventory inventory);
@@ -40,9 +42,5 @@ public abstract class ProtectNMS {
     public abstract CallbackBucket<Block, String, Material> getBucketData(Block block, BlockFace blockFace, Material bucket);
 
     public abstract ItemStack getItemInHand(Player player);
-
-    public abstract int getHashBlockData(Block block);
-
-    public abstract int getHashBlockState(BlockState block);
 
 }

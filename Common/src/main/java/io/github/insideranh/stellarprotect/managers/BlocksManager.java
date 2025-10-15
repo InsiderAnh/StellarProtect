@@ -3,7 +3,6 @@ package io.github.insideranh.stellarprotect.managers;
 import io.github.insideranh.stellarprotect.StellarProtect;
 import io.github.insideranh.stellarprotect.blocks.BlockTemplate;
 import io.github.insideranh.stellarprotect.blocks.DataBlock;
-import io.github.insideranh.stellarprotect.maps.IntObjectMap;
 import lombok.Getter;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
@@ -16,8 +15,9 @@ public class BlocksManager {
 
     private final StellarProtect plugin = StellarProtect.getInstance();
 
-    // String -> BlockId
-    private final IntObjectMap<Integer> blockHashToId = new IntObjectMap<>(1000);
+    //private final IntObjectMap<Integer> blockHashToId = new IntObjectMap<>(1000);
+    // String -> BlockTemplate
+    private final Map<String, BlockTemplate> blockHashToId = new HashMap<>(100);
     // BlockId -> BlockTemplate
     private final Map<Integer, BlockTemplate> idToBlockTemplate = new HashMap<>(100);
     private final Set<Integer> unsavedBlocks = new HashSet<>();
@@ -34,46 +34,45 @@ public class BlocksManager {
     public void loadBlockData(int id, String blockDataString) {
         DataBlock dataBlock = plugin.getDataBlock(blockDataString);
         BlockTemplate template = new BlockTemplate(id, dataBlock);
-        blockHashToId.put(dataBlock.hashCode(), template.getId());
+        blockHashToId.put(blockDataString, template);
         idToBlockTemplate.put(template.getId(), template);
     }
 
     public BlockTemplate getBlockTemplate(String blockDataString) {
         DataBlock dataBlock = plugin.getDataBlock(blockDataString);
-        int hashCode = dataBlock.hashCode();
-        Integer id = blockHashToId.get(hashCode);
+        BlockTemplate id = blockHashToId.get(blockDataString);
         if (id != null) {
-            return idToBlockTemplate.get(id);
+            return id;
         }
-        return createBlockTemplate(dataBlock, hashCode);
+        return createBlockTemplate(dataBlock);
     }
 
     public BlockTemplate getBlockTemplate(BlockState block) {
-        int hashCode = plugin.getProtectNMS().getHashBlockState(block);
-        Integer id = blockHashToId.get(hashCode);
+        String blockDataString = plugin.getProtectNMS().getBlockData(block);
+        BlockTemplate id = blockHashToId.get(blockDataString);
         if (id != null) {
-            return idToBlockTemplate.get(id);
+            return id;
         }
         DataBlock dataBlock = plugin.getDataBlock(block);
-        return createBlockTemplate(dataBlock, hashCode);
+        return createBlockTemplate(dataBlock);
     }
 
     public BlockTemplate getBlockTemplate(Block block) {
-        int hashCode = plugin.getProtectNMS().getHashBlockData(block);
-        Integer id = blockHashToId.get(hashCode);
+        String blockDataString = plugin.getProtectNMS().getBlockData(block);
+        BlockTemplate id = blockHashToId.get(blockDataString);
         if (id != null) {
-            return idToBlockTemplate.get(id);
+            return id;
         }
         DataBlock dataBlock = plugin.getDataBlock(block);
-        return createBlockTemplate(dataBlock, hashCode);
+        return createBlockTemplate(dataBlock);
     }
 
-    public BlockTemplate createBlockTemplate(DataBlock dataBlock, int hashCode) {
+    public BlockTemplate createBlockTemplate(DataBlock dataBlock) {
         int id = currentId.getAndIncrement();
 
         BlockTemplate template = new BlockTemplate(id, dataBlock);
         unsavedBlocks.add(id);
-        blockHashToId.put(hashCode, id);
+        blockHashToId.put(dataBlock.getBlockDataString(), template);
         idToBlockTemplate.put(id, template);
 
         return template;

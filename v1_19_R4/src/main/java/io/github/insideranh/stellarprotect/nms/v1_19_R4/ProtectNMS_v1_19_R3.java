@@ -32,15 +32,6 @@ public class ProtectNMS_v1_19_R3 extends ProtectNMS {
         return itemMeta.getCustomModelData();
     }
 
-    @Override
-    public int getHashBlockData(Block block) {
-        return block.getBlockData().hashCode();
-    }
-
-    @Override
-    public int getHashBlockState(BlockState block) {
-        return block.getBlockData().hashCode();
-    }
 
     @Override
     public boolean canGrow(Block block) {
@@ -61,6 +52,11 @@ public class ProtectNMS_v1_19_R3 extends ProtectNMS {
 
     @Override
     public String getBlockData(Block block) {
+        return block.getBlockData().getAsString(true);
+    }
+
+    @Override
+    public String getBlockData(BlockState block) {
         return block.getBlockData().getAsString(true);
     }
 

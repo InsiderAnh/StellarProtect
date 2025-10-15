@@ -37,24 +37,6 @@ public class ProtectNMS_v1_9_R4 extends ProtectNMS {
 
     @SuppressWarnings("deprecation")
     @Override
-    public int getHashBlockData(Block block) {
-        JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("m", block.getType().name());
-        jsonObject.addProperty("d", block.getData());
-        return jsonObject.toString().hashCode();
-    }
-
-    @SuppressWarnings("deprecation")
-    @Override
-    public int getHashBlockState(BlockState block) {
-        JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("m", block.getType().name());
-        jsonObject.addProperty("d", block.getData().getData());
-        return jsonObject.toString().hashCode();
-    }
-
-    @SuppressWarnings("deprecation")
-    @Override
     public boolean canGrow(Block block) {
         BlockState state = block.getState();
         MaterialData data = state.getData();
@@ -80,6 +62,17 @@ public class ProtectNMS_v1_9_R4 extends ProtectNMS {
 
         obj.addProperty("m", block.getType().name());
         obj.addProperty("d", block.getData());
+
+        return obj.toString();
+    }
+
+    @SuppressWarnings("deprecation")
+    @Override
+    public String getBlockData(BlockState block) {
+        JsonObject obj = new JsonObject();
+
+        obj.addProperty("m", block.getType().name());
+        obj.addProperty("d", block.getData().getData());
 
         return obj.toString();
     }
