@@ -33,10 +33,15 @@ import io.github.insideranh.stellarprotect.listeners.blocks.CropGrowListener;
 import io.github.insideranh.stellarprotect.listeners.versions.DecorativeEventHandler;
 import io.github.insideranh.stellarprotect.listeners.versions.EventVersionHandler;
 import io.github.insideranh.stellarprotect.managers.*;
+import io.github.insideranh.stellarprotect.nms.v1_12_R2.ColorUtils_v1_12_R2;
 import io.github.insideranh.stellarprotect.nms.v1_12_R2.ProtectNMS_v1_12_R2;
+import io.github.insideranh.stellarprotect.nms.v1_13_R2.ColorUtils_v1_13_R2;
 import io.github.insideranh.stellarprotect.nms.v1_13_R2.ProtectNMS_v1_13_R2;
+import io.github.insideranh.stellarprotect.nms.v1_16_R5.ColorUtils_v1_16_R5;
 import io.github.insideranh.stellarprotect.nms.v1_16_R5.ProtectNMS_v1_16_R5;
+import io.github.insideranh.stellarprotect.nms.v1_8_R3.ColorUtils_v1_8_R3;
 import io.github.insideranh.stellarprotect.nms.v1_8_R3.ProtectNMS_v1_8_R3;
+import io.github.insideranh.stellarprotect.nms.v1_9_R4.ColorUtils_v1_9_R4;
 import io.github.insideranh.stellarprotect.nms.v1_9_R4.ProtectNMS_v1_9_R4;
 import io.github.insideranh.stellarprotect.restore.BlockRestore;
 import io.github.insideranh.stellarprotect.trackers.BlockTracker;
@@ -52,7 +57,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -155,6 +162,7 @@ public class StellarProtect extends JavaPlugin {
         getCommand("stellarprotect").setExecutor(new StellarProtectCMD());
 
         bStats = new MetricsLite(this, 26624);
+        bStats.addCustomChart(new MetricsLite.SimplePie("databases", () -> getConfig().getString("databases.type", "h2").toLowerCase()));
 
         loadLastHooks();
 
@@ -254,30 +262,34 @@ public class StellarProtect extends JavaPlugin {
         if (localVersion.equals(MinecraftVersion.v1_8)) {
             this.completer = "v1_8_R3";
             this.protectNMS = new ProtectNMS_v1_8_R3();
+            this.colorUtils = new ColorUtils_v1_8_R3();
         } else if (localVersion.equals(MinecraftVersion.v1_9)) {
             this.completer = "v1_9_R4";
             this.protectNMS = new ProtectNMS_v1_9_R4();
+            this.colorUtils = new ColorUtils_v1_9_R4();
         } else if (localVersion.equals(MinecraftVersion.v1_12)) {
             this.completer = "v1_12_R2";
             this.protectNMS = new ProtectNMS_v1_12_R2();
+            this.colorUtils = new ColorUtils_v1_12_R2();
         } else if (localVersion.equals(MinecraftVersion.v1_13)) {
             this.completer = "v1_13_R2";
             this.protectNMS = new ProtectNMS_v1_13_R2();
+            this.colorUtils = new ColorUtils_v1_13_R2();
         } else if (localVersion.equals(MinecraftVersion.v1_16)) {
             this.completer = "v1_16_R5";
             this.protectNMS = new ProtectNMS_v1_16_R5();
+            this.colorUtils = new ColorUtils_v1_16_R5();
         } else if (localVersion.equals(MinecraftVersion.v1_17)) {
             this.completer = "v1_17_R1";
             this.protectNMS = new ProtectNMS_v1_16_R5();
+            this.colorUtils = new ColorUtils_v1_16_R5();
         } else {
             this.completer = localVersion.name();
             this.protectNMS = new ProtectNMS_v1_16_R5();
+            this.colorUtils = new ColorUtils_v1_16_R5();
         }
 
         getLogger().info("Loaded " + completer + " version.");
-
-        //this.protectNMS = Class.forName("io.github.insideranh.stellarprotect.nms." + completer + ".ProtectNMS_" + completer).asSubclass(ProtectNMS.class).getConstructor().newInstance();
-        this.colorUtils = Class.forName("io.github.insideranh.stellarprotect.nms." + completer + ".ColorUtils_" + completer).asSubclass(ColorUtils.class).getConstructor().newInstance();
 
         Listener listener = Class.forName("io.github.insideranh.stellarprotect.nms." + completer + ".listeners.BlockListener_" + completer).asSubclass(Listener.class).getConstructor(EventLogicHandler.class).newInstance(this.eventLogicHandler);
         getServer().getPluginManager().registerEvents(listener, this);
