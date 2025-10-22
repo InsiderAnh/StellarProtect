@@ -69,10 +69,8 @@ public class PlayerDeathEntry extends LogEntry {
         JsonObject obj = new JsonObject();
         obj.addProperty("c", cause);
 
-        PlayerDeathEntry entry = this;
-
         JsonObject dropItemsOjb = new JsonObject();
-        for (Map.Entry<Long, Integer> addedItem : entry.getDrops().entrySet()) {
+        for (Map.Entry<Long, Integer> addedItem : getDrops().entrySet()) {
             dropItemsOjb.addProperty(String.valueOf(addedItem.getKey()), addedItem.getValue());
         }
 

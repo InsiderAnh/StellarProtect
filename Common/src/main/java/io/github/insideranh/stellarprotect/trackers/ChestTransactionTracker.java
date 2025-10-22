@@ -422,10 +422,10 @@ public class ChestTransactionTracker implements Listener {
         }
 
         void reset() {
-            size = 0;
             Arrays.fill(items, 0, size, null);
             Arrays.fill(counts, 0, size, 0);
             Arrays.fill(hashes, 0, size, 0);
+            size = 0;
         }
 
         void addItem(ItemStack item) {

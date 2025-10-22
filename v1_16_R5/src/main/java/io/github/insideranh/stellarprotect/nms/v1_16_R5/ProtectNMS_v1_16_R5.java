@@ -52,12 +52,12 @@ public class ProtectNMS_v1_16_R5 extends ProtectNMS {
 
     @Override
     public String getBlockData(Block block) {
-        return block.getBlockData().getAsString(true);
+        return block.getBlockData().getAsString();
     }
 
     @Override
     public String getBlockData(BlockState block) {
-        return block.getBlockData().getAsString(true);
+        return block.getBlockData().getAsString();
     }
 
     @Override

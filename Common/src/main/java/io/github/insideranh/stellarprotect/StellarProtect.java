@@ -13,6 +13,7 @@ import io.github.insideranh.stellarprotect.blocks.adjacents.AdjacentType;
 import io.github.insideranh.stellarprotect.bstats.MetricsLite;
 import io.github.insideranh.stellarprotect.commands.StellarProtectCMD;
 import io.github.insideranh.stellarprotect.database.ProtectDatabase;
+import io.github.insideranh.stellarprotect.entities.DataEntity;
 import io.github.insideranh.stellarprotect.enums.MinecraftVersion;
 import io.github.insideranh.stellarprotect.hooks.ShopGUIHookListener;
 import io.github.insideranh.stellarprotect.hooks.StellarTaskHook;
@@ -52,6 +53,7 @@ import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
+import org.bukkit.entity.Entity;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
@@ -59,7 +61,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -124,7 +125,8 @@ public class StellarProtect extends JavaPlugin {
         getConfig().options().copyDefaults(true);
         saveConfig();
 
-        isFolia = MinecraftVersions.WILD_UPDATE.isAtLeast() && ServerVersions.isFolia();
+        this.isFolia = MinecraftVersions.WILD_UPDATE.isAtLeast() && ServerVersions.isFolia();
+        this.loadNMS();
 
         this.lookupExecutor = MoreExecutors.listeningDecorator(new ThreadPoolExecutor(2, 2, 0L, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<>(1024)));
         this.joinExecutor = MoreExecutors.listeningDecorator(new ThreadPoolExecutor(2, 2, 0L, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<>(1024)));
@@ -297,34 +299,32 @@ public class StellarProtect extends JavaPlugin {
 
     @SneakyThrows
     public BlockRestore getBlockRestore(String data) {
-        if (completer == null) {
-            loadNMS();
-        }
         return Class.forName("io.github.insideranh.stellarprotect.nms." + completer + ".BlockRestore_" + completer).asSubclass(BlockRestore.class).getConstructor(String.class).newInstance(data);
     }
 
     @SneakyThrows
     public DataBlock getDataBlock(Block block) {
-        if (completer == null) {
-            loadNMS();
-        }
         return Class.forName("io.github.insideranh.stellarprotect.nms." + completer + ".DataBlock_" + completer).asSubclass(DataBlock.class).getConstructor(Block.class).newInstance(block);
     }
 
     @SneakyThrows
     public DataBlock getDataBlock(BlockState blockState) {
-        if (completer == null) {
-            loadNMS();
-        }
         return Class.forName("io.github.insideranh.stellarprotect.nms." + completer + ".DataBlock_" + completer).asSubclass(DataBlock.class).getConstructor(BlockState.class).newInstance(blockState);
     }
 
     @SneakyThrows
     public DataBlock getDataBlock(String blockDataString) {
-        if (completer == null) {
-            loadNMS();
-        }
         return Class.forName("io.github.insideranh.stellarprotect.nms." + completer + ".DataBlock_" + completer).asSubclass(DataBlock.class).getConstructor(String.class).newInstance(blockDataString);
+    }
+
+    @SneakyThrows
+    public DataEntity getDataEntity(Entity entity) {
+        return Class.forName("io.github.insideranh.stellarprotect.nms." + completer + ".DataEntity_" + completer).asSubclass(DataEntity.class).getConstructor(Entity.class).newInstance(entity);
+    }
+
+    @SneakyThrows
+    public DataEntity getDataEntity(HashMap<String, Object> map) {
+        return Class.forName("io.github.insideranh.stellarprotect.nms." + completer + ".DataEntity_" + completer).asSubclass(DataEntity.class).getConstructor(HashMap.class).newInstance(map);
     }
 
     public StellarTaskHook getStellarTaskHook(Runnable runnable) {

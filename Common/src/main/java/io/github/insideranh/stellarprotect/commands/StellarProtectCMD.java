@@ -144,6 +144,7 @@ public class StellarProtectCMD implements TabExecutor {
                 }
                 arguments.get("memory").onCommand(sender, Arrays.copyOfRange(args, 1, args.length));
                 break;
+            case "r":
             case "restore":
             case "rollback":
                 if (hasBlockedPermission(sender, "rollback")) {
@@ -192,6 +193,7 @@ public class StellarProtectCMD implements TabExecutor {
             case "memory": {
                 return arguments.get("memory").onTabComplete(sender, Arrays.copyOfRange(args, 1, args.length));
             }
+            case "r":
             case "restore":
             case "rollback": {
                 return arguments.get("restore").onTabComplete(sender, Arrays.copyOfRange(args, 1, args.length));

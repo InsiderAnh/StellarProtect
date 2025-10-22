@@ -15,11 +15,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class RestoreArgument extends StellarArgument {
 
@@ -42,14 +40,18 @@ public class RestoreArgument extends StellarArgument {
             radiusArg = new RadiusArg(player.getLocation(), 10, -1);
             plugin.getLangManager().sendMessage(player, "messages.specifyRadius");
         }
-        List<ActionType> actionTypes = Arrays.asList(
+        List<ActionType> actionTypes = new LinkedList<>(Arrays.asList(
             ActionType.BLOCK_BREAK,
             ActionType.BLOCK_PLACE,
             ActionType.BUCKET_EMPTY,
             ActionType.BUCKET_FILL,
             ActionType.BLOCK_SPREAD,
             ActionType.INVENTORY_TRANSACTION
-        );
+        ));
+
+        if (hashTagsArg.isEntities()) {
+            actionTypes.add(ActionType.KILL_ENTITY);
+        }
 
         if (hashTagsArg.isSession()) {
             RestoreSession session = new RestoreSession(player, timeArg, radiusArg, actionTypes.stream().map(ActionType::getId).collect(Collectors.toList()), hashTagsArg.isVerbose(), hashTagsArg.isSilent());
@@ -65,7 +67,7 @@ public class RestoreArgument extends StellarArgument {
     @Override
     public List<String> onTabComplete(@NotNull CommandSender sender, String[] arguments) {
         if (arguments.length >= 1) {
-            String currentArg = arguments[arguments.length - 1];
+            String currentArg = arguments[arguments.length - 1].toLowerCase();
 
             if (currentArg.startsWith("t:") || currentArg.startsWith("time:")) {
                 return Arrays.asList("t:1h-2h", "t:1d", "t:1w", "t:1mo");
@@ -74,9 +76,11 @@ public class RestoreArgument extends StellarArgument {
             if (currentArg.startsWith("r:") || currentArg.startsWith("radius:")) {
                 return Arrays.asList("r:10", "r:20", "r:#world", "r:10,10,10");
             }
+
+            return Stream.of("t:1h", "r:10", "#session", "#preview", "#verbose", "#silent", "#count", "#entities").filter(name -> name.contains(currentArg)).collect(Collectors.toList());
         }
 
-        return Arrays.asList("t:1h", "r:10", "#session", "#preview", "#verbose", "#silent", "#count");
+        return Arrays.asList("t:1h", "r:10", "#session", "#preview", "#verbose", "#silent", "#count", "#entities");
     }
 
     public void executeRestore(Player player, boolean preview, boolean verbose, boolean silent, TimeArg timeArg, RadiusArg radiusArg, List<ActionType> actionTypes) {

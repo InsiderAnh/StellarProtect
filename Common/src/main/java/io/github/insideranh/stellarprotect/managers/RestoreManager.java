@@ -6,12 +6,16 @@ import io.github.insideranh.stellarprotect.cache.keys.LocationCache;
 import io.github.insideranh.stellarprotect.database.entries.LogEntry;
 import io.github.insideranh.stellarprotect.database.entries.players.PlayerBlockLogEntry;
 import io.github.insideranh.stellarprotect.database.entries.players.PlayerBlockStateLogEntry;
+import io.github.insideranh.stellarprotect.database.entries.players.PlayerKillLogEntry;
+import io.github.insideranh.stellarprotect.entities.DataEntity;
 import io.github.insideranh.stellarprotect.enums.ActionType;
 import io.github.insideranh.stellarprotect.restore.BlockRestore;
 import io.github.insideranh.stellarprotect.utils.PlayerUtils;
 import io.github.insideranh.stellarprotect.utils.SerializerUtils;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
 import java.util.Map;
@@ -142,6 +146,17 @@ public class RestoreManager {
             }
 
             plugin.getStellarTaskHook(() -> blockRestore.reset(gson, location)).runTask(location);
+        } else if (logEntry instanceof PlayerKillLogEntry) {
+            PlayerKillLogEntry playerKillLogEntry = (PlayerKillLogEntry) logEntry;
+            if (playerKillLogEntry.getEntityType().equals("PLAYER")) return;
+
+            EntityType entityType = EntityType.valueOf(playerKillLogEntry.getEntityType());
+            Location location = playerKillLogEntry.asBukkitLocation();
+
+            Entity entity = location.getWorld().spawnEntity(location, entityType);
+            DataEntity dataEntity = plugin.getDataEntity(playerKillLogEntry.getEntityData().getEntityData());
+
+            dataEntity.applyToEntity(entity);
         }
     }
 

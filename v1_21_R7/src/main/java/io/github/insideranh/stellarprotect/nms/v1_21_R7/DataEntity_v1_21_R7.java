@@ -1,4 +1,4 @@
-package io.github.insideranh.stellarprotect.nms.v1_21_R8;
+package io.github.insideranh.stellarprotect.nms.v1_21_R7;
 
 import io.github.insideranh.stellarprotect.entities.DataEntity;
 import io.github.insideranh.stellarprotect.entities.DataEntityType;
@@ -15,22 +15,22 @@ import org.bukkit.util.EulerAngle;
 
 import java.util.*;
 
-public class DataEntity_v1_21_R8 implements DataEntity {
+public class DataEntity_v1_21_R7 implements DataEntity {
 
     private final HashMap<String, Object> data = new HashMap<>();
     private ItemStack[] armor;
     private ItemStack mainHand;
     private ItemStack offHand;
 
-    public DataEntity_v1_21_R8(Entity entity) {
+    public DataEntity_v1_21_R7(Entity entity) {
         readEntityData(entity);
     }
 
-    public DataEntity_v1_21_R8(HashMap<String, Object> data) {
+    public DataEntity_v1_21_R7(HashMap<String, Object> data) {
         this.data.putAll(data);
     }
 
-    public DataEntity_v1_21_R8() {
+    public DataEntity_v1_21_R7() {
     }
 
     private void readEntityData(Entity entity) {

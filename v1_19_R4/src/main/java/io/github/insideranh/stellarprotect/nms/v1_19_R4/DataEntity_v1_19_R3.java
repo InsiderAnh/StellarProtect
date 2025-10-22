@@ -1,4 +1,4 @@
-package io.github.insideranh.stellarprotect.nms.v1_21_R8;
+package io.github.insideranh.stellarprotect.nms.v1_19_R4;
 
 import io.github.insideranh.stellarprotect.entities.DataEntity;
 import io.github.insideranh.stellarprotect.entities.DataEntityType;
@@ -15,22 +15,22 @@ import org.bukkit.util.EulerAngle;
 
 import java.util.*;
 
-public class DataEntity_v1_21_R8 implements DataEntity {
+public class DataEntity_v1_19_R3 implements DataEntity {
 
     private final HashMap<String, Object> data = new HashMap<>();
     private ItemStack[] armor;
     private ItemStack mainHand;
     private ItemStack offHand;
 
-    public DataEntity_v1_21_R8(Entity entity) {
+    public DataEntity_v1_19_R3(Entity entity) {
         readEntityData(entity);
     }
 
-    public DataEntity_v1_21_R8(HashMap<String, Object> data) {
+    public DataEntity_v1_19_R3(HashMap<String, Object> data) {
         this.data.putAll(data);
     }
 
-    public DataEntity_v1_21_R8() {
+    public DataEntity_v1_19_R3() {
     }
 
     private void readEntityData(Entity entity) {
@@ -59,7 +59,7 @@ public class DataEntity_v1_21_R8 implements DataEntity {
 
     private void readLivingEntityData(LivingEntity entity) {
         setData(DataEntityType.HEALTH, entity.getHealth());
-        setData(DataEntityType.MAX_HEALTH, entity.getAttribute(Attribute.MAX_HEALTH).getBaseValue());
+        setData(DataEntityType.MAX_HEALTH, entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue());
         setData(DataEntityType.AI, entity.hasAI());
         setData(DataEntityType.CAN_PICKUP_ITEMS, entity.getCanPickupItems());
         setData(DataEntityType.COLLIDABLE, entity.isCollidable());
@@ -146,14 +146,13 @@ public class DataEntity_v1_21_R8 implements DataEntity {
         } else if (entity instanceof Wolf) {
             Wolf wolf = (Wolf) entity;
             setData(DataEntityType.ANGRY, wolf.isAngry());
-            setData(DataEntityType.WOLF_VARIANT, wolf.getVariant().getKey().getKey());
             if (wolf.isTamed()) {
                 Color collarColor = wolf.getCollarColor().getColor();
                 setData(DataEntityType.COLLAR_COLOR, collarColor.getRed() + "," + collarColor.getGreen() + "," + collarColor.getBlue());
             }
         } else if (entity instanceof Cat) {
             Cat cat = (Cat) entity;
-            setData(DataEntityType.CAT_TYPE, cat.getCatType().getKey().getKey());
+            setData(DataEntityType.CAT_TYPE, cat.getCatType().name());
             if (cat.isTamed()) {
                 Color collarColor = cat.getCollarColor().getColor();
                 setData(DataEntityType.COLLAR_COLOR, collarColor.getRed() + "," + collarColor.getGreen() + "," + collarColor.getBlue());
@@ -257,8 +256,6 @@ public class DataEntity_v1_21_R8 implements DataEntity {
         } else if (entity instanceof Camel) {
             Camel camel = (Camel) entity;
             setData(DataEntityType.CAMEL_DASHING, camel.isDashing());
-        } else if (entity instanceof Armadillo) {
-            Armadillo armadillo = (Armadillo) entity;
         } else if (entity instanceof Zombie) {
             Zombie zombie = (Zombie) entity;
             setData(DataEntityType.ZOMBIE_BABY, zombie.isBaby());
@@ -336,7 +333,7 @@ public class DataEntity_v1_21_R8 implements DataEntity {
             entity.setHealth(Math.max(getDouble(DataEntityType.HEALTH), 1.0));
         }
         if (hasData(DataEntityType.MAX_HEALTH)) {
-            entity.getAttribute(Attribute.MAX_HEALTH).setBaseValue(getDouble(DataEntityType.MAX_HEALTH));
+            entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(getDouble(DataEntityType.MAX_HEALTH));
         }
         entity.setAI(getBoolean(DataEntityType.AI));
         entity.setCanPickupItems(getBoolean(DataEntityType.CAN_PICKUP_ITEMS));
@@ -482,10 +479,6 @@ public class DataEntity_v1_21_R8 implements DataEntity {
             if (hasData(DataEntityType.ANGRY)) {
                 wolf.setAngry(getBoolean(DataEntityType.ANGRY));
             }
-            if (hasData(DataEntityType.WOLF_VARIANT)) {
-                String variantKey = getString(DataEntityType.WOLF_VARIANT);
-                wolf.setVariant(getWolfVariant(variantKey));
-            }
             if (hasData(DataEntityType.COLLAR_COLOR) && wolf.isTamed()) {
                 String[] rgb = getString(DataEntityType.COLLAR_COLOR).split(",");
                 Color color = Color.fromRGB(Integer.parseInt(rgb[0]), Integer.parseInt(rgb[1]), Integer.parseInt(rgb[2]));
@@ -500,12 +493,8 @@ public class DataEntity_v1_21_R8 implements DataEntity {
             Cat cat = (Cat) entity;
             if (hasData(DataEntityType.CAT_TYPE)) {
                 String typeKey = getString(DataEntityType.CAT_TYPE);
-                for (Cat.Type type : Cat.Type.values()) {
-                    if (type.getKey().getKey().equals(typeKey)) {
-                        cat.setCatType(type);
-                        break;
-                    }
-                }
+                Cat.Type type = Cat.Type.valueOf(typeKey);
+                cat.setCatType(type);
             }
             if (hasData(DataEntityType.COLLAR_COLOR) && cat.isTamed()) {
                 String[] rgb = getString(DataEntityType.COLLAR_COLOR).split(",");
@@ -684,9 +673,6 @@ public class DataEntity_v1_21_R8 implements DataEntity {
             if (hasData(DataEntityType.CAMEL_DASHING)) {
                 camel.setDashing(getBoolean(DataEntityType.CAMEL_DASHING));
             }
-        } else if (entity instanceof Armadillo) {
-            Armadillo armadillo = (Armadillo) entity;
-
         } else if (entity instanceof Zombie) {
             Zombie zombie = (Zombie) entity;
             if (hasData(DataEntityType.ZOMBIE_BABY)) {
@@ -768,29 +754,6 @@ public class DataEntity_v1_21_R8 implements DataEntity {
         }
         if (hasData(DataEntityType.ITEM_FRAME_FIXED)) {
             frame.setFixed(getBoolean(DataEntityType.ITEM_FRAME_FIXED));
-        }
-    }
-
-    public Wolf.Variant getWolfVariant(String key) {
-        switch (key) {
-            case "pale":
-                return Wolf.Variant.PALE;
-            case "spotted":
-                return Wolf.Variant.SPOTTED;
-            case "snowy":
-                return Wolf.Variant.SNOWY;
-            case "black":
-                return Wolf.Variant.BLACK;
-            case "ashen":
-                return Wolf.Variant.ASHEN;
-            case "rusty":
-                return Wolf.Variant.RUSTY;
-            case "woods":
-                return Wolf.Variant.WOODS;
-            case "chestnut":
-                return Wolf.Variant.CHESTNUT;
-            default:
-                return Wolf.Variant.STRIPED;
         }
     }
 

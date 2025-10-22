@@ -28,15 +28,21 @@ public class EntityListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onEntityDeath(EntityDeathEvent event) {
         LivingEntity entity = event.getEntity();
-        if (entity.getKiller() == null) return;
         if (ActionType.KILL_ENTITY.shouldSkipLog(entity.getWorld().getName(), entity.getType().name())) return;
 
-        Player killer = entity.getKiller();
+        long playerId;
+        if (entity.getKiller() != null) {
+            Player killer = entity.getKiller();
 
-        PlayerProtect playerProtect = PlayerProtect.getPlayer(killer);
-        if (playerProtect == null) return;
+            PlayerProtect playerProtect = PlayerProtect.getPlayer(killer);
+            if (playerProtect == null) return;
 
-        LoggerCache.addLog(new PlayerKillLogEntry(playerProtect.getPlayerId(), entity, ActionType.KILL_ENTITY));
+            playerId = playerProtect.getPlayerId();
+        } else {
+            playerId = -2;
+        }
+
+        LoggerCache.addLog(new PlayerKillLogEntry(playerId, entity, ActionType.KILL_ENTITY));
     }
 
     @EventHandler

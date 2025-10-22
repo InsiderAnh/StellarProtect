@@ -1,4 +1,4 @@
-package io.github.insideranh.stellarprotect.nms.v1_21_R8;
+package io.github.insideranh.stellarprotect.nms.v1_21_R2;
 
 import io.github.insideranh.stellarprotect.entities.DataEntity;
 import io.github.insideranh.stellarprotect.entities.DataEntityType;
@@ -15,22 +15,22 @@ import org.bukkit.util.EulerAngle;
 
 import java.util.*;
 
-public class DataEntity_v1_21_R8 implements DataEntity {
+public class DataEntity_v1_21_R2 implements DataEntity {
 
     private final HashMap<String, Object> data = new HashMap<>();
     private ItemStack[] armor;
     private ItemStack mainHand;
     private ItemStack offHand;
 
-    public DataEntity_v1_21_R8(Entity entity) {
+    public DataEntity_v1_21_R2(Entity entity) {
         readEntityData(entity);
     }
 
-    public DataEntity_v1_21_R8(HashMap<String, Object> data) {
+    public DataEntity_v1_21_R2(HashMap<String, Object> data) {
         this.data.putAll(data);
     }
 
-    public DataEntity_v1_21_R8() {
+    public DataEntity_v1_21_R2() {
     }
 
     private void readEntityData(Entity entity) {
@@ -59,7 +59,7 @@ public class DataEntity_v1_21_R8 implements DataEntity {
 
     private void readLivingEntityData(LivingEntity entity) {
         setData(DataEntityType.HEALTH, entity.getHealth());
-        setData(DataEntityType.MAX_HEALTH, entity.getAttribute(Attribute.MAX_HEALTH).getBaseValue());
+        setData(DataEntityType.MAX_HEALTH, entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue());
         setData(DataEntityType.AI, entity.hasAI());
         setData(DataEntityType.CAN_PICKUP_ITEMS, entity.getCanPickupItems());
         setData(DataEntityType.COLLIDABLE, entity.isCollidable());
@@ -336,7 +336,7 @@ public class DataEntity_v1_21_R8 implements DataEntity {
             entity.setHealth(Math.max(getDouble(DataEntityType.HEALTH), 1.0));
         }
         if (hasData(DataEntityType.MAX_HEALTH)) {
-            entity.getAttribute(Attribute.MAX_HEALTH).setBaseValue(getDouble(DataEntityType.MAX_HEALTH));
+            entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(getDouble(DataEntityType.MAX_HEALTH));
         }
         entity.setAI(getBoolean(DataEntityType.AI));
         entity.setCanPickupItems(getBoolean(DataEntityType.CAN_PICKUP_ITEMS));

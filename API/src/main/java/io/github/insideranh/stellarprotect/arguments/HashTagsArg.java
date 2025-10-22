@@ -10,6 +10,7 @@ public class HashTagsArg {
     private boolean silent;
     private boolean count;
     private boolean session;
+    private boolean entities;
 
     public HashTagsArg(String[] arguments) {
         for (String arg : arguments) {
@@ -27,6 +28,9 @@ public class HashTagsArg {
             }
             if (arg.equals("#session")) {
                 this.session = true;
+            }
+            if (arg.equals("#entities")) {
+                this.entities = true;
             }
         }
     }

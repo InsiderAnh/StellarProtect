@@ -1,0 +1,212 @@
+﻿messages:
+  noPermission: '&cNon hai il permesso per farlo.'
+  reloaded: '&aPlugin ricaricato correttamente.'
+  onlyPlayer: '&cQuesto comando può essere usato solo dai giocatori.'
+  noLogs: '&cNessun log trovato.'
+  noMoreLogs: '&cNessun altro log trovato.'
+  noActiveRestoreSession: '&cNessuna sessione di ripristino attiva trovata.'
+  invalidLog: '&cQuesto log non è valido, usa di nuovo /spt restore r:<radius> #session.'
+  noPlayer: '&cI tuoi dati non sono ancora stati caricati.'
+  loadingLookup: '&aCaricamento log...'
+  pagesNav: '&dPagine '
+  clickPage: '&7Clicca per andare alla pagina &f(<page>)'
+  purging: '&aPulizia log in corso... Sarai avvisato al termine.'
+  purgedFinish: '&fLog puliti correttamente in &d<time>&fms.'
+  waitingForLookup: '&cAttendi che la ricerca termini.'
+  noInspectLogs: '&6StellarProtect &cNessun log trovato per &7(<location>)&c.'
+  debugSave: '&aModalità salvataggio debug impostata su &7<state>'
+  debugLog: '&aModalità log debug impostata su &7<state>'
+  debugExtras: '&aModalità extra debug impostata su &7<state>'
+  specifyRadius: '&cNon hai specificato un raggio, uso il raggio predefinito (10).'
+  error: '&cSi è verificato un errore durante l''esecuzione del comando. Segnala su Discord.'
+  sessions:
+    title: '&6=== Sessioni di Ripristino ==='
+    subtitle: '&7Clicca sui pulsanti per gestire i singoli log.'
+    restore: |-
+      &aAzione di ripristino
+      &7Clicca per ripristinare l'azione.
+    undo: |-
+      &cAnnulla azione
+      &7Clicca per annullare l'azione.
+    restoreall: '&8[&6Ripristina Tutto&8]'
+    next: ' &8[&ePagina Successiva&8]'
+    exit: ' &8[&cEsci&8]'
+    restoreall-tip: |-
+      &7Ripristina tutte le azioni
+      &7Ripristina tutti i log visibili in questa sessione.
+    next-tip: |-
+      &7Pagina successiva
+      &7Visualizza i log successivi.
+    exit-tip: |-
+      &7Esci
+      &7Chiudi la sessione.
+    restored: '&aLog ripristinato con successo!'
+    undone: '&cLog annullato con successo!'
+    amount-restored: '&a<amount> log ripristinati con successo!'
+    block_break: '&7<time> &8| &d<player>&f ha rotto &8| &d(<data>)'
+    block_place: '&7<time> &8| &d<player>&f ha piazzato &8| &d(<data>)'
+    block_spread: '&7<time> &8| &d<player>&f ha diffuso &8| &d(<data>)'
+    inventory_transaction: '&7<time> &8| &d<player>&f transazione inventario &8| &a[Visualizza]'
+    bucket_empty: '&7<time> &8| &d<player>&f ha svuotato secchio &8| &d(<data>)'
+    bucket_fill: '&7<time> &8| &d<player>&f ha riempito secchio &8| &d(<data>)'
+  rollback:
+    preview: '&aAnteprima: §e<progress>% §7(§e<now>/§e<total>§7) §eUsa §e/spt restore confirm §eper applicare le modifiche.'
+    preview-verbose: '&aAnteprima Dettagliata: §e<progress>% §7(§e<now>/§e<total>§7) §7- Info dettagliate sopra. §eUsa §e/spt restore confirm §eper applicare.'
+    progress: '&bProgresso: §e<progress>% §7(§e<now>/§e<total>§7)'
+    progress-verbose: '&bProgresso Dettagliato: §e<progress>% §7(§e<now>/§e<total>§7) §7- Dettagli blocchi sopra.'
+    error: '&cErrore nella sezione <section>: <error>'
+    success: '&aRollback completato! §e<total>§a log elaborati.'
+    success-verbose: '&aRollback dettagliato completato! §e<total>§a log elaborati con output dettagliato.'
+    success-silent: '&aRollback completato in modalità silenziosa! §e<total>§a log elaborati.'
+    start: '&aInizio rollback di §e<total>§a log in batch da §e<batch>§a...'
+    start-verbose: '&aInizio rollback dettagliato di §e<total>§a log in batch da §e<batch>§a... (modalità dettagliata attiva)'
+    start-silent: '&7Rollback avviato in modalità silenziosa...'
+  help:
+    headerTop: '&7&m+---------------------------------------+'
+    title: '&8[!] &cStellarProtect &8[!]'
+    headerBottom: '&7&m+---------------------------------------+'
+    reload: '&e/spt reload &7- &fRicarica il plugin.'
+    help: '&e/spt help &7- &fMostra questo aiuto.'
+    version: '&e/spt version &7- &fMostra la versione del plugin.'
+    inspect: '&e/spt inspect &7- &fAttiva/disattiva la modalità ispezione.'
+    lookup: '&e/spt lookup p:<page> t:<time> r:<radius> &7- &fCerca log in un raggio.'
+    restore: '&e/spt restore p:<page> t:<time> r:<radius> &7- &fRipristina log in un raggio.'
+    purge: '&e/spt purge p:<page> t:<time> r:<radius> &7- &fElimina log in un raggio.'
+    debug: '&e/spt debug save|log|extras &7- &fAttiva/disattiva modalità debug.'
+    memory: '&e/spt memory &7- &fMostra analisi memoria.'
+  memory:
+    title: '&7----- &6StellarProtect &8| &dAnalisi Memoria &7-----'
+    footprint: '&7Impronta memoria:'
+    total: '&7Dimensione:'
+    summary:
+      title: '&7===== &6Riepilogo Totale &7====='
+      totalMemory: '&7Memoria totale usata: &f'
+      objectsAnalyzed: '&7Oggetti analizzati: &f'
+    itemTemplates: '&d▸ &cTemplate ItemsManager'
+    cachedLogsByCategory: '&d▸ &cLoggerCache &7- &fLog memorizzati per categoria'
+    unSavedLogsByCategory: '&d▸ &cLoggerCache &7- &fLog non salvati per categoria'
+    placedBlockLogs: '&d▸ &cLoggerCache &7- &fLog blocchi piazzati'
+    playerRecentActions: '&d▸ &cLoggerCache &7- &fAzioni recenti giocatore'
+    queryCache: '&d▸ &cLoggerCache &7- &fCache delle query'
+  actions:
+    lookup: '&7----- &6StellarProtect &8| &6Ricerca &7-----'
+    location: '&7&l      ˄   &7(<location>) &7&l   ˄'
+    transactions_title: '&7+ &6StellarProtect &8| &7(<location>) &8| &6Oggetti &7+'
+    added_item: '&7<time> &8| &a<player>&f ha aggiunto &8| &d<data> &7(x<amount>)'
+    removed_item: '&7<time> &8| &c<player>&f ha rimosso &8| &d<data> &7(x<amount>)'
+    growAge: '&6Età <age>'
+    block_break: '&7<time> &8| &d<player>&f ha rotto &8| &d(<data>)'
+    block_place: '&7<time> &8| &d<player>&f ha piazzato &8| &d(<data>)'
+    block_use: '&7<time> &8| &d<player>&f ha usato &8| &d(<data>)'
+    drop_item: '&7<time> &8| &d<player>&f ha buttato &8| &d(<data>) &8| &a[Visualizza]'
+    pickup_item: '&7<time> &8| &d<player>&f ha raccolto &8| &d(<data>) &8| &a[Visualizza]'
+    furnace_place: '&7<time> &8| &d<player>&f ha piazzato fornace &8| &d(<data>)'
+    furnace_extract: '&7<time> &8| &d<player>&f ha estratto dalla fornace &8| &d(<data>)'
+    craft: '&7<time> &8| &d<player>&f ha creato &8| &d(<data>)'
+    crop_grow: '&7<time> &8| &d<player>&f ha fatto crescere &8| &6(<data>)'
+    kill_entity: '&7<time> &8| &d<player>&f ha ucciso &8| &d(<data>)'
+    interact: '&7<time> &8| &d<player>&f ha interagito &8| &d(<data>)'
+    tame: '&7<time> &8| &d<player>&f ha addomesticato &8| &d(<data>)'
+    breed: '&7<time> &8| &d<player>&f ha fatto accoppiare &8| &d(<data>)'
+    chat: '&7<time> &8| &d<player>&f ha scritto &8| &d(<data>)'
+    command: '&7<time> &8| &d<player>&f ha eseguito comando &8| &d(<data>)'
+    bucket_empty: '&7<time> &8| &d<player>&f ha svuotato secchio &8| &d(<data>)'
+    bucket_fill: '&7<time> &8| &d<player>&f ha riempito secchio &8| &d(<data>)'
+    use: '&7<time> &8| &d<player>&f ha usato &8| &d(<data>)'
+    sign_change: '&7<time> &8| &d<player>&f ha cambiato cartello &8| &d[Visualizza]'
+    login_session: '&7<time> &8| &d<player>&f ha effettuato l''accesso.'
+    logout_session: '&7<time> &8| &d<player>&f ha effettuato il logout. &8| &a[Visualizza]'
+    inventory_transaction: '&7<time> &8| &d<player>&f transazione inventario &8| &a[Visualizza]'
+    shoot: '&7<time> &8| &d<player>&f ha sparato &8| &d(<data>)'
+    success_shoot: '&7<time> &8| &d<player>&f ha colpito con successo &d<shoot> &8| &d(<data>)'
+    mount: '&7<time> &8| &d<player>&f è salito su &8| &d(<data>)'
+    dismount: '&7<time> &8| &d<player>&f è sceso da &8| &d(<data>)'
+    hanging: '&7<time> &8| &d<player>&f ha rimosso &8| &d(<data>)'
+    teleport: '&7<time> &8| &d<player>&f si è teletrasportato &8| &d(<data>)'
+    consume: '&7<time> &8| &d<player>&f ha consumato &8| &d(<data>)'
+    game_mode: '&7<time> &8| &d<player>&f modalità di gioco &8| &a[Visualizza]'
+    smith: '&7<time> &8| &d<player>&f ha forgiato &8| &d(<data>)'
+    totem: '&7<time> &8| &d<player>&f ha usato totem &8| &d(<data>)'
+    death: '&7<time> &8| &d<player>&f è morto &8| &d(<data>)'
+    add_xp: '&7<time> &8| &d<player>&f xp &8| &a+<amount>'
+    remove_xp: '&7<time> &8| &d<player>&f xp &8| &c-<amount>'
+    vault_income: '&7<time> &8| &d<player>&f denaro &8| &a$+<amount>'
+    vault_outcome: '&7<time> &8| &d<player>&f denaro &8| &c$-<amount>'
+    shop_gui: '&7<time> &8| &d<player>&f negozio gui &8| &d(<data>)'
+    place_item: '&7<time> &8| &d<player>&f ha piazzato oggetto &8| &d(<data>) &a[Visualizza]'
+    remove_item: '&7<time> &8| &d<player>&f ha rimosso oggetto &8| &d(<data>) &a[Visualizza]'
+    furniture_break: '&7<time> &8| &d<player>&f ha rotto mobilio &8| &d(<data>)'
+    furniture_place: '&7<time> &8| &d<player>&f ha piazzato mobilio &8| &d(<data>)'
+    x_kit_give: '&7<time> &8| &d<player>&f ha ricevuto kit &8| &d(<data>)'
+    x_kit_claim: '&7<time> &8| &d<player>&f ha riscattato kit &8| &d(<data>)'
+    tree_grow: '&7<time> &8| &d<player>&f ha fatto crescere albero &8| &6(<data>)'
+    block_spread: '&7<time> &8| &d<player>&f ha diffuso &8| &d(<data>)'
+    armor_stand_manipulate: '&7<time> &8| &d<player>&f ha manipolato armorstand &8| &d(<data>) &7| &a[Visualizza]'
+  tooltips:
+    armor_stand_manipulate: '&fClicca per vedere le modifiche!'
+    item_details:
+      displayName:
+        - '&7'
+        - '&d<displayName>'
+      lore:
+        - '&7'
+        - <lore>
+      lore_format: '&7- &f<line>'
+      enchants:
+        - '&7'
+        - '&7Incantesimi:'
+        - <enchants>
+      enchant_format: '&7- &f<name> &8| &d<level>'
+      body:
+        - '&7Quantità: &dx<amount>'
+        - <display_name>
+        - <lore>
+        - <enchants>
+        - '&7'
+        - '&eClicca per vedere l''oggetto.'
+    transactions_inventory:
+      added:
+        - '&aAggiunto:'
+        - <added>
+      removed:
+        - '&cRimosso:'
+        - <removed>
+      body:
+        - <added>
+        - <removed>
+        - '&7'
+        - '&eClicca per vedere l''inventario.'
+    place_item: '&d<data> &7(x<amount>)'
+    remove_item: '&d<data> &7(x<amount>)'
+    logout_session: '&fOra disconnessione: &d<time>'
+    sign_change: |-
+      &7Linee modificate:
+      &d1.- &f<line1>
+      &d2.- &f<line2>
+      &d3.- &f<line3>
+      &d4.- &f<line4>
+    game_mode: |-
+      &fUltima modalità di gioco: &d<lastGameMode>
+      &fNuova modalità di gioco: &d<newGameMode>
+    no_changes: '&cNessuna modifica agli oggetti.'
+    added_item: '&d<data> &7(x<amount>)'
+    removed_item: '&d<data> &7(x<amount>)'
+  inspect:
+    enable: '&aHai abilitato la modalità ispezione.'
+    disable: '&cHai disabilitato la modalità ispezione.'
+game_modes:
+  '0': Sopravvivenza
+  '1': Creativa
+  '2': Avventura
+  '3': Spettatore
+menus:
+  view_stand:
+    title: Oggetto Armor Stand
+    new_item:
+      nameItem: '&aNuovo Oggetto'
+      loreItem: '&7➤➤➤'
+    old_item:
+      nameItem: '&cVecchio Oggetto'
+      loreItem: '&7➤➤➤'
+    none:
+      nameItem: '&cNessun Oggetto'
