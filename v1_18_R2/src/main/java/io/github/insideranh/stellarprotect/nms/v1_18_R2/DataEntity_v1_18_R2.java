@@ -252,7 +252,9 @@ public class DataEntity_v1_18_R2 implements DataEntity {
             setData(DataEntityType.SNOWMAN_DERP, snowman.isDerp());
         } else if (entity instanceof Shulker) {
             Shulker shulker = (Shulker) entity;
-            setData(DataEntityType.SHULKER_COLOR, shulker.getColor().name());
+            if (shulker.getColor() != null) {
+                setData(DataEntityType.SHULKER_COLOR, shulker.getColor().name());
+            }
         }
     }
 
