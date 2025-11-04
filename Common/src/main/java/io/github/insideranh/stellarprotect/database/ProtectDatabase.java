@@ -2,8 +2,6 @@ package io.github.insideranh.stellarprotect.database;
 
 import io.github.insideranh.stellarprotect.StellarProtect;
 import io.github.insideranh.stellarprotect.arguments.DatabaseFilters;
-import io.github.insideranh.stellarprotect.arguments.RadiusArg;
-import io.github.insideranh.stellarprotect.arguments.TimeArg;
 import io.github.insideranh.stellarprotect.blocks.BlockTemplate;
 import io.github.insideranh.stellarprotect.cache.keys.LocationCache;
 import io.github.insideranh.stellarprotect.callback.CallbackLookup;
@@ -14,7 +12,6 @@ import io.github.insideranh.stellarprotect.database.repositories.DatabaseConnect
 import io.github.insideranh.stellarprotect.database.types.MongoConnection;
 import io.github.insideranh.stellarprotect.database.types.MySQLConnection;
 import io.github.insideranh.stellarprotect.database.types.SQLConnection;
-import io.github.insideranh.stellarprotect.enums.ActionType;
 import io.github.insideranh.stellarprotect.items.ItemTemplate;
 import lombok.NonNull;
 import org.bukkit.Location;
@@ -74,12 +71,12 @@ public class ProtectDatabase {
         return databaseConnection.getLoggerRepository().getLogs(databaseFilters, ignoreCache, skip, limit);
     }
 
-    public CompletableFuture<CallbackLookup<Map<LocationCache, Set<LogEntry>>, Long>> getRestoreActions(@NonNull TimeArg timeArg, @NonNull RadiusArg radiusArg, @NonNull List<ActionType> actionTypes, int skip, int limit) {
-        return databaseConnection.getRestoreRepository().getRestoreActions(timeArg, radiusArg, actionTypes, skip, limit);
+    public CompletableFuture<CallbackLookup<Map<LocationCache, Set<LogEntry>>, Long>> getRestoreActions(@NonNull DatabaseFilters filters, int skip, int limit) {
+        return databaseConnection.getRestoreRepository().getRestoreActions(filters, skip, limit);
     }
 
-    public CompletableFuture<Long> countRestoreActions(@NonNull TimeArg timeArg, @NonNull RadiusArg radiusArg, List<ActionType> actionTypes) {
-        return databaseConnection.getRestoreRepository().countRestoreActions(timeArg, radiusArg, actionTypes);
+    public CompletableFuture<Long> countRestoreActions(@NonNull DatabaseFilters filters) {
+        return databaseConnection.getRestoreRepository().countRestoreActions(filters);
     }
 
     public CompletableFuture<CallbackLookup<Set<LogEntry>, Long>> getLogs(@NonNull Location location, int skip, int limit) {

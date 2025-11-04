@@ -120,7 +120,8 @@ public class ProtectNMS_v1_16_R5 extends ProtectNMS {
     @Override
     public CallbackBucket<Block, String, Material> getBucketData(Block block, BlockFace blockFace, Material bucket) {
         if (bucket.equals(Material.LAVA_BUCKET)) {
-            return new CallbackBucket<>(block, block.getBlockData().getAsString(), Material.LAVA);
+            Block relativeBlock = block.getRelative(blockFace);
+            return new CallbackBucket<>(relativeBlock, relativeBlock.getBlockData().getAsString(), Material.LAVA);
         }
         BlockData blockData = block.getBlockData();
         if (blockData instanceof Waterlogged) {
@@ -131,7 +132,7 @@ public class ProtectNMS_v1_16_R5 extends ProtectNMS {
         }
 
         Block relativeBlock = block.getRelative(blockFace);
-        return new CallbackBucket<>(relativeBlock, block.getBlockData().getAsString(), Material.WATER);
+        return new CallbackBucket<>(relativeBlock, relativeBlock.getBlockData().getAsString(), Material.WATER);
     }
 
     @Override

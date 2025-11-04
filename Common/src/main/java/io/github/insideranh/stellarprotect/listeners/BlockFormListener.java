@@ -1,9 +1,11 @@
 package io.github.insideranh.stellarprotect.listeners;
 
 import io.github.insideranh.stellarprotect.StellarProtect;
+import io.github.insideranh.stellarprotect.cache.BlockSourceCache;
 import io.github.insideranh.stellarprotect.cache.LoggerCache;
 import io.github.insideranh.stellarprotect.database.entries.LogEntry;
 import io.github.insideranh.stellarprotect.database.entries.players.PlayerBlockLogEntry;
+import io.github.insideranh.stellarprotect.database.entries.players.PlayerBlockStateLogEntry;
 import io.github.insideranh.stellarprotect.enums.ActionType;
 import io.github.insideranh.stellarprotect.managers.ConfigManager;
 import org.bukkit.Location;
@@ -24,13 +26,14 @@ public class BlockFormListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onBlockForm(BlockFormEvent event) {
+        Block block = event.getBlock();
         BlockState newState = event.getNewState();
         Material newType = newState.getType();
 
         try {
             if (newType.equals(Material.OBSIDIAN) || newType.equals(Material.COBBLESTONE) || newType.equals(Material.STONE) || newType.name().endsWith("_CONCRETE_POWDER")) {
-                PlayerBlockLogEntry blockBreakEntry = new PlayerBlockLogEntry(-2L, newState, ActionType.BLOCK_PLACE);
-                LoggerCache.addLog(blockBreakEntry);
+                PlayerBlockStateLogEntry blockStateLogEntry = new PlayerBlockStateLogEntry(-2L, block.getState(), newState, ActionType.BLOCK_PLACE);
+                LoggerCache.addLog(blockStateLogEntry);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -45,11 +48,16 @@ public class BlockFormListener implements Listener {
         Material oldMaterial = oldBlock.getType();
         Material newMaterial = newBlock.getType();
         String oldBlockName = oldMaterial.name();
-        long userId = getEntityId(oldBlockName, oldBlock.getLocation());
+        Location oldLocation = oldBlock.getLocation();
+        Location newLocation = newBlock.getLocation();
+
+        long userId = getEntityId(oldBlockName, oldLocation);
 
         boolean isOldBlockAir = oldMaterial.ordinal() == airOrdinal;
         if (!isOldBlockAir) {
-            PlayerBlockLogEntry blockBreakEntry = new PlayerBlockLogEntry(userId, newBlock.getLocation(), oldBlock, ActionType.BLOCK_PLACE);
+            BlockSourceCache.registerBlockSource(newLocation, userId);
+
+            PlayerBlockLogEntry blockBreakEntry = new PlayerBlockLogEntry(userId, newLocation, oldBlock, ActionType.BLOCK_PLACE);
             LoggerCache.addLog(blockBreakEntry);
         }
 
@@ -63,13 +71,21 @@ public class BlockFormListener implements Listener {
 
     private long getEntityId(String name, Location location) {
         if (name.equals("LAVA") || name.equals("STATIONARY_LAVA")) {
+            Long cachedPlayerId = BlockSourceCache.getPlayerId(location);
+            if (cachedPlayerId != null) {
+                return cachedPlayerId;
+            }
             return -5L;
         }
         if (name.equals("WATER") || name.equals("STATIONARY_WATER")) {
+            Long cachedPlayerId = BlockSourceCache.getPlayerId(location);
+            if (cachedPlayerId != null) {
+                return cachedPlayerId;
+            }
             return -4L;
         }
+
         LogEntry logEntry = LoggerCache.getPlacedBlockLog(location);
-        // If the block is not placed =natural
         if (logEntry == null || !configManager.isLiquidTracking()) return -2L;
         return logEntry.getPlayerId();
     }

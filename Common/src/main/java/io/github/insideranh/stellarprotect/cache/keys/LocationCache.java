@@ -3,7 +3,9 @@ package io.github.insideranh.stellarprotect.cache.keys;
 import io.github.insideranh.stellarprotect.database.entries.LogEntry;
 import io.github.insideranh.stellarprotect.utils.WorldUtils;
 import lombok.Getter;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
 
 @Getter
 public class LocationCache {
@@ -30,6 +32,12 @@ public class LocationCache {
 
     public static LocationCache of(int worldId, int x, int y, int z) {
         return new LocationCache(worldId, x, y, z);
+    }
+
+    public Location asLocation() {
+        World world = Bukkit.getWorld(WorldUtils.getWorld(worldId));
+        if (world == null) return null;
+        return new Location(world, x, y, z);
     }
 
     public boolean isInside(double minX, double maxX, double minY, double maxY, double minZ, double maxZ) {

@@ -1,6 +1,6 @@
 name: StellarProtect
 main: io.github.insideranh.stellarprotect.StellarProtect
-version: 1.4.0
+version: 1.5.0
 author: InsiderAnh
 folia-supported: true
 api-version: 1.13

@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class RestoreSessionManager {
 
@@ -32,9 +31,7 @@ public class RestoreSessionManager {
         session.getProcessedLogHashes().clear();
 
         plugin.getProtectDatabase().getRestoreActions(
-            session.getTimeArg(),
-            session.getRadiusArg(),
-            session.getActionTypes().stream().map(ActionType::getById).collect(Collectors.toList()),
+            session.getDatabaseFilters(),
             session.getCurrentOffset(),
             session.getLogsPerPage()
         ).thenAccept(callbackLookup -> {

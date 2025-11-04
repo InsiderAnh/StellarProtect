@@ -83,7 +83,7 @@ public class LoggerCache {
         ActionCategory[] categories = ActionCategory.values();
         CacheConfig[] configs = new CacheConfig[categories.length];
 
-        configs[ActionCategory.BLOCK_ACTIONS.ordinal()] = new CacheConfig(1000, 50, 5 * 60 * 1000L);
+        configs[ActionCategory.BLOCK_ACTIONS.ordinal()] = new CacheConfig(1000, 5, 5 * 60 * 1000L);
         configs[ActionCategory.ITEM_ACTIONS.ordinal()] = new CacheConfig(800, 30, 10 * 60 * 1000L);
         configs[ActionCategory.ENTITY_ACTIONS.ordinal()] = new CacheConfig(400, 20, 15 * 60 * 1000L);
         configs[ActionCategory.PLAYER_ACTIONS.ordinal()] = new CacheConfig(200, 5, 30 * 60 * 1000L);

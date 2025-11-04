@@ -6,8 +6,10 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Sorts;
 import io.github.insideranh.stellarprotect.StellarProtect;
+import io.github.insideranh.stellarprotect.arguments.DatabaseFilters;
 import io.github.insideranh.stellarprotect.arguments.RadiusArg;
 import io.github.insideranh.stellarprotect.arguments.TimeArg;
+import io.github.insideranh.stellarprotect.arguments.UsersArg;
 import io.github.insideranh.stellarprotect.cache.LoggerCache;
 import io.github.insideranh.stellarprotect.cache.PlayerCache;
 import io.github.insideranh.stellarprotect.cache.keys.LocationCache;
@@ -20,7 +22,6 @@ import io.github.insideranh.stellarprotect.utils.Debugger;
 import lombok.NonNull;
 import org.bson.Document;
 import org.bson.conversions.Bson;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -40,12 +41,27 @@ public class RestoreRepositoryMongo implements RestoreRepository {
     }
 
     @Override
-    public CompletableFuture<CallbackLookup<Map<LocationCache, Set<LogEntry>>, Long>> getRestoreActions(@NonNull TimeArg timeArg, @NonNull RadiusArg radiusArg, @NotNull List<ActionType> actionTypes, int skip, int limit) {
+    public CompletableFuture<CallbackLookup<Map<LocationCache, Set<LogEntry>>, Long>> getRestoreActions(@NonNull DatabaseFilters filters, int skip, int limit) {
         return CompletableFuture.supplyAsync(() -> {
-            List<LogEntry> cachedLogs = LoggerCache.getLogs(timeArg, radiusArg, actionTypes, skip, limit)
-                .stream()
-                .sorted(Comparator.comparingLong(LogEntry::getCreatedAt).reversed())
-                .collect(Collectors.toList());
+            TimeArg timeArg = filters.getTimeFilter();
+            RadiusArg radiusArg = filters.getRadiusFilter();
+            List<Integer> actionTypes = filters.getActionTypesFilter();
+
+            // Convertir IDs de actionTypes a objetos ActionType para cache
+            List<ActionType> actionTypeObjects = actionTypes != null ?
+                actionTypes.stream()
+                    .map(ActionType::getById)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList()) :
+                new ArrayList<>();
+
+            List<LogEntry> cachedLogs = new ArrayList<>();
+            if (!filters.isIgnoreCache() && !actionTypeObjects.isEmpty()) {
+                cachedLogs = LoggerCache.getLogs(timeArg, radiusArg, actionTypeObjects, skip, limit)
+                    .stream()
+                    .sorted(Comparator.comparingLong(LogEntry::getCreatedAt).reversed())
+                    .collect(Collectors.toList());
+            }
 
             Map<LocationCache, Set<LogEntry>> groupedResults = cachedLogs.stream()
                 .collect(Collectors.groupingBy(
@@ -59,11 +75,12 @@ public class RestoreRepositoryMongo implements RestoreRepository {
             if (remaining > 0) {
                 int dbSkip = skip + cachedLogs.size();
 
-                CallbackLookup<Map<LocationCache, Set<LogEntry>>, Long> dbLookup = queryLogsFromDB(timeArg, radiusArg, actionTypes, dbSkip, remaining);
+                CallbackLookup<Map<LocationCache, Set<LogEntry>>, Long> dbLookup = queryLogsFromDB(filters, dbSkip, remaining);
 
+                List<LogEntry> finalCachedLogs = cachedLogs;
                 List<LogEntry> dbLogs = dbLookup.getLogs().values().stream()
                     .flatMap(Set::stream)
-                    .filter(log -> cachedLogs.stream().noneMatch(c -> c.equals(log)))
+                    .filter(log -> finalCachedLogs.stream().noneMatch(c -> c.equals(log)))
                     .sorted(Comparator.comparingLong(LogEntry::getCreatedAt).reversed())
                     .limit(remaining)
                     .collect(Collectors.toList());
@@ -89,60 +106,43 @@ public class RestoreRepositoryMongo implements RestoreRepository {
         }, stellarProtect.getLookupExecutor());
     }
 
-    public CompletableFuture<Long> countRestoreActions(@NonNull TimeArg timeArg, @NonNull RadiusArg radiusArg, @NotNull List<ActionType> actionTypes) {
+    public CompletableFuture<Long> countRestoreActions(@NonNull DatabaseFilters filters) {
         return CompletableFuture.supplyAsync(() -> {
-            long cachedCount = LoggerCache.countLogs(timeArg, radiusArg, actionTypes);
-            long dbCount = countLogsFromDB(timeArg, radiusArg, actionTypes);
+            TimeArg timeArg = filters.getTimeFilter();
+            RadiusArg radiusArg = filters.getRadiusFilter();
+            List<Integer> actionTypes = filters.getActionTypesFilter();
+
+            // Convertir IDs de actionTypes a objetos ActionType para cache
+            List<ActionType> actionTypeObjects = actionTypes != null ?
+                actionTypes.stream()
+                    .map(ActionType::getById)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList()) :
+                new ArrayList<>();
+
+            long cachedCount = 0;
+            if (!filters.isIgnoreCache() && !actionTypeObjects.isEmpty()) {
+                cachedCount = LoggerCache.countLogs(timeArg, radiusArg, actionTypeObjects);
+            }
+            long dbCount = countLogsFromDB(filters);
 
             return cachedCount + dbCount;
         }, stellarProtect.getLookupExecutor());
     }
 
-    private long countLogsFromDB(TimeArg timeArg, RadiusArg radiusArg, List<ActionType> actionTypes) {
-        List<Integer> actionTypeNames = actionTypes.stream()
-            .map(ActionType::getId)
-            .collect(Collectors.toList());
-
-        Bson filter = Filters.and(
-            Filters.gte("created_at", timeArg.getStart()),
-            Filters.lte("created_at", timeArg.getEnd()),
-            Filters.gte("x", radiusArg.getMinX()),
-            Filters.lte("x", radiusArg.getMaxX()),
-            Filters.gte("y", radiusArg.getMinY()),
-            Filters.lte("y", radiusArg.getMaxY()),
-            Filters.gte("z", radiusArg.getMinZ()),
-            Filters.lte("z", radiusArg.getMaxZ()),
-            Filters.in("action_type", actionTypeNames)
-        );
-
+    private long countLogsFromDB(DatabaseFilters filters) {
+        Bson filter = buildFilters(filters);
         return logEntries.countDocuments(filter);
     }
 
     private CallbackLookup<Map<LocationCache, Set<LogEntry>>, Long> queryLogsFromDB(
-        TimeArg timeArg,
-        RadiusArg radiusArg,
-        List<ActionType> actionTypes,
+        DatabaseFilters filters,
         int skip,
         int limit) {
 
         Set<LogEntry> logs = new LinkedHashSet<>();
 
-        List<Integer> actionTypeNames = actionTypes.stream()
-            .map(ActionType::getId)
-            .collect(Collectors.toList());
-
-        Bson filter = Filters.and(
-            Filters.gte("created_at", timeArg.getStart()),
-            Filters.lte("created_at", timeArg.getEnd()),
-            Filters.gte("x", radiusArg.getMinX()),
-            Filters.lte("x", radiusArg.getMaxX()),
-            Filters.gte("y", radiusArg.getMinY()),
-            Filters.lte("y", radiusArg.getMaxY()),
-            Filters.gte("z", radiusArg.getMinZ()),
-            Filters.lte("z", radiusArg.getMaxZ()),
-            Filters.in("action_type", actionTypeNames)
-        );
-
+        Bson filter = buildFilters(filters);
         long totalCount = logEntries.countDocuments(filter);
 
         FindIterable<Document> logDocs = logEntries.find(filter)
@@ -176,6 +176,87 @@ public class RestoreRepositoryMongo implements RestoreRepository {
         );
 
         return new CallbackLookup<>(groupedLogs, totalCount);
+    }
+
+    private Bson buildFilters(DatabaseFilters databaseFilters) {
+        TimeArg timeArg = databaseFilters.getTimeFilter();
+        RadiusArg radiusArg = databaseFilters.getRadiusFilter();
+        UsersArg usersArg = databaseFilters.getUserFilters();
+        List<Integer> actionTypes = databaseFilters.getActionTypesFilter();
+        List<Long> includeFilter = databaseFilters.getAllIncludeFilters();
+        List<Long> excludeFilter = databaseFilters.getAllExcludeFilters();
+
+        List<Bson> filters = new ArrayList<>();
+
+        if (timeArg != null) {
+            filters.add(Filters.gte("created_at", timeArg.getStart()));
+            filters.add(Filters.lte("created_at", timeArg.getEnd()));
+        }
+
+        if (radiusArg != null) {
+            if (radiusArg.getWorldId() != -1) {
+                filters.add(Filters.eq("world_id", radiusArg.getWorldId()));
+            }
+            filters.add(Filters.gte("x", radiusArg.getMinX()));
+            filters.add(Filters.lte("x", radiusArg.getMaxX()));
+            filters.add(Filters.gte("y", radiusArg.getMinY()));
+            filters.add(Filters.lte("y", radiusArg.getMaxY()));
+            filters.add(Filters.gte("z", radiusArg.getMinZ()));
+            filters.add(Filters.lte("z", radiusArg.getMaxZ()));
+        }
+
+        if (usersArg != null && usersArg.getUserIds() != null && !usersArg.getUserIds().isEmpty()) {
+            filters.add(Filters.in("player_id", usersArg.getUserIds()));
+        }
+
+        if (actionTypes != null && !actionTypes.isEmpty()) {
+            filters.add(Filters.in("action_type", actionTypes));
+        }
+
+        if (includeFilter != null && !includeFilter.isEmpty()) {
+            filters.add(buildIncludeFilter(includeFilter));
+        }
+
+        if (excludeFilter != null && !excludeFilter.isEmpty()) {
+            filters.add(buildExcludeFilter(excludeFilter));
+        }
+
+        return filters.isEmpty() ? new Document() : Filters.and(filters);
+    }
+
+    private Bson buildIncludeFilter(List<Long> includeFilter) {
+        if (includeFilter.size() == 1) {
+            Long itemId = includeFilter.get(0);
+            return Filters.text("\"id\":" + itemId + " OR \"ai\":{\"" + itemId + "\" OR \"ri\":{\"" + itemId + "\"");
+        }
+
+        List<Bson> conditions = new ArrayList<>();
+        for (Long itemId : includeFilter) {
+            conditions.add(Filters.text("\"id\":" + itemId + " OR \"ai\":{\"" + itemId + "\" OR \"ri\":{\"" + itemId + "\""));
+        }
+
+        return Filters.or(conditions);
+    }
+
+    private Bson buildExcludeFilter(List<Long> excludeFilter) {
+        List<Bson> excludeConditions = new ArrayList<>();
+
+        for (Long itemId : excludeFilter) {
+            List<Bson> singleExcludeConditions = new ArrayList<>();
+
+            singleExcludeConditions.add(Filters.not(Filters.regex("extra_json",
+                ".*\"id\"\\s*:\\s*\"?" + itemId + "\"?\\s*[,}].*")));
+
+            singleExcludeConditions.add(Filters.not(Filters.regex("extra_json",
+                ".*\"ai\"\\s*:\\s*\\{[^}]*\"" + itemId + "\"\\s*:\\s*\\d+.*")));
+
+            singleExcludeConditions.add(Filters.not(Filters.regex("extra_json",
+                ".*\"ri\"\\s*:\\s*\\{[^}]*\"" + itemId + "\"\\s*:\\s*\\d+.*")));
+
+            excludeConditions.add(Filters.and(singleExcludeConditions));
+        }
+
+        return excludeConditions.size() == 1 ? excludeConditions.get(0) : Filters.and(excludeConditions);
     }
 
 }

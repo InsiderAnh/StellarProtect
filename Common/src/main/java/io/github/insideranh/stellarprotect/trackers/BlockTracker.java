@@ -60,20 +60,31 @@ public class BlockTracker {
         List<String> VINES = new ArrayList<>();
         VINES.add("VINE");
         VINES.add("TWISTING_VINES");
+        VINES.add("TWISTING_VINES_PLANT");
         VINES.add("WEEPING_VINES");
+        VINES.add("WEEPING_VINES_PLANT");
+        VINES.add("CAVE_VINES");
+        VINES.add("CAVE_VINES_PLANT");
 
         List<String> SCULK = new ArrayList<>();
         SCULK.add("SCULK");
         SCULK.add("SCULK_VEIN");
+        SCULK.add("SCULK_CATALYST");
+        SCULK.add("SCULK_SENSOR");
 
         List<String> CHORUS = new ArrayList<>();
         CHORUS.add("CHORUS_FLOWER");
+        CHORUS.add("CHORUS_PLANT");
 
         List<String> BAMBOO = new ArrayList<>();
         BAMBOO.add("BAMBOO");
+        BAMBOO.add("BAMBOO_SAPLING");
 
         List<String> AMETHYST = new ArrayList<>();
         AMETHYST.add("SMALL_AMETHYST_BUD");
+        AMETHYST.add("MEDIUM_AMETHYST_BUD");
+        AMETHYST.add("LARGE_AMETHYST_BUD");
+        AMETHYST.add("AMETHYST_CLUSTER");
 
         for (String block : toggleableList) {
             try {

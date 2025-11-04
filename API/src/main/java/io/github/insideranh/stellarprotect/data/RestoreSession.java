@@ -1,22 +1,18 @@
 package io.github.insideranh.stellarprotect.data;
 
-import io.github.insideranh.stellarprotect.arguments.RadiusArg;
-import io.github.insideranh.stellarprotect.arguments.TimeArg;
+import io.github.insideranh.stellarprotect.arguments.DatabaseFilters;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
-import java.util.List;
 
 @Getter
 @Setter
 public class RestoreSession {
 
     private final Player player;
-    private final TimeArg timeArg;
-    private final RadiusArg radiusArg;
-    private final List<Integer> actionTypes;
+    private final DatabaseFilters databaseFilters;
     private final HashMap<Integer, Object> processedLogHashes;
     private final HashMap<Integer, Object> restoredLogHashes;
     private final int logsPerPage;
@@ -24,11 +20,9 @@ public class RestoreSession {
     private boolean verbose;
     private boolean silent;
 
-    public RestoreSession(Player player, TimeArg timeArg, RadiusArg radiusArg, List<Integer> actionTypes, boolean verbose, boolean silent) {
+    public RestoreSession(Player player, DatabaseFilters databaseFilters, boolean verbose, boolean silent) {
         this.player = player;
-        this.timeArg = timeArg;
-        this.radiusArg = radiusArg;
-        this.actionTypes = actionTypes;
+        this.databaseFilters = databaseFilters;
         this.processedLogHashes = new HashMap<>();
         this.restoredLogHashes = new HashMap<>();
         this.logsPerPage = 10;

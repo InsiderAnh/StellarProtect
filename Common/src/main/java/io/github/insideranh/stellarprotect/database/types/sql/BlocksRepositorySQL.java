@@ -3,6 +3,7 @@ package io.github.insideranh.stellarprotect.database.types.sql;
 import io.github.insideranh.stellarprotect.StellarProtect;
 import io.github.insideranh.stellarprotect.blocks.BlockTemplate;
 import io.github.insideranh.stellarprotect.database.repositories.BlocksRepository;
+import io.github.insideranh.stellarprotect.utils.Debugger;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -50,7 +51,7 @@ public class BlocksRepositorySQL implements BlocksRepository {
                 }
 
                 connection.commit();
-                stellarProtect.getLogger().info("Saved " + blockTemplates.size() + " block templates in SQLite");
+                Debugger.debugSave("Saved " + blockTemplates.size() + " block templates in SQLite");
             } catch (Exception e) {
                 stellarProtect.getLogger().info("Error on save items in SQLite: " + e.getMessage());
             }

@@ -160,7 +160,7 @@ public class ArgumentsParser {
         duration = duration.toLowerCase().trim();
         long totalSeconds = 0;
 
-        Pattern pattern = Pattern.compile("(\\d*\\.?\\d+)([wdhms])");
+        Pattern pattern = Pattern.compile("(\\d*\\.?\\d+)(mo|[ywdhms])");
         Matcher matcher = pattern.matcher(duration);
 
         while (matcher.find()) {
@@ -168,6 +168,12 @@ public class ArgumentsParser {
             String unit = matcher.group(2);
 
             switch (unit) {
+                case "y":
+                    totalSeconds += (long) (value * 365 * 24 * 3600);
+                    break;
+                case "mo":
+                    totalSeconds += (long) (value * 30 * 24 * 3600);
+                    break;
                 case "w":
                     totalSeconds += (long) (value * 7 * 24 * 3600);
                     break;

@@ -1,6 +1,7 @@
 package io.github.insideranh.stellarprotect.listeners;
 
 import io.github.insideranh.stellarprotect.StellarProtect;
+import io.github.insideranh.stellarprotect.cache.BlockSourceCache;
 import io.github.insideranh.stellarprotect.cache.LoggerCache;
 import io.github.insideranh.stellarprotect.callback.CallbackBucket;
 import io.github.insideranh.stellarprotect.data.PlayerProtect;
@@ -27,7 +28,11 @@ public class BucketListener implements Listener {
         if (playerProtect == null) return;
 
         CallbackBucket<Block, String, Material> data = plugin.getProtectNMS().getBucketData(event.getBlockClicked(), event.getBlockFace(), event.getBucket());
-        LoggerCache.addLog(new PlayerBlockLogEntry(playerProtect.getPlayerId(), data.getBlock(), ActionType.BUCKET_EMPTY));
+
+        Block liquidBlock = data.getBlock();
+        BlockSourceCache.registerBlockSource(liquidBlock.getLocation(), playerProtect.getPlayerId());
+
+        LoggerCache.addLog(new PlayerBlockLogEntry(playerProtect.getPlayerId(), liquidBlock, ActionType.BUCKET_EMPTY));
     }
 
     @EventHandler
@@ -38,7 +43,11 @@ public class BucketListener implements Listener {
         PlayerProtect playerProtect = PlayerProtect.getPlayer(player);
         if (playerProtect == null) return;
 
-        LoggerCache.addLog(new PlayerBlockLogEntry(playerProtect.getPlayerId(), event.getBlockClicked().getRelative(event.getBlockFace()), ActionType.BUCKET_FILL));
+        Block liquidBlock = event.getBlockClicked().getRelative(event.getBlockFace());
+
+        BlockSourceCache.removeBlockSource(liquidBlock.getLocation());
+
+        LoggerCache.addLog(new PlayerBlockLogEntry(playerProtect.getPlayerId(), liquidBlock, ActionType.BUCKET_FILL));
     }
 
 }

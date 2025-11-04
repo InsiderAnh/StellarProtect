@@ -20,6 +20,7 @@ public class PlayerBlockLogEntry extends LogEntry {
 
     private static final BlocksManager blocksManager = StellarProtect.getInstance().getBlocksManager();
     private final int blockId;
+    private int oldBlockId;
     private String nexoBlockId;
     private byte extraType;
     private String extraData;
@@ -28,6 +29,7 @@ public class PlayerBlockLogEntry extends LogEntry {
         super(document);
 
         this.blockId = getBlockId(jsonObject);
+        this.oldBlockId = getOldBlockId(jsonObject);
         if (jsonObject.has("nbId")) {
             this.nexoBlockId = jsonObject.get("nbId").getAsString();
         }
@@ -44,9 +46,24 @@ public class PlayerBlockLogEntry extends LogEntry {
         super(resultSet);
 
         this.blockId = getBlockId(jsonObject);
+        this.oldBlockId = getOldBlockId(jsonObject);
         if (jsonObject.has("nbId")) {
             this.nexoBlockId = jsonObject.get("nbId").getAsString();
         }
+        if (jsonObject.has("xt")) {
+            this.extraType = jsonObject.get("xt").getAsByte();
+        }
+        if (jsonObject.has("xd")) {
+            this.extraData = jsonObject.get("xd").getAsString();
+        }
+    }
+
+    public PlayerBlockLogEntry(long playerId, BlockState oldBlockState, BlockState newBlockState, ActionType actionType) {
+        super(playerId, actionType.getId(), newBlockState.getLocation(), System.currentTimeMillis());
+        BlockTemplate oldBlockTemplate = blocksManager.getBlockTemplate(oldBlockState);
+        this.oldBlockId = oldBlockTemplate.getId();
+        BlockTemplate blockTemplate = blocksManager.getBlockTemplate(newBlockState);
+        this.blockId = blockTemplate.getId();
     }
 
     public PlayerBlockLogEntry(long playerId, BlockState blockState, ActionType actionType) {
@@ -83,6 +100,15 @@ public class PlayerBlockLogEntry extends LogEntry {
         return blockTemplate.getId();
     }
 
+    public int getOldBlockId(JsonObject jsonObject) {
+        if (jsonObject.has("ob")) return jsonObject.get("ob").getAsInt();
+        if (!jsonObject.has("od")) return -1;
+
+        String data = jsonObject.get("od").getAsString();
+        BlockTemplate blockTemplate = blocksManager.getBlockTemplate(data);
+        return blockTemplate.getId();
+    }
+
     @Override
     public String getDataString() {
         if (nexoBlockId != null) {
@@ -97,6 +123,9 @@ public class PlayerBlockLogEntry extends LogEntry {
     public String toSaveJson() {
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("b", blockId);
+        if (oldBlockId != 0) {
+            jsonObject.addProperty("ob", oldBlockId);
+        }
         if (nexoBlockId != null) {
             jsonObject.addProperty("nbId", nexoBlockId);
         }

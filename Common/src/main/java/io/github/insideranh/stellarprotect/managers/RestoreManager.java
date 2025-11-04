@@ -38,23 +38,21 @@ public class RestoreManager {
 
                     if (verbose) {
                         String actionName = blockLogEntry.getActionType() == ActionType.BLOCK_PLACE.getId() ? "PLACE" : "BREAK";
+                        String materialName = blockLogEntry.getDataString().split(":")[0];
                         sender.sendMessage("§7[VERBOSE] §e" + actionName + " §7at §f" +
                             (int) location.getX() + ", " + (int) location.getY() + ", " + (int) location.getZ() +
                             " §7in §f" + location.getWorld().getName() +
+                            " §7material: §f" + materialName +
                             " §7by §f" + PlayerUtils.getNameOfEntity(blockLogEntry.getPlayerId()) +
                             " §7(ID: " + blockLogEntry.getPlayerId() + ") §7at §f" +
                             new java.text.SimpleDateFormat("HH:mm:ss dd/MM/yyyy").format(new java.util.Date(blockLogEntry.getCreatedAt())));
                     }
 
                     BlockRestore blockRestore = plugin.getBlockRestore(blockLogEntry.getDataString());
-                    if (blockLogEntry.getActionType() == ActionType.BLOCK_PLACE.getId()) {
-                        if (!silent) {
-                            plugin.getStellarTaskHook(() -> blockRestore.previewRemove(sender, location)).runTask(location);
-                        }
-                    } else if (blockLogEntry.getActionType() == ActionType.BLOCK_BREAK.getId()) {
-                        if (!silent) {
-                            plugin.getStellarTaskHook(() -> blockRestore.preview(sender, gson, location)).runTask(location);
-                        }
+                    if (blockLogEntry.getActionType() == ActionType.BLOCK_PLACE.getId() || blockLogEntry.getActionType() == ActionType.BUCKET_EMPTY.getId()) {
+                        plugin.getStellarTaskHook(() -> blockRestore.previewRemove(sender, location)).runTask(location);
+                    } else if (blockLogEntry.getActionType() == ActionType.BLOCK_BREAK.getId() || blockLogEntry.getActionType() == ActionType.BUCKET_FILL.getId()) {
+                        plugin.getStellarTaskHook(() -> blockRestore.preview(sender, gson, location)).runTask(location);
                     }
                 } else if (logEntry instanceof PlayerBlockStateLogEntry) {
                     PlayerBlockStateLogEntry blockStateLogEntry = (PlayerBlockStateLogEntry) logEntry;
@@ -62,9 +60,11 @@ public class RestoreManager {
                     Location location = blockStateLogEntry.asBukkitLocation();
 
                     if (verbose) {
+                        String materialName = blockStateLogEntry.lastDataString().split(":")[0];
                         sender.sendMessage("§7[VERBOSE] §eSTATE_CHANGE §7at §f" +
                             (int) location.getX() + ", " + (int) location.getY() + ", " + (int) location.getZ() +
                             " §7in §f" + location.getWorld().getName() +
+                            " §7material: §f" + materialName +
                             " §7by §f" + PlayerUtils.getNameOfEntity(logEntry.getPlayerId()) +
                             " §7(ID: " + blockStateLogEntry.getPlayerId() + ") §7at §f" +
                             new java.text.SimpleDateFormat("HH:mm:ss dd/MM/yyyy").format(new java.util.Date(blockStateLogEntry.getCreatedAt())));
@@ -127,9 +127,9 @@ public class RestoreManager {
             }
 
             BlockRestore blockRestore = plugin.getBlockRestore(blockLogEntry.getDataString());
-            if (blockLogEntry.getActionType() == ActionType.BLOCK_PLACE.getId()) {
+            if (blockLogEntry.getActionType() == ActionType.BLOCK_PLACE.getId() || blockLogEntry.getActionType() == ActionType.BUCKET_EMPTY.getId()) {
                 plugin.getStellarTaskHook(() -> blockRestore.remove(location)).runTask(location);
-            } else if (blockLogEntry.getActionType() == ActionType.BLOCK_BREAK.getId()) {
+            } else if (blockLogEntry.getActionType() == ActionType.BLOCK_BREAK.getId() || blockLogEntry.getActionType() == ActionType.BUCKET_FILL.getId()) {
                 plugin.getStellarTaskHook(() -> blockRestore.reset(gson, location)).runTask(location);
             }
         } else if (logEntry instanceof PlayerBlockStateLogEntry) {

@@ -43,6 +43,11 @@ public class PlayerUtils {
         specialIds.put("=chorus", -21L);
         specialIds.put("=bamboo", -22L);
         specialIds.put("=amethyst", -23L);
+        specialIds.put("=frost_walker", -24L);
+        specialIds.put("=dragon", -25L);
+        specialIds.put("=warden", -26L);
+        specialIds.put("=evoker", -27L);
+        specialIds.put("=ravager", -28L);
     }
 
     public static long getNextLogId() {

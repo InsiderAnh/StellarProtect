@@ -1,7 +1,6 @@
 package io.github.insideranh.stellarprotect.arguments;
 
 import lombok.Getter;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
 @Getter
@@ -29,8 +28,6 @@ public class RadiusArg {
         this.maxY = maxY;
         this.minZ = minZ;
         this.maxZ = maxZ;
-
-        Bukkit.getLogger().info(this.toString());
     }
 
     @Override

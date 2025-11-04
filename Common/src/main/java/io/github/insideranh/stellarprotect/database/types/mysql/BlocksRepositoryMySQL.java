@@ -4,6 +4,7 @@ import com.zaxxer.hikari.HikariDataSource;
 import io.github.insideranh.stellarprotect.StellarProtect;
 import io.github.insideranh.stellarprotect.blocks.BlockTemplate;
 import io.github.insideranh.stellarprotect.database.repositories.BlocksRepository;
+import io.github.insideranh.stellarprotect.utils.Debugger;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -53,7 +54,7 @@ public class BlocksRepositoryMySQL implements BlocksRepository {
                 }
 
                 connection.commit();
-                stellarProtect.getLogger().info("Saved " + blockTemplates.size() + " block templates in MySQL");
+                Debugger.debugSave("Saved " + blockTemplates.size() + " block templates in MySQL");
             } catch (Exception e) {
                 stellarProtect.getLogger().info("Error on save blocks in MySQL: " + e.getMessage());
             }
