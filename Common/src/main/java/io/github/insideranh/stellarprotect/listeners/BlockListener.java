@@ -5,6 +5,7 @@ import io.github.insideranh.stellarprotect.blocks.adjacents.AdjacentTracker;
 import io.github.insideranh.stellarprotect.blocks.adjacents.AdjacentType;
 import io.github.insideranh.stellarprotect.cache.BlockSourceCache;
 import io.github.insideranh.stellarprotect.cache.LoggerCache;
+import io.github.insideranh.stellarprotect.callback.CallbackSource;
 import io.github.insideranh.stellarprotect.data.PlayerProtect;
 import io.github.insideranh.stellarprotect.database.entries.players.PlayerBlockLogEntry;
 import io.github.insideranh.stellarprotect.database.entries.players.PlayerBlockStateLogEntry;
@@ -71,14 +72,10 @@ public class BlockListener implements Listener {
                     }
                 }
 
-                playerId = PlayerUtils.getPlayerOrEntityId("=lava");
-                sourceLocation = findNearbyLavaSource(block.getLocation());
-                if (sourceLocation != null) {
-                    Long sourcePlayerId = BlockSourceCache.getPlayerId(sourceLocation);
-                    if (sourcePlayerId != null) {
-                        playerId = sourcePlayerId;
-                    }
-                }
+                CallbackSource<Location, Long> lavaSource = findNearbyLavaSource(block.getLocation());
+
+                playerId = lavaSource.getPlayerId();
+                sourceLocation = lavaSource.getLocation();
                 break;
             case LIGHTNING:
                 playerId = PlayerUtils.getPlayerOrEntityId("=lightning");
@@ -89,22 +86,13 @@ public class BlockListener implements Listener {
             case SPREAD:
             case ENDER_CRYSTAL:
             default:
-                playerId = PlayerUtils.getPlayerOrEntityId("=fire");
-                sourceLocation = findNearbyFireSource(block.getLocation());
-                if (sourceLocation != null) {
-                    Location fireSource = findNearbyFireSource(sourceLocation);
-                    if (fireSource != null) {
-                        Long sourcePlayerId = BlockSourceCache.getPlayerId(fireSource);
-                        if (sourcePlayerId != null) {
-                            playerId = sourcePlayerId;
-                        }
+                CallbackSource<Location, Long> fireSource = findNearbyFireSource(block.getLocation());
 
-                        processBlockBreak(sourceLocation.getBlock(), null, playerId);
-                    }
-                }
+                playerId = fireSource.getPlayerId();
+                sourceLocation = fireSource.getLocation();
                 break;
         }
-        BlockSourceCache.registerBlockSource(block.getLocation(), playerId, sourceLocation);
+        BlockSourceCache.registerBlockSource(sourceLocation, playerId, block.getLocation());
 
         processBlockPlace(block, null, playerId);
     }
@@ -113,7 +101,12 @@ public class BlockListener implements Listener {
     public void onBlockBurn(BlockBurnEvent event) {
         if (event.isCancelled()) return;
 
-        processBlockBreak(event.getBlock(), null, PlayerUtils.getPlayerOrEntityId("=fire"));
+        Long playerId = BlockSourceCache.getPlayerId(event.getBlock().getLocation());
+        if (playerId == null) {
+            playerId = PlayerUtils.getPlayerOrEntityId("=fire");
+        }
+
+        processBlockBreak(event.getBlock(), null, playerId);
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
@@ -122,6 +115,8 @@ public class BlockListener implements Listener {
 
         Block block = event.getBlock();
         Material material = block.getType();
+        if (ActionType.BLOCK_BREAK.shouldSkipLog(block.getWorld().getName(), material.name())) return;
+
         long playerId;
 
         if (material == Material.ICE || material.name().contains("FROSTED_ICE")) {
@@ -135,8 +130,6 @@ public class BlockListener implements Listener {
         } else {
             playerId = PlayerUtils.getPlayerOrEntityId("=natural");
         }
-
-        if (ActionType.BLOCK_BREAK.shouldSkipLog(block.getWorld().getName(), material.name())) return;
 
         BlockState newState = event.getNewState();
         if (newState.getType() != Material.AIR) {
@@ -365,50 +358,56 @@ public class BlockListener implements Listener {
     }
 
 
-    private Location findNearbyFireSource(Location location) {
+    private CallbackSource<Location, Long> findNearbyFireSource(Location location) {
         if (location == null || location.getWorld() == null) return null;
 
+        Location checkLoc = location.clone();
         for (int x = -3; x <= 3; x++) {
             for (int y = -1; y <= 1; y++) {
                 for (int z = -3; z <= 3; z++) {
-                    if (x == 0 && y == 0 && z == 0) continue;
+                    checkLoc.setX(location.getX() + x);
+                    checkLoc.setY(location.getY() + y);
+                    checkLoc.setZ(location.getZ() + z);
 
-                    Location checkLoc = location.clone().add(x, y, z);
                     Block checkBlock = checkLoc.getBlock();
 
                     if (checkBlock.getType() == Material.FIRE || checkBlock.getType().name().contains("FIRE")) {
-                        if (BlockSourceCache.getPlayerId(checkLoc) != null) {
-                            return checkLoc;
+                        Long playerId = BlockSourceCache.getPlayerId(checkLoc);
+                        if (playerId != null) {
+                            return new CallbackSource<>(checkLoc, playerId);
                         }
                     }
                 }
             }
         }
 
-        return null;
+        return new CallbackSource<>(checkLoc, PlayerUtils.getPlayerOrEntityId("=fire"));
     }
 
-    private Location findNearbyLavaSource(Location location) {
+    private CallbackSource<Location, Long> findNearbyLavaSource(Location location) {
         if (location == null || location.getWorld() == null) return null;
 
+        Location checkLoc = location.clone();
         for (int x = -2; x <= 2; x++) {
             for (int y = -1; y <= 1; y++) {
                 for (int z = -2; z <= 2; z++) {
-                    if (x == 0 && y == 0 && z == 0) continue;
+                    checkLoc.setX(location.getX() + x);
+                    checkLoc.setY(location.getY() + y);
+                    checkLoc.setZ(location.getZ() + z);
 
-                    Location checkLoc = location.clone().add(x, y, z);
                     Block checkBlock = checkLoc.getBlock();
 
                     if (checkBlock.getType() == Material.LAVA || checkBlock.getType().name().contains("LAVA")) {
-                        if (BlockSourceCache.getPlayerId(checkLoc) != null) {
-                            return checkLoc;
+                        Long playerId = BlockSourceCache.getPlayerId(checkLoc);
+                        if (playerId != null) {
+                            return new CallbackSource<>(checkLoc, playerId);
                         }
                     }
                 }
             }
         }
 
-        return null;
+        return new CallbackSource<>(checkLoc, PlayerUtils.getPlayerOrEntityId("=lava"));
     }
 
     private boolean hasBurnableBlocksNearby(Block block) {

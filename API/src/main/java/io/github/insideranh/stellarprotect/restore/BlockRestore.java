@@ -10,10 +10,20 @@ import org.bukkit.entity.Player;
 @Getter
 public abstract class BlockRestore {
 
-    private final String data;
+    protected final String data;
+    protected final byte extraType;
+    protected final String extraData;
 
     protected BlockRestore(String data) {
         this.data = data;
+        this.extraType = 0;
+        this.extraData = null;
+    }
+
+    protected BlockRestore(String data, byte extraType, String extraData) {
+        this.data = data;
+        this.extraType = extraType;
+        this.extraData = extraData;
     }
 
     public abstract void reset(Gson gson, Location location);

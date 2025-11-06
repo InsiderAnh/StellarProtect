@@ -67,6 +67,7 @@ databases:
     database: StellarProtect
     user: admin
     password: 123456
+    useSSL: false
   mongodb:
     host: localhost
     port: 27017

@@ -126,7 +126,7 @@ public class RestoreManager {
                     " §7ID: " + blockLogEntry.getPlayerId() + "§7) §7data: §f" + blockLogEntry.getDataString());
             }
 
-            BlockRestore blockRestore = plugin.getBlockRestore(blockLogEntry.getDataString());
+            BlockRestore blockRestore = plugin.getBlockRestore(blockLogEntry.getDataString(), blockLogEntry.getExtraType(), blockLogEntry.getExtraData());
             if (blockLogEntry.getActionType() == ActionType.BLOCK_PLACE.getId() || blockLogEntry.getActionType() == ActionType.BUCKET_EMPTY.getId()) {
                 plugin.getStellarTaskHook(() -> blockRestore.remove(location)).runTask(location);
             } else if (blockLogEntry.getActionType() == ActionType.BLOCK_BREAK.getId() || blockLogEntry.getActionType() == ActionType.BUCKET_FILL.getId()) {

@@ -1,5 +1,6 @@
 package io.github.insideranh.stellarprotect.trackers;
 
+import com.google.gson.JsonObject;
 import io.github.insideranh.stellarprotect.StellarProtect;
 import io.github.insideranh.stellarprotect.api.ProtectNMS;
 import io.github.insideranh.stellarprotect.cache.LoggerCache;
@@ -340,6 +341,24 @@ public class ChestTransactionTracker implements Listener {
         LoggerCache.addLog(new PlayerTransactionEntry(playerProtect.getPlayerId(), itemsAdded, itemsRemoved, result.chestLocation, ActionType.INVENTORY_TRANSACTION));
     }
 
+    public JsonObject getInventoryContent(Inventory inventory) {
+        JsonObject jsonObject = new JsonObject();
+        ItemStack[] contents = inventory.getContents();
+
+        for (int slot = 0; slot < contents.length; slot++) {
+            ItemStack item = contents[slot];
+            if (item != null && item.getType() != Material.AIR) {
+                ItemReference itemReference = plugin.getItemsManager().getItemReference(item, item.getAmount());
+                JsonObject slotData = new JsonObject();
+                slotData.addProperty("t", itemReference.getTemplateId());
+                slotData.addProperty("a", item.getAmount());
+                jsonObject.add(String.valueOf(slot), slotData);
+            }
+        }
+
+        return jsonObject;
+    }
+
     public void cleanupOldStates() {
         long currentTime = System.currentTimeMillis();
         List<String> keysToRemove = new ArrayList<>();
@@ -480,7 +499,11 @@ public class ChestTransactionTracker implements Listener {
             ItemMeta metaA = a.getItemMeta();
             ItemMeta metaB = b.getItemMeta();
 
-            return Objects.equals(metaA.getDisplayName(), metaB.getDisplayName()) &&
+            int modelA = protectNMS.modelDataHashCode(metaA);
+            int modelB = protectNMS.modelDataHashCode(metaB);
+
+            return modelA == modelB &&
+                Objects.equals(metaA.getDisplayName(), metaB.getDisplayName()) &&
                 Objects.equals(metaA.getLore(), metaB.getLore()) &&
                 Objects.equals(metaA.getEnchants(), metaB.getEnchants());
         }

@@ -1,5 +1,6 @@
 package io.github.insideranh.stellarprotect.managers;
 
+import com.google.common.collect.Sets;
 import io.github.insideranh.stellarprotect.StellarProtect;
 import io.github.insideranh.stellarprotect.blocks.BlockTemplate;
 import io.github.insideranh.stellarprotect.blocks.DataBlock;
@@ -7,7 +8,11 @@ import lombok.Getter;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Getter
@@ -17,10 +22,10 @@ public class BlocksManager {
 
     //private final IntObjectMap<Integer> blockHashToId = new IntObjectMap<>(1000);
     // String -> BlockTemplate
-    private final Map<String, BlockTemplate> blockHashToId = new HashMap<>(100);
+    private final Map<String, BlockTemplate> blockHashToId = new ConcurrentHashMap<>(100);
     // BlockId -> BlockTemplate
-    private final Map<Integer, BlockTemplate> idToBlockTemplate = new HashMap<>(100);
-    private final Set<Integer> unsavedBlocks = new HashSet<>();
+    private final Map<Integer, BlockTemplate> idToBlockTemplate = new ConcurrentHashMap<>(100);
+    private final Set<Integer> unsavedBlocks = Sets.newConcurrentHashSet();
     private final AtomicInteger currentId = new AtomicInteger(0);
 
     public void load() {

@@ -155,7 +155,6 @@ public class PlayerLogListener implements Listener {
         playerProtect.setNextUse(System.currentTimeMillis() + 300L);
 
         Block block = event.getClickedBlock();
-
         ItemStack item = event.getItem();
         Material blockType = block.getType();
 

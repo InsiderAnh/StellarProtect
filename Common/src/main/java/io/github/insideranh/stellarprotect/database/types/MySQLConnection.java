@@ -28,27 +28,40 @@ public class MySQLConnection implements DatabaseConnection {
         try {
             HikariConfig config = new HikariConfig();
 
+            boolean useSSL = stellarProtect.getConfig().getBoolean("databases.mysql.useSSL", false);
             String url = "jdbc:mysql://" + stellarProtect.getConfig().getString("databases.mysql.host") + ":" +
                 stellarProtect.getConfig().getInt("databases.mysql.port") + "/" +
                 stellarProtect.getConfig().getString("databases.mysql.database") +
-                "?useSSL=false&allowPublicKeyRetrieval=true";
+                "?autoReconnect=true";
 
             stellarProtect.getLogger().info("Connecting to MySQL database with url: " + url);
+
+            config.setDriverClassName("com.mysql.jdbc.Driver");
 
             config.setJdbcUrl(url);
             config.setUsername(stellarProtect.getConfig().getString("databases.mysql.user"));
             config.setPassword(stellarProtect.getConfig().getString("databases.mysql.password", ""));
 
-            config.addDataSourceProperty("cachePrepStmts", "true");
-            config.addDataSourceProperty("prepStmtCacheSize", "250");
-            config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
-            config.addDataSourceProperty("autoReconnect", "true");
-            config.addDataSourceProperty("leakDetectionThreshold", "true");
-            config.addDataSourceProperty("verifyServerCertificate", "false");
-            config.addDataSourceProperty("useSSL", "false");
+            config.addDataSourceProperty("cachePrepStmts", true);
+            config.addDataSourceProperty("prepStmtCacheSize", 250);
+            config.addDataSourceProperty("prepStmtCacheSqlLimit", 2048);
+            config.addDataSourceProperty("useServerPrepStmts", true);
+            config.addDataSourceProperty("useLocalSessionState", true);
+            config.addDataSourceProperty("rewriteBatchedStatements", true);
+            config.addDataSourceProperty("cacheResultSetMetadata", true);
+            config.addDataSourceProperty("cacheServerConfiguration", true);
+            config.addDataSourceProperty("elideSetAutoCommits", true);
+            config.addDataSourceProperty("maintainTimeStats", false);
+            config.addDataSourceProperty("characterEncoding", "utf8");
+            config.addDataSourceProperty("encoding", "UTF-8");
+            config.addDataSourceProperty("useUnicode", "true");
+            config.addDataSourceProperty("useSSL", useSSL);
+            config.addDataSourceProperty("tcpKeepAlive", true);
+            config.setMaxLifetime(Long.MAX_VALUE);
+            config.setMinimumIdle(0);
+            config.setIdleTimeout(30000L);
+            config.setConnectionTimeout(10000L);
             config.setMaximumPoolSize(10);
-            config.setConnectionTimeout(250);
-            config.setLeakDetectionThreshold(60000);
 
             dataSource = new HikariDataSource(config);
 

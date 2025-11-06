@@ -1,7 +1,13 @@
 package io.github.insideranh.stellarprotect.utils;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import io.github.insideranh.stellarprotect.api.ItemsProvider;
+import io.github.insideranh.stellarprotect.api.ItemsProviderRegistry;
+import io.github.insideranh.stellarprotect.items.ItemTemplate;
 import lombok.Getter;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 
 public class SerializerUtils {
 
@@ -46,6 +52,34 @@ public class SerializerUtils {
         }
 
         return sb.toString();
+    }
+
+    public static void setInventoryContent(Inventory inventory, JsonObject jsonObject) {
+        ItemsProvider itemsProvider = ItemsProviderRegistry.getProvider();
+        if (itemsProvider == null) {
+            return;
+        }
+
+        inventory.clear();
+
+        for (String slotKey : jsonObject.keySet()) {
+            try {
+                int slot = Integer.parseInt(slotKey);
+                if (slot < 0 || slot >= inventory.getSize()) continue;
+
+                JsonObject slotData = jsonObject.getAsJsonObject(slotKey);
+                long templateId = slotData.get("t").getAsLong();
+                int amount = slotData.get("a").getAsInt();
+
+                ItemTemplate itemTemplate = itemsProvider.getItemTemplate(templateId);
+                if (itemTemplate != null) {
+                    ItemStack item = itemTemplate.getBukkitItem().clone();
+                    item.setAmount(amount);
+                    inventory.setItem(slot, item);
+                }
+            } catch (NumberFormatException | NullPointerException ignored) {
+            }
+        }
     }
 
 }

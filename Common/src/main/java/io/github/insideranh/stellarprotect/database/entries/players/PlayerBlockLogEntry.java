@@ -5,6 +5,7 @@ import io.github.insideranh.stellarprotect.StellarProtect;
 import io.github.insideranh.stellarprotect.blocks.BlockTemplate;
 import io.github.insideranh.stellarprotect.database.entries.LogEntry;
 import io.github.insideranh.stellarprotect.enums.ActionType;
+import io.github.insideranh.stellarprotect.enums.ExtraDataType;
 import io.github.insideranh.stellarprotect.managers.BlocksManager;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -12,6 +13,8 @@ import org.bson.Document;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 
 import java.sql.ResultSet;
 
@@ -82,6 +85,15 @@ public class PlayerBlockLogEntry extends LogEntry {
         super(playerId, actionType.getId(), block.getLocation(), System.currentTimeMillis());
         BlockTemplate itemTemplate = blocksManager.getBlockTemplate(block);
         this.blockId = itemTemplate.getId();
+
+        if (actionType.getId() != ActionType.BLOCK_PLACE.getId() && actionType.getId() != ActionType.BLOCK_BREAK.getId())
+            return;
+        if (block.getState() instanceof InventoryHolder) {
+            Inventory inventory = ((InventoryHolder) block.getState()).getInventory();
+            JsonObject jsonObject = StellarProtect.getInstance().getChestTransactionTracker().getInventoryContent(inventory);
+            this.extraType = ExtraDataType.INVENTORY_CONTENT.getId();
+            this.extraData = jsonObject.toString();
+        }
     }
 
     public PlayerBlockLogEntry(long playerId, Block block, ActionType actionType, String nexoBlockId) {

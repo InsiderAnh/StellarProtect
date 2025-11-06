@@ -5,6 +5,7 @@ import com.cjcrafter.foliascheduler.util.ServerVersions;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
 import io.github.insideranh.stellarprotect.api.ColorUtils;
+import io.github.insideranh.stellarprotect.api.ItemsProviderRegistry;
 import io.github.insideranh.stellarprotect.api.ProtectNMS;
 import io.github.insideranh.stellarprotect.api.events.DecorativeLogicHandler;
 import io.github.insideranh.stellarprotect.api.events.EventLogicHandler;
@@ -44,6 +45,7 @@ import io.github.insideranh.stellarprotect.nms.v1_8_R3.ColorUtils_v1_8_R3;
 import io.github.insideranh.stellarprotect.nms.v1_8_R3.ProtectNMS_v1_8_R3;
 import io.github.insideranh.stellarprotect.nms.v1_9_R4.ColorUtils_v1_9_R4;
 import io.github.insideranh.stellarprotect.nms.v1_9_R4.ProtectNMS_v1_9_R4;
+import io.github.insideranh.stellarprotect.providers.ItemsProviderImpl;
 import io.github.insideranh.stellarprotect.restore.BlockRestore;
 import io.github.insideranh.stellarprotect.trackers.BlockTracker;
 import io.github.insideranh.stellarprotect.trackers.ChestTransactionTracker;
@@ -153,6 +155,8 @@ public class StellarProtect extends JavaPlugin {
 
         this.protectDatabase.load();
         this.cacheManager.load();
+
+        ItemsProviderRegistry.register(new ItemsProviderImpl(this));
 
         this.chestTransactionTracker = new ChestTransactionTracker();
 
@@ -300,6 +304,11 @@ public class StellarProtect extends JavaPlugin {
     @SneakyThrows
     public BlockRestore getBlockRestore(String data) {
         return Class.forName("io.github.insideranh.stellarprotect.nms." + completer + ".BlockRestore_" + completer).asSubclass(BlockRestore.class).getConstructor(String.class).newInstance(data);
+    }
+
+    @SneakyThrows
+    public BlockRestore getBlockRestore(String data, byte extraType, String extraData) {
+        return Class.forName("io.github.insideranh.stellarprotect.nms." + completer + ".BlockRestore_" + completer).asSubclass(BlockRestore.class).getConstructor(String.class, byte.class, String.class).newInstance(data, extraType, extraData);
     }
 
     @SneakyThrows

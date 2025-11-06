@@ -36,7 +36,11 @@ public class BlockSourceCache {
     }
 
     public static void registerBlockSource(@Nullable Location sourceKey, long playerId, @Nullable Location newLocation) {
-        if (newLocation == null || sourceKey == null) return;
+        if (newLocation == null) return;
+        if (sourceKey == null) {
+            registerBlockSource(newLocation, playerId);
+            return;
+        }
         INSTANCE.put(LocationCache.of(sourceKey), playerId, newLocation);
     }
 

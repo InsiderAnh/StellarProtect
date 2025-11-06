@@ -327,8 +327,7 @@ public class ArgumentsParser {
                         location.getBlockZ() - radiusZ,
                         location.getBlockZ() + radiusZ);
 
-                } catch (NumberFormatException e) {
-                    System.err.println("Error parsing radius values: " + String.join(",", radiusParts));
+                } catch (NumberFormatException ignored) {
                 }
             }
         }

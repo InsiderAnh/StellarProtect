@@ -42,13 +42,11 @@ public class ProtectDatabase {
     }
 
     public void load() {
-        this.databaseConnection.getItemsRepository().loadMostUsedItems();
-        this.databaseConnection.getBlocksRepository().loadBlockDatas();
-
         this.databaseConnection.getIdsRepository().loadWorlds();
         this.databaseConnection.getIdsRepository().loadEntityIds();
 
-        //this.databaseConnection.getLoggerRepository().loadTemporaryLogs();
+        this.stellarProtect.getLookupExecutor().execute(() -> this.databaseConnection.getItemsRepository().loadMostUsedItems());
+        this.stellarProtect.getLookupExecutor().execute(() -> this.databaseConnection.getBlocksRepository().loadBlockDatas());
     }
 
     public void close() {
