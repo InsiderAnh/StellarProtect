@@ -233,7 +233,9 @@ public class DataEntity_v1_18_R2 implements DataEntity {
         } else if (entity instanceof Hoglin) {
             Hoglin hoglin = (Hoglin) entity;
             setData(DataEntityType.HOGLIN_IMMUNE_TO_ZOMBIFICATION, hoglin.isImmuneToZombification());
-            setData(DataEntityType.HOGLIN_HUNTING_COOLDOWN, hoglin.getConversionTime());
+            if (hoglin.isConverting()) {
+                setData(DataEntityType.HOGLIN_HUNTING_COOLDOWN, hoglin.getConversionTime());
+            }
         } else if (entity instanceof Strider) {
             Strider strider = (Strider) entity;
             setData(DataEntityType.STRIDER_SADDLED, strider.isShivering());
