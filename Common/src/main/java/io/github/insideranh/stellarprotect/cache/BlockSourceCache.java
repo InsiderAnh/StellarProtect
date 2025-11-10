@@ -6,6 +6,7 @@ import org.bukkit.Location;
 import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class BlockSourceCache {
 
@@ -17,7 +18,7 @@ public class BlockSourceCache {
     private long lastCleanupTime;
 
     public BlockSourceCache(int initialCapacity, int expiryMinutes) {
-        this.cache = new HashMap<>(initialCapacity);
+        this.cache = new ConcurrentHashMap<>(initialCapacity);
         this.expiryMillis = expiryMinutes * 60_000L;
         this.lastCleanupTime = System.currentTimeMillis();
     }
