@@ -109,7 +109,7 @@ public class BlockListener implements Listener {
         processBlockBreak(event.getBlock(), null, playerId);
     }
 
-    @EventHandler(priority = EventPriority.MONITOR)
+    /*@EventHandler(priority = EventPriority.MONITOR)
     public void onBlockFade(BlockFadeEvent event) {
         if (event.isCancelled()) return;
 
@@ -137,7 +137,7 @@ public class BlockListener implements Listener {
         } else {
             processBlockBreak(block, null, playerId);
         }
-    }
+    }*/
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onBlockMultiPlace(BlockMultiPlaceEvent event) {
@@ -185,6 +185,9 @@ public class BlockListener implements Listener {
     public void onPistonExtend(BlockPistonExtendEvent event) {
         if (event.isCancelled()) return;
 
+        Block pistonBlock = event.getBlock();
+        if (ActionType.BLOCK_BREAK.shouldSkipLog(pistonBlock.getWorld().getName(), "=piston")) return;
+
         long playerId = PlayerUtils.getPlayerOrEntityId("=piston");
 
         for (Block block : event.getBlocks()) {
@@ -199,6 +202,9 @@ public class BlockListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPistonRetract(BlockPistonRetractEvent event) {
         if (event.isCancelled()) return;
+
+        Block pistonBlock = event.getBlock();
+        if (ActionType.BLOCK_BREAK.shouldSkipLog(pistonBlock.getWorld().getName(), "=piston")) return;
 
         long playerId = PlayerUtils.getPlayerOrEntityId("=piston");
 
@@ -228,6 +234,9 @@ public class BlockListener implements Listener {
         BlockState blockState = event.getBlock().getState();
         BlockState newState = event.getNewState();
         Material newMaterial = newState.getType();
+
+        if (ActionType.BLOCK_PLACE.shouldSkipLog(blockState.getWorld().getName(), newMaterial.name())) return;
+
         long playerId;
 
         if (BlockTracker.isChorusState(newMaterial)) {
@@ -242,14 +251,15 @@ public class BlockListener implements Listener {
             playerId = PlayerUtils.getEntityByDirectId("=vine");
         } else if (newMaterial == Material.FIRE || newMaterial.name().contains("FIRE")) {
             playerId = PlayerUtils.getEntityByDirectId("=fire");
-        } else if (newMaterial.name().contains("MUSHROOM")) {
+        } /*else if (newMaterial.name().contains("MUSHROOM")) {
             playerId = PlayerUtils.getEntityByDirectId("=natural");
         } else if (newMaterial.name().equals("GRASS_BLOCK") || newMaterial.name().equals("GRASS") || newMaterial.name().equals("MYCELIUM")) {
             playerId = PlayerUtils.getEntityByDirectId("=natural");
         } else if (newMaterial.name().contains("KELP") || newMaterial.name().contains("SEAGRASS")) {
             playerId = PlayerUtils.getEntityByDirectId("=natural");
-        } else {
+        }*/ else {
             playerId = PlayerUtils.getEntityByDirectId("=natural");
+            return;
         }
 
         processBlockStatePlace(event.getBlock().getLocation(), blockState, newState, playerId);
