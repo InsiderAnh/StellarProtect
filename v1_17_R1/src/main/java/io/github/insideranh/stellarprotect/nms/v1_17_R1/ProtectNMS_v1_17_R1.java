@@ -1,4 +1,4 @@
-package io.github.insideranh.stellarprotect.nms.v1_16_R5;
+package io.github.insideranh.stellarprotect.nms.v1_17_R1;
 
 import io.github.insideranh.stellarprotect.api.ProtectNMS;
 import io.github.insideranh.stellarprotect.callback.CallbackBucket;
@@ -24,7 +24,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.function.Function;
 
-public class ProtectNMS_v1_16_R5 extends ProtectNMS {
+public class ProtectNMS_v1_17_R1 extends ProtectNMS {
 
     @Override
     public int modelDataHashCode(ItemMeta itemMeta) {
@@ -98,16 +98,20 @@ public class ProtectNMS_v1_16_R5 extends ProtectNMS {
 
     @Override
     public void teleport(Player player, Location location) {
-        if (location.getWorld() == null) return;
+        try {
+            player.teleportAsync(location);
+        } catch (Exception e) {
+            if (location.getWorld() == null) return;
 
-        int chunkX = location.getBlockX() >> 4;
-        int chunkZ = location.getBlockZ() >> 4;
+            int chunkX = location.getBlockX() >> 4;
+            int chunkZ = location.getBlockZ() >> 4;
 
-        if (!location.getWorld().isChunkLoaded(chunkX, chunkZ)) {
-            location.getWorld().getChunkAt(location);
+            if (!location.getWorld().isChunkLoaded(chunkX, chunkZ)) {
+                location.getWorld().getChunkAt(location);
+            }
+
+            player.teleport(location);
         }
-
-        player.teleport(location);
     }
 
     @Override
