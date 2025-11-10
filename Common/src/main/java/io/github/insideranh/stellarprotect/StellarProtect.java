@@ -41,6 +41,7 @@ import io.github.insideranh.stellarprotect.nms.v1_13_R2.ColorUtils_v1_13_R2;
 import io.github.insideranh.stellarprotect.nms.v1_13_R2.ProtectNMS_v1_13_R2;
 import io.github.insideranh.stellarprotect.nms.v1_16_R5.ColorUtils_v1_16_R5;
 import io.github.insideranh.stellarprotect.nms.v1_16_R5.ProtectNMS_v1_16_R5;
+import io.github.insideranh.stellarprotect.nms.v1_17_R1.ProtectNMS_v1_17_R1;
 import io.github.insideranh.stellarprotect.nms.v1_8_R3.ColorUtils_v1_8_R3;
 import io.github.insideranh.stellarprotect.nms.v1_8_R3.ProtectNMS_v1_8_R3;
 import io.github.insideranh.stellarprotect.nms.v1_9_R4.ColorUtils_v1_9_R4;
@@ -287,11 +288,11 @@ public class StellarProtect extends JavaPlugin {
             this.colorUtils = new ColorUtils_v1_16_R5();
         } else if (localVersion.equals(MinecraftVersion.v1_17)) {
             this.completer = "v1_17_R1";
-            this.protectNMS = new ProtectNMS_v1_16_R5();
+            this.protectNMS = new ProtectNMS_v1_17_R1();
             this.colorUtils = new ColorUtils_v1_16_R5();
         } else {
             this.completer = localVersion.name();
-            this.protectNMS = new ProtectNMS_v1_16_R5();
+            this.protectNMS = new ProtectNMS_v1_17_R1();
             this.colorUtils = new ColorUtils_v1_16_R5();
         }
 
