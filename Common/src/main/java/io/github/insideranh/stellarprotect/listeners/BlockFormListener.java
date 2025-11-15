@@ -55,6 +55,8 @@ public class BlockFormListener implements Listener {
 
         boolean isOldBlockAir = oldMaterial.ordinal() == airOrdinal;
         if (!isOldBlockAir) {
+            if (ActionType.BLOCK_PLACE.shouldSkipLog(newLocation.getWorld().getName(), newMaterial.name())) return;
+
             BlockSourceCache.registerBlockSource(newLocation, userId);
 
             PlayerBlockLogEntry blockBreakEntry = new PlayerBlockLogEntry(userId, newLocation, oldBlock, ActionType.BLOCK_PLACE);
@@ -64,6 +66,8 @@ public class BlockFormListener implements Listener {
         boolean isNewBlockAir = newMaterial.ordinal() == airOrdinal;
 
         if (!isNewBlockAir) {
+            if (ActionType.BLOCK_BREAK.shouldSkipLog(newLocation.getWorld().getName(), newMaterial.name())) return;
+
             PlayerBlockLogEntry blockBreakEntry = new PlayerBlockLogEntry(userId, newBlock, ActionType.BLOCK_BREAK);
             LoggerCache.addLog(blockBreakEntry);
         }

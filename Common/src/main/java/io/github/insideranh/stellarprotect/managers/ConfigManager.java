@@ -108,8 +108,20 @@ public class ConfigManager {
                 if (!config.isConfigurationSection("logs." + actionType.name().toLowerCase())) continue;
 
                 WorldConfigType worldConfigType = new WorldConfigType();
-                worldConfigType.setEnabled(config.getBoolean("logs." + actionType.name().toLowerCase() + ".enabled"));
-                worldConfigType.getDisabledTypes().addAll(config.getStringList("logs." + actionType.name().toLowerCase() + ".disable_types").stream().map(String::toLowerCase).collect(Collectors.toList()));
+                List<String> disableTypes = config.getStringList("logs." + actionType.name().toLowerCase() + ".disable_types")
+                    .stream()
+                    .map(String::toLowerCase)
+                    .collect(Collectors.toList());
+
+                if (disableTypes.contains("all")) {
+                    worldConfigType.setDisableAll(true);
+                }
+
+                boolean isEmptyOrNone = disableTypes.isEmpty() ||
+                    (disableTypes.size() == 1 && disableTypes.contains("none"));
+
+                worldConfigType.setEnabled(!isEmptyOrNone && config.getBoolean("logs." + actionType.name().toLowerCase() + ".enabled"));
+                worldConfigType.getDisabledTypes().addAll(disableTypes);
                 worlds.computeIfAbsent(actionType, k -> new HashMap<>()).put(world, worldConfigType);
             }
         }
@@ -120,11 +132,19 @@ public class ConfigManager {
 
             boolean enabled = plugin.getConfig().getBoolean("logs." + actionType.name().toLowerCase() + ".enabled");
             List<String> worldList = plugin.getConfig().getStringList("logs." + actionType.name().toLowerCase() + ".worlds").stream().map(String::toLowerCase).collect(Collectors.toList());
+            List<String> disableTypesList = plugin.getConfig().getStringList("logs." + actionType.name().toLowerCase() + ".disable_types").stream().map(String::toLowerCase).collect(Collectors.toList());
 
-            actionType.setEnabled(enabled);
+            if (disableTypesList.contains("all")) {
+                actionType.setHasDisableAll(true);
+            }
+
+            boolean isEmptyOrNone = disableTypesList.isEmpty() ||
+                (disableTypesList.size() == 1 && disableTypesList.contains("none"));
+
+            actionType.setEnabled(!isEmptyOrNone && enabled);
             actionType.setHasAllWorlds(worldList.contains("all"));
             actionType.getWorlds().addAll(worldList);
-            actionType.getDisabledTypes().addAll(plugin.getConfig().getStringList("logs." + actionType.name().toLowerCase() + ".disable_types").stream().map(String::toLowerCase).collect(Collectors.toList()));
+            actionType.getDisabledTypes().addAll(disableTypesList);
         }
     }
 

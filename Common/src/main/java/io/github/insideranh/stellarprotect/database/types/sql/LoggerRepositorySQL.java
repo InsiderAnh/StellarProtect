@@ -581,6 +581,8 @@ public class LoggerRepositorySQL implements LoggerRepository {
             .allExcludeFilters(databaseFilters.getAllExcludeFilters())
             .allIncludeFilters(databaseFilters.getIncludeMaterialFilters())
             .allExcludeFilters(databaseFilters.getExcludeMaterialFilters())
+            .blockIncludeFilters(databaseFilters.getIncludeBlockFilters())
+            .blockExcludeFilters(databaseFilters.getExcludeBlockFilters())
             .addActionTypesFilter(databaseFilters.getActionTypesFilter());
     }
 
@@ -722,6 +724,64 @@ public class LoggerRepositorySQL implements LoggerRepository {
                     parameters.add("%\"ri\":{%\"" + materialId + "\":%");
 
                     excludeConditions.add("(" + String.join(" AND ", worldExcludeConditions) + ")");
+                }
+
+                whereConditions.add("(" + String.join(" AND ", excludeConditions) + ")");
+            }
+            return this;
+        }
+
+        public QueryBuilder blockIncludeFilters(List<Long> blockFilters) {
+            if (blockFilters != null && !blockFilters.isEmpty()) {
+                List<String> jsonConditions = new ArrayList<>();
+
+                for (Long blockId : blockFilters) {
+                    List<String> blockConditions = new ArrayList<>();
+
+                    // Buscar en el campo "b" (blockId)
+                    blockConditions.add("ple.extra_json LIKE ?");
+                    parameters.add("%\"b\":" + blockId + ",%");
+
+                    blockConditions.add("ple.extra_json LIKE ?");
+                    parameters.add("%\"b\":" + blockId + "}%");
+
+                    // Buscar en el campo "ob" (oldBlockId)
+                    blockConditions.add("ple.extra_json LIKE ?");
+                    parameters.add("%\"ob\":" + blockId + ",%");
+
+                    blockConditions.add("ple.extra_json LIKE ?");
+                    parameters.add("%\"ob\":" + blockId + "}%");
+
+                    jsonConditions.add("(" + String.join(" OR ", blockConditions) + ")");
+                }
+
+                whereConditions.add("(" + String.join(" OR ", jsonConditions) + ")");
+            }
+            return this;
+        }
+
+        public QueryBuilder blockExcludeFilters(List<Long> blockFilters) {
+            if (blockFilters != null && !blockFilters.isEmpty()) {
+                List<String> excludeConditions = new ArrayList<>();
+
+                for (Long blockId : blockFilters) {
+                    List<String> blockExcludeConditions = new ArrayList<>();
+
+                    // Excluir del campo "b" (blockId)
+                    blockExcludeConditions.add("ple.extra_json NOT LIKE ?");
+                    parameters.add("%\"b\":" + blockId + ",%");
+
+                    blockExcludeConditions.add("ple.extra_json NOT LIKE ?");
+                    parameters.add("%\"b\":" + blockId + "}%");
+
+                    // Excluir del campo "ob" (oldBlockId)
+                    blockExcludeConditions.add("ple.extra_json NOT LIKE ?");
+                    parameters.add("%\"ob\":" + blockId + ",%");
+
+                    blockExcludeConditions.add("ple.extra_json NOT LIKE ?");
+                    parameters.add("%\"ob\":" + blockId + "}%");
+
+                    excludeConditions.add("(" + String.join(" AND ", blockExcludeConditions) + ")");
                 }
 
                 whereConditions.add("(" + String.join(" AND ", excludeConditions) + ")");

@@ -57,7 +57,7 @@ optimizations:
   # Economy check interval, save default: 10 second
   economy-check-interval: 10
 databases:
-  # Database type: h2 or mysql or mongodb
+  # Database type: h2 or mysql
   type: "h2"
   h2:
     database: StellarProtect
@@ -68,12 +68,6 @@ databases:
     user: admin
     password: 123456
     useSSL: false
-  mongodb:
-    host: localhost
-    port: 27017
-    database: StellarProtect
-    user: admin
-    password: 123456
 tablesOrCollections:
   prefix: ""
   players: players

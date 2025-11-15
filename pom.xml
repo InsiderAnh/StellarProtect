@@ -33,6 +33,7 @@
         <module>v1_21_R8</module>
         <module>v1_21_R9</module>
         <module>v1_21_R10</module>
+        <module>v1_21</module>
     </modules>
 
     <properties>

@@ -4,7 +4,6 @@ import io.github.insideranh.stellarprotect.cache.keys.LocationCache;
 import org.bukkit.Location;
 
 import javax.annotation.Nullable;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 

@@ -11,5 +11,6 @@ public class WorldConfigType {
 
     private final HashSet<String> disabledTypes = new HashSet<>();
     private boolean enabled;
+    private boolean disableAll;
 
 }

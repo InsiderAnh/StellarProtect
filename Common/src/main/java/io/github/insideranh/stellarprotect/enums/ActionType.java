@@ -104,6 +104,9 @@ public enum ActionType {
     private boolean hasAllWorlds = false;
 
     @Setter
+    private boolean hasDisableAll = false;
+
+    @Setter
     private boolean enabled = true;
     private boolean parseMinecraftData = true;
 
@@ -163,7 +166,17 @@ public enum ActionType {
 
         WorldConfigType worldConfig = worldTypes.get(world);
         if (worldConfig != null) {
-            return !worldConfig.isEnabled() || worldConfig.getDisabledTypes().contains(typeLower);
+            if (!worldConfig.isEnabled()) {
+                return true;
+            }
+            if (worldConfig.isDisableAll()) {
+                return true;
+            }
+            return worldConfig.getDisabledTypes().contains(typeLower);
+        }
+
+        if (hasDisableAll) {
+            return true;
         }
 
         if (disabledTypes.contains(typeLower)) {
@@ -190,12 +203,19 @@ public enum ActionType {
             if (!worldConfig.isEnabled()) {
                 return true;
             }
+            if (worldConfig.isDisableAll()) {
+                return true;
+            }
             for (String disabledType : worldConfig.getDisabledTypes()) {
                 if (typeLower.startsWith(disabledType)) {
                     return true;
                 }
             }
             return false;
+        }
+
+        if (hasDisableAll) {
+            return true;
         }
 
         for (String disabledType : disabledTypes) {

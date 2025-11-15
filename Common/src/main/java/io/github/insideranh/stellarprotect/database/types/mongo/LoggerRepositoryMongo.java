@@ -474,6 +474,10 @@ public class LoggerRepositoryMongo implements LoggerRepository {
         List<Integer> actionTypes = databaseFilters.getActionTypesFilter();
         List<Long> wordsFilter = databaseFilters.getAllIncludeFilters();
         List<Long> wordsExcludeFilter = databaseFilters.getAllExcludeFilters();
+        List<Long> materialIncludeFilters = databaseFilters.getIncludeMaterialFilters();
+        List<Long> materialExcludeFilters = databaseFilters.getExcludeMaterialFilters();
+        List<Long> blockIncludeFilters = databaseFilters.getIncludeBlockFilters();
+        List<Long> blockExcludeFilters = databaseFilters.getExcludeBlockFilters();
 
         List<Bson> filters = new ArrayList<>();
 
@@ -508,6 +512,23 @@ public class LoggerRepositoryMongo implements LoggerRepository {
         if (wordsExcludeFilter != null && !wordsExcludeFilter.isEmpty()) {
             filters.add(buildWordsExcludeFilter(wordsExcludeFilter));
         }
+
+        if (materialIncludeFilters != null && !materialIncludeFilters.isEmpty()) {
+            filters.add(buildMaterialIncludeFilter(materialIncludeFilters));
+        }
+
+        if (materialExcludeFilters != null && !materialExcludeFilters.isEmpty()) {
+            filters.add(buildMaterialExcludeFilter(materialExcludeFilters));
+        }
+
+        if (blockIncludeFilters != null && !blockIncludeFilters.isEmpty()) {
+            filters.add(buildBlockIncludeFilter(blockIncludeFilters));
+        }
+
+        if (blockExcludeFilters != null && !blockExcludeFilters.isEmpty()) {
+            filters.add(buildBlockExcludeFilter(blockExcludeFilters));
+        }
+
         return filters.isEmpty() ? new Document() : Filters.and(filters);
     }
 
@@ -541,6 +562,75 @@ public class LoggerRepositoryMongo implements LoggerRepository {
                 ".*\"ri\"\\s*:\\s*\\{[^}]*\"" + wordId + "\"\\s*:\\s*\\d+.*")));
 
             excludeConditions.add(Filters.and(singleWorldExcludeConditions));
+        }
+
+        return excludeConditions.size() == 1 ? excludeConditions.get(0) : Filters.and(excludeConditions);
+    }
+
+    private Bson buildMaterialIncludeFilter(List<Long> materialFilters) {
+        if (materialFilters.size() == 1) {
+            Long materialId = materialFilters.get(0);
+            return Filters.or(
+                Filters.regex("extra_json", ".*\"id\"\\s*:\\s*" + materialId + "\\s*[,}].*"),
+                Filters.regex("extra_json", ".*\"ai\"\\s*:\\s*\\{[^}]*\"" + materialId + "\"\\s*:.*"),
+                Filters.regex("extra_json", ".*\"ri\"\\s*:\\s*\\{[^}]*\"" + materialId + "\"\\s*:.*")
+            );
+        }
+
+        List<Bson> materialConditions = new ArrayList<>();
+        for (Long materialId : materialFilters) {
+            materialConditions.add(Filters.or(
+                Filters.regex("extra_json", ".*\"id\"\\s*:\\s*" + materialId + "\\s*[,}].*"),
+                Filters.regex("extra_json", ".*\"ai\"\\s*:\\s*\\{[^}]*\"" + materialId + "\"\\s*:.*"),
+                Filters.regex("extra_json", ".*\"ri\"\\s*:\\s*\\{[^}]*\"" + materialId + "\"\\s*:.*")
+            ));
+        }
+
+        return Filters.or(materialConditions);
+    }
+
+    private Bson buildMaterialExcludeFilter(List<Long> materialFilters) {
+        List<Bson> excludeConditions = new ArrayList<>();
+
+        for (Long materialId : materialFilters) {
+            excludeConditions.add(Filters.and(
+                Filters.not(Filters.regex("extra_json", ".*\"id\"\\s*:\\s*" + materialId + "\\s*[,}].*")),
+                Filters.not(Filters.regex("extra_json", ".*\"ai\"\\s*:\\s*\\{[^}]*\"" + materialId + "\"\\s*:.*")),
+                Filters.not(Filters.regex("extra_json", ".*\"ri\"\\s*:\\s*\\{[^}]*\"" + materialId + "\"\\s*:.*"))
+            ));
+        }
+
+        return excludeConditions.size() == 1 ? excludeConditions.get(0) : Filters.and(excludeConditions);
+    }
+
+    private Bson buildBlockIncludeFilter(List<Long> blockFilters) {
+        if (blockFilters.size() == 1) {
+            Long blockId = blockFilters.get(0);
+            return Filters.or(
+                Filters.regex("extra_json", ".*\"b\"\\s*:\\s*" + blockId + "\\s*[,}].*"),
+                Filters.regex("extra_json", ".*\"ob\"\\s*:\\s*" + blockId + "\\s*[,}].*")
+            );
+        }
+
+        List<Bson> blockConditions = new ArrayList<>();
+        for (Long blockId : blockFilters) {
+            blockConditions.add(Filters.or(
+                Filters.regex("extra_json", ".*\"b\"\\s*:\\s*" + blockId + "\\s*[,}].*"),
+                Filters.regex("extra_json", ".*\"ob\"\\s*:\\s*" + blockId + "\\s*[,}].*")
+            ));
+        }
+
+        return Filters.or(blockConditions);
+    }
+
+    private Bson buildBlockExcludeFilter(List<Long> blockFilters) {
+        List<Bson> excludeConditions = new ArrayList<>();
+
+        for (Long blockId : blockFilters) {
+            excludeConditions.add(Filters.and(
+                Filters.not(Filters.regex("extra_json", ".*\"b\"\\s*:\\s*" + blockId + "\\s*[,}].*")),
+                Filters.not(Filters.regex("extra_json", ".*\"ob\"\\s*:\\s*" + blockId + "\\s*[,}].*"))
+            ));
         }
 
         return excludeConditions.size() == 1 ? excludeConditions.get(0) : Filters.and(excludeConditions);
