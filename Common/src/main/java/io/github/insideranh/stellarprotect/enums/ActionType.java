@@ -1,10 +1,10 @@
 package io.github.insideranh.stellarprotect.enums;
 
-import javax.annotation.Nullable;
 import io.github.insideranh.stellarprotect.config.WorldConfigType;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 

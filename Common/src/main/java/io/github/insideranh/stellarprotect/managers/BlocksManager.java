@@ -4,6 +4,7 @@ import com.google.common.collect.Sets;
 import io.github.insideranh.stellarprotect.StellarProtect;
 import io.github.insideranh.stellarprotect.blocks.BlockTemplate;
 import io.github.insideranh.stellarprotect.blocks.DataBlock;
+import io.github.insideranh.stellarprotect.cache.BlocksCache;
 import lombok.Getter;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
@@ -20,7 +21,8 @@ public class BlocksManager {
 
     private final StellarProtect plugin = StellarProtect.getInstance();
 
-    //private final IntObjectMap<Integer> blockHashToId = new IntObjectMap<>(1000);
+    private final BlocksCache blocksCache = new BlocksCache();
+
     // String -> BlockTemplate
     private final Map<String, BlockTemplate> blockHashToId = new ConcurrentHashMap<>(100);
     // BlockId -> BlockTemplate
@@ -40,6 +42,7 @@ public class BlocksManager {
         DataBlock dataBlock = plugin.getDataBlock(blockDataString);
         BlockTemplate template = new BlockTemplate(id, dataBlock);
         blockHashToId.put(blockDataString, template);
+        blocksCache.put(template);
         idToBlockTemplate.put(template.getId(), template);
     }
 
@@ -76,6 +79,7 @@ public class BlocksManager {
         int id = currentId.getAndIncrement();
 
         BlockTemplate template = new BlockTemplate(id, dataBlock);
+        blocksCache.put(template);
         unsavedBlocks.add(id);
         blockHashToId.put(dataBlock.getBlockDataString(), template);
         idToBlockTemplate.put(id, template);

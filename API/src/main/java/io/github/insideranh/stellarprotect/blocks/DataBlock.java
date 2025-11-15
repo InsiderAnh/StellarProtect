@@ -4,4 +4,6 @@ public interface DataBlock {
 
     String getBlockDataString();
 
+    String getTypeMaterial();
+
 }

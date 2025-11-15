@@ -50,6 +50,11 @@ public class DataBlock_v1_12_R2 implements DataBlock {
     }
 
     @Override
+    public String getTypeMaterial() {
+        return material.name();
+    }
+
+    @Override
     public int hashCode() {
         return this.blockDataString.hashCode();
     }

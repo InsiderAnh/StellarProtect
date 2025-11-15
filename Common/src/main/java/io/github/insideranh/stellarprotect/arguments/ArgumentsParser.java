@@ -1,6 +1,5 @@
 package io.github.insideranh.stellarprotect.arguments;
 
-import javax.annotation.Nullable;
 import io.github.insideranh.stellarprotect.StellarProtect;
 import io.github.insideranh.stellarprotect.enums.ActionType;
 import io.github.insideranh.stellarprotect.enums.TimesType;
@@ -10,6 +9,7 @@ import lombok.NonNull;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;

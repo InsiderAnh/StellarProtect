@@ -2,7 +2,6 @@ package io.github.insideranh.stellarprotect.database.types.mysql;
 
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
-import javax.annotation.Nullable;
 import com.zaxxer.hikari.HikariDataSource;
 import io.github.insideranh.stellarprotect.StellarProtect;
 import io.github.insideranh.stellarprotect.arguments.DatabaseFilters;
@@ -26,6 +25,7 @@ import lombok.SneakyThrows;
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 
+import javax.annotation.Nullable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -598,20 +598,27 @@ public class LoggerRepositoryMySQL implements LoggerRepository {
     }
 
     private QueryBuilder buildBaseQuery(DatabaseFilters databaseFilters) {
-        return new QueryBuilder(
+        QueryBuilder queryBuilder = new QueryBuilder(
             stellarProtect.getConfigManager().getTablesLogEntries(),
             stellarProtect.getConfigManager().getTablesPlayers()
         )
             .addTimeFilter(databaseFilters.getTimeFilter())
             .addRadiusFilter(databaseFilters.getRadiusFilter())
-            .addUsersFilter(databaseFilters.getUserFilters())
-            .allIncludeFilters(databaseFilters.getAllIncludeFilters())
-            .allExcludeFilters(databaseFilters.getAllExcludeFilters())
-            .allIncludeFilters(databaseFilters.getIncludeMaterialFilters())
-            .allExcludeFilters(databaseFilters.getExcludeMaterialFilters())
-            .blockIncludeFilters(databaseFilters.getIncludeBlockFilters())
-            .blockExcludeFilters(databaseFilters.getExcludeBlockFilters())
-            .addActionTypesFilter(databaseFilters.getActionTypesFilter());
+            .addUsersFilter(databaseFilters.getUserFilters());
+
+        queryBuilder.addCombinedIncludeFilters(
+            databaseFilters.getAllIncludeFilters(),
+            databaseFilters.getIncludeMaterialFilters(),
+            databaseFilters.getIncludeBlockFilters()
+        );
+
+        queryBuilder.addCombinedExcludeFilters(
+            databaseFilters.getAllExcludeFilters(),
+            databaseFilters.getExcludeMaterialFilters(),
+            databaseFilters.getExcludeBlockFilters()
+        );
+
+        return queryBuilder.addActionTypesFilter(databaseFilters.getActionTypesFilter());
     }
 
     private long executeCountQuery(Connection connection, String countQuery, List<Object> parameters) throws SQLException {
@@ -708,10 +715,27 @@ public class LoggerRepositoryMySQL implements LoggerRepository {
             return this;
         }
 
-        public QueryBuilder allIncludeFilters(List<Long> materialFilters) {
-            if (materialFilters != null && !materialFilters.isEmpty()) {
-                List<String> jsonConditions = new ArrayList<>();
+        public QueryBuilder addCombinedIncludeFilters(List<Long> allIncludeFilters, List<Long> materialFilters, List<Long> blockFilters) {
+            List<String> allIncludeConditions = new ArrayList<>();
 
+            if (allIncludeFilters != null && !allIncludeFilters.isEmpty()) {
+                for (Long wordId : allIncludeFilters) {
+                    List<String> worldConditions = new ArrayList<>();
+
+                    worldConditions.add("ple.extra_json LIKE ?");
+                    parameters.add("%\"id\":" + wordId + ",%");
+
+                    worldConditions.add("ple.extra_json LIKE ?");
+                    parameters.add("%\"ai\":{%\"" + wordId + "\":%");
+
+                    worldConditions.add("ple.extra_json LIKE ?");
+                    parameters.add("%\"ri\":{%\"" + wordId + "\":%");
+
+                    allIncludeConditions.add("(" + String.join(" OR ", worldConditions) + ")");
+                }
+            }
+
+            if (materialFilters != null && !materialFilters.isEmpty()) {
                 for (Long wordId : materialFilters) {
                     List<String> worldConditions = new ArrayList<>();
 
@@ -724,18 +748,61 @@ public class LoggerRepositoryMySQL implements LoggerRepository {
                     worldConditions.add("ple.extra_json LIKE ?");
                     parameters.add("%\"ri\":{%\"" + wordId + "\":%");
 
-                    jsonConditions.add("(" + String.join(" OR ", worldConditions) + ")");
+                    allIncludeConditions.add("(" + String.join(" OR ", worldConditions) + ")");
                 }
-
-                whereConditions.add("(" + String.join(" OR ", jsonConditions) + ")");
             }
+
+            if (blockFilters != null && !blockFilters.isEmpty()) {
+                for (Long blockId : blockFilters) {
+                    List<String> blockConditions = new ArrayList<>();
+
+                    blockConditions.add("ple.extra_json = ?");
+                    parameters.add("{\"b\":" + blockId + "}");
+
+                    blockConditions.add("ple.extra_json LIKE ?");
+                    parameters.add("{\"b\":" + blockId + ",\"ob\":%}");
+
+                    blockConditions.add("ple.extra_json LIKE ?");
+                    parameters.add("{\"b\":%,\"ob\":" + blockId + "}");
+
+                    blockConditions.add("ple.extra_json LIKE ?");
+                    parameters.add("{\"nb\":\"" + blockId + "\",\"lb\":\"%\"}");
+
+                    blockConditions.add("ple.extra_json LIKE ?");
+                    parameters.add("{\"nb\":\"%\",\"lb\":\"" + blockId + "\"}");
+
+                    allIncludeConditions.add("(" + String.join(" OR ", blockConditions) + ")");
+                }
+            }
+
+            if (!allIncludeConditions.isEmpty()) {
+                whereConditions.add("(" + String.join(" OR ", allIncludeConditions) + ")");
+            }
+
             return this;
         }
 
-        public QueryBuilder allExcludeFilters(List<Long> materialFilters) {
-            if (materialFilters != null && !materialFilters.isEmpty()) {
-                List<String> excludeConditions = new ArrayList<>();
+        public QueryBuilder addCombinedExcludeFilters(List<Long> allExcludeFilters, List<Long> materialFilters, List<Long> blockFilters) {
+            List<String> allExcludeConditions = new ArrayList<>();
 
+            if (allExcludeFilters != null && !allExcludeFilters.isEmpty()) {
+                for (Long materialId : allExcludeFilters) {
+                    List<String> worldExcludeConditions = new ArrayList<>();
+
+                    worldExcludeConditions.add("ple.extra_json NOT LIKE ?");
+                    parameters.add("%\"id\":" + materialId + ",%");
+
+                    worldExcludeConditions.add("ple.extra_json NOT LIKE ?");
+                    parameters.add("%\"ai\":{%\"" + materialId + "\":%");
+
+                    worldExcludeConditions.add("ple.extra_json NOT LIKE ?");
+                    parameters.add("%\"ri\":{%\"" + materialId + "\":%");
+
+                    allExcludeConditions.add("(" + String.join(" AND ", worldExcludeConditions) + ")");
+                }
+            }
+
+            if (materialFilters != null && !materialFilters.isEmpty()) {
                 for (Long materialId : materialFilters) {
                     List<String> worldExcludeConditions = new ArrayList<>();
 
@@ -748,65 +815,37 @@ public class LoggerRepositoryMySQL implements LoggerRepository {
                     worldExcludeConditions.add("ple.extra_json NOT LIKE ?");
                     parameters.add("%\"ri\":{%\"" + materialId + "\":%");
 
-                    excludeConditions.add("(" + String.join(" AND ", worldExcludeConditions) + ")");
+                    allExcludeConditions.add("(" + String.join(" AND ", worldExcludeConditions) + ")");
                 }
-
-                whereConditions.add("(" + String.join(" AND ", excludeConditions) + ")");
             }
-            return this;
-        }
 
-        public QueryBuilder blockIncludeFilters(List<Long> blockFilters) {
             if (blockFilters != null && !blockFilters.isEmpty()) {
-                List<String> jsonConditions = new ArrayList<>();
-
-                for (Long blockId : blockFilters) {
-                    List<String> blockConditions = new ArrayList<>();
-
-                    blockConditions.add("ple.extra_json LIKE ?");
-                    parameters.add("%\"b\":" + blockId + ",%");
-
-                    blockConditions.add("ple.extra_json LIKE ?");
-                    parameters.add("%\"b\":" + blockId + "}%");
-
-                    blockConditions.add("ple.extra_json LIKE ?");
-                    parameters.add("%\"ob\":" + blockId + ",%");
-
-                    blockConditions.add("ple.extra_json LIKE ?");
-                    parameters.add("%\"ob\":" + blockId + "}%");
-
-                    jsonConditions.add("(" + String.join(" OR ", blockConditions) + ")");
-                }
-
-                whereConditions.add("(" + String.join(" OR ", jsonConditions) + ")");
-            }
-            return this;
-        }
-
-        public QueryBuilder blockExcludeFilters(List<Long> blockFilters) {
-            if (blockFilters != null && !blockFilters.isEmpty()) {
-                List<String> excludeConditions = new ArrayList<>();
-
                 for (Long blockId : blockFilters) {
                     List<String> blockExcludeConditions = new ArrayList<>();
 
-                    blockExcludeConditions.add("ple.extra_json NOT LIKE ?");
-                    parameters.add("%\"b\":" + blockId + ",%");
+                    blockExcludeConditions.add("ple.extra_json != ?");
+                    parameters.add("{\"b\":" + blockId + "}");
 
                     blockExcludeConditions.add("ple.extra_json NOT LIKE ?");
-                    parameters.add("%\"b\":" + blockId + "}%");
+                    parameters.add("{\"b\":" + blockId + ",\"ob\":%}");
 
                     blockExcludeConditions.add("ple.extra_json NOT LIKE ?");
-                    parameters.add("%\"ob\":" + blockId + ",%");
+                    parameters.add("{\"b\":%,\"ob\":" + blockId + "}");
 
                     blockExcludeConditions.add("ple.extra_json NOT LIKE ?");
-                    parameters.add("%\"ob\":" + blockId + "}%");
+                    parameters.add("{\"nb\":\"" + blockId + "\",\"lb\":\"%\"}");
 
-                    excludeConditions.add("(" + String.join(" AND ", blockExcludeConditions) + ")");
+                    blockExcludeConditions.add("ple.extra_json NOT LIKE ?");
+                    parameters.add("{\"nb\":\"%\",\"lb\":\"" + blockId + "\"}");
+
+                    allExcludeConditions.add("(" + String.join(" AND ", blockExcludeConditions) + ")");
                 }
-
-                whereConditions.add("(" + String.join(" AND ", excludeConditions) + ")");
             }
+
+            if (!allExcludeConditions.isEmpty()) {
+                whereConditions.add("(" + String.join(" AND ", allExcludeConditions) + ")");
+            }
+
             return this;
         }
 

@@ -1,12 +1,13 @@
 package io.github.insideranh.stellarprotect.listeners.handlers;
 
-import javax.annotation.Nullable;
 import io.github.insideranh.stellarprotect.StellarProtect;
 import lombok.NonNull;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+
+import javax.annotation.Nullable;
 
 public abstract class GenericHandler {
 

@@ -29,6 +29,11 @@ public class DataBlock_v1_16_R5 implements DataBlock {
     }
 
     @Override
+    public String getTypeMaterial() {
+        return blockData.getMaterial().name();
+    }
+
+    @Override
     public int hashCode() {
         return blockData.hashCode();
     }

@@ -2,6 +2,7 @@ package io.github.insideranh.stellarprotect.commands.arguments;
 
 import io.github.insideranh.stellarprotect.StellarProtect;
 import io.github.insideranh.stellarprotect.arguments.*;
+import io.github.insideranh.stellarprotect.cache.BlocksCache;
 import io.github.insideranh.stellarprotect.cache.ItemsCache;
 import io.github.insideranh.stellarprotect.cache.keys.LocationCache;
 import io.github.insideranh.stellarprotect.commands.StellarArgument;
@@ -65,6 +66,7 @@ public class RestoreArgument extends StellarArgument {
         }
 
         ItemsCache itemsCache = StellarProtect.getInstance().getItemsManager().getItemCache();
+        BlocksCache blocksCache = StellarProtect.getInstance().getBlocksManager().getBlocksCache();
 
         RadiusArg finalRadiusArg = radiusArg;
         ArgumentsParser.parseUsers(arguments).thenAccept(usersArg -> {
@@ -75,6 +77,8 @@ public class RestoreArgument extends StellarArgument {
             databaseFilters.setUserFilters(usersArg);
             databaseFilters.setAllIncludeFilters(itemsCache.findIdsByTypeNameContains(includesArg, ItemsCache.FieldType.LOWER_TYPE_NAME));
             databaseFilters.setAllExcludeFilters(itemsCache.findIdsByTypeNameContains(excludesArg, ItemsCache.FieldType.LOWER_TYPE_NAME));
+            databaseFilters.setIncludeBlockFilters(blocksCache.findIdsByTypeNameContains(includesArg, BlocksCache.FieldType.LOWER_TYPE_NAME));
+            databaseFilters.setExcludeBlockFilters(blocksCache.findIdsByTypeNameContains(excludesArg, BlocksCache.FieldType.LOWER_TYPE_NAME));
             databaseFilters.setIncludeMaterialFilters(itemsCache.findIdsContains(includesMap));
             databaseFilters.setExcludeMaterialFilters(itemsCache.findIdsContains(excludesMap));
 
