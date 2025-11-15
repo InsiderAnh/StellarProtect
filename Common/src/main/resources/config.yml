@@ -39,9 +39,9 @@ optimizations:
   max-logs-per-location: 10
   # Time to clear cache, save default: 15 minutes, not recommended to change
   time-for-cache-clear: 15
-  # Days to keep logs, save default: 15
+  # Days to keep logs, save default: 30
   # Change this considering your machine disk space
-  days-to-keep-logs: 15
+  days-to-keep-logs: 30
   # Period to delete old logs, save default: 15 minutes
   delete-old-period: 15
   # Period to clean placed block cache, save default: 30 seconds

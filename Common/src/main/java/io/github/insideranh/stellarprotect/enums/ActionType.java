@@ -107,6 +107,9 @@ public enum ActionType {
     private boolean hasDisableAll = false;
 
     @Setter
+    private boolean hasNoDisabledTypes = false;
+
+    @Setter
     private boolean enabled = true;
     private boolean parseMinecraftData = true;
 
@@ -169,22 +172,21 @@ public enum ActionType {
             if (!worldConfig.isEnabled()) {
                 return true;
             }
+            if (worldConfig.isHasNoDisabledTypes()) {
+                return false;
+            }
             if (worldConfig.isDisableAll()) {
                 return true;
             }
             return worldConfig.getDisabledTypes().contains(typeLower);
         }
 
-        if (hasDisableAll) {
-            return true;
-        }
-
-        if (disabledTypes.contains(typeLower)) {
-            return true;
-        }
-
-        if (hasAllWorlds) {
+        if (hasNoDisabledTypes || hasAllWorlds) {
             return false;
+        }
+
+        if (hasDisableAll || disabledTypes.contains(typeLower)) {
+            return true;
         }
 
         String worldLower = getLowerCaseWorld(world);
@@ -203,6 +205,9 @@ public enum ActionType {
             if (!worldConfig.isEnabled()) {
                 return true;
             }
+            if (worldConfig.isHasNoDisabledTypes()) {
+                return false;
+            }
             if (worldConfig.isDisableAll()) {
                 return true;
             }
@@ -214,6 +219,10 @@ public enum ActionType {
             return false;
         }
 
+        if (hasNoDisabledTypes || hasAllWorlds) {
+            return false;
+        }
+
         if (hasDisableAll) {
             return true;
         }
@@ -222,10 +231,6 @@ public enum ActionType {
             if (typeLower.startsWith(disabledType)) {
                 return true;
             }
-        }
-
-        if (hasAllWorlds) {
-            return false;
         }
 
         if (world == null) {

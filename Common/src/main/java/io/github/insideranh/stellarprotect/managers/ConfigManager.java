@@ -120,7 +120,8 @@ public class ConfigManager {
                 boolean isEmptyOrNone = disableTypes.isEmpty() ||
                     (disableTypes.size() == 1 && disableTypes.contains("none"));
 
-                worldConfigType.setEnabled(!isEmptyOrNone && config.getBoolean("logs." + actionType.name().toLowerCase() + ".enabled"));
+                worldConfigType.setEnabled(config.getBoolean("logs." + actionType.name().toLowerCase() + ".enabled"));
+                worldConfigType.setHasNoDisabledTypes(isEmptyOrNone);
                 worldConfigType.getDisabledTypes().addAll(disableTypes);
                 worlds.computeIfAbsent(actionType, k -> new HashMap<>()).put(world, worldConfigType);
             }
@@ -141,7 +142,8 @@ public class ConfigManager {
             boolean isEmptyOrNone = disableTypesList.isEmpty() ||
                 (disableTypesList.size() == 1 && disableTypesList.contains("none"));
 
-            actionType.setEnabled(!isEmptyOrNone && enabled);
+            actionType.setEnabled(enabled);
+            actionType.setHasNoDisabledTypes(isEmptyOrNone);
             actionType.setHasAllWorlds(worldList.contains("all"));
             actionType.getWorlds().addAll(worldList);
             actionType.getDisabledTypes().addAll(disableTypesList);
