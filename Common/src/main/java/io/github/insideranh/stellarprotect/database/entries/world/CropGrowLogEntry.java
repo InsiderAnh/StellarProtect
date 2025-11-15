@@ -6,7 +6,6 @@ import io.github.insideranh.stellarprotect.database.entries.LogEntry;
 import io.github.insideranh.stellarprotect.enums.ActionType;
 import io.github.insideranh.stellarprotect.utils.PlayerUtils;
 import lombok.Getter;
-import org.bson.Document;
 import org.bukkit.block.Block;
 
 import java.sql.ResultSet;
@@ -15,11 +14,6 @@ import java.sql.ResultSet;
 public class CropGrowLogEntry extends LogEntry {
 
     private final int age;
-
-    public CropGrowLogEntry(Document document, JsonObject jsonObject) {
-        super(document);
-        this.age = jsonObject.has("a") ? jsonObject.get("a").getAsInt() : 0;
-    }
 
     public CropGrowLogEntry(ResultSet resultSet, JsonObject jsonObject) {
         super(resultSet);

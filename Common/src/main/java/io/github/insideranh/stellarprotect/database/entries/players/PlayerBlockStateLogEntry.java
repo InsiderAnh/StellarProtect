@@ -8,7 +8,6 @@ import io.github.insideranh.stellarprotect.enums.ActionType;
 import io.github.insideranh.stellarprotect.managers.BlocksManager;
 import lombok.Getter;
 import lombok.SneakyThrows;
-import org.bson.Document;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
@@ -21,13 +20,6 @@ public class PlayerBlockStateLogEntry extends LogEntry {
     private static final BlocksManager blocksManager = StellarProtect.getInstance().getBlocksManager();
     private final int lastBlockId;
     private final int newBlockId;
-
-    public PlayerBlockStateLogEntry(Document document, JsonObject jsonObject) {
-        super(document);
-
-        this.newBlockId = jsonObject.has("nb") ? jsonObject.get("nb").getAsInt() : -1;
-        this.lastBlockId = jsonObject.has("lb") ? jsonObject.get("lb").getAsInt() : -1;
-    }
 
     @SneakyThrows
     public PlayerBlockStateLogEntry(ResultSet resultSet, JsonObject jsonObject) {

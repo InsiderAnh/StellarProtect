@@ -5,7 +5,6 @@ import io.github.insideranh.stellarprotect.database.entries.LogEntry;
 import io.github.insideranh.stellarprotect.enums.ActionType;
 import lombok.Getter;
 import lombok.SneakyThrows;
-import org.bson.Document;
 import org.bukkit.Location;
 
 import java.sql.ResultSet;
@@ -15,11 +14,6 @@ import java.util.Arrays;
 public class PlayerSignChangeEntry extends LogEntry {
 
     private final String[] lines;
-
-    public PlayerSignChangeEntry(Document document, JsonObject jsonObject) {
-        super(document);
-        this.lines = jsonObject.get("l").getAsString().split("\n");
-    }
 
     @SneakyThrows
     public PlayerSignChangeEntry(ResultSet resultSet, JsonObject jsonObject) {

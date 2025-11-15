@@ -1,6 +1,6 @@
 package io.github.insideranh.stellarprotect.arguments;
 
-import com.mongodb.lang.Nullable;
+import javax.annotation.Nullable;
 import io.github.insideranh.stellarprotect.StellarProtect;
 import io.github.insideranh.stellarprotect.enums.ActionType;
 import io.github.insideranh.stellarprotect.enums.TimesType;

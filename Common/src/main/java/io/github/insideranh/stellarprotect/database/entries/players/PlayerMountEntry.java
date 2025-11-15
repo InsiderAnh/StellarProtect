@@ -5,7 +5,6 @@ import io.github.insideranh.stellarprotect.database.entries.LogEntry;
 import io.github.insideranh.stellarprotect.enums.ActionType;
 import io.github.insideranh.stellarprotect.utils.WorldUtils;
 import lombok.Getter;
-import org.bson.Document;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 
@@ -17,13 +16,6 @@ public class PlayerMountEntry extends LogEntry {
     // mount = 0 (0 = mount, 1 = dismount)
     private final String entityType;
     private final byte mount;
-
-    public PlayerMountEntry(Document document, JsonObject jsonObject) {
-        super(document);
-
-        this.entityType = jsonObject.get("et").getAsString();
-        this.mount = jsonObject.get("mt").getAsByte();
-    }
 
     public PlayerMountEntry(ResultSet resultSet, JsonObject jsonObject) {
         super(resultSet);

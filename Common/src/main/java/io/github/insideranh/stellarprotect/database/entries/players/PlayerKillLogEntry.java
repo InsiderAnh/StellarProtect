@@ -6,7 +6,6 @@ import io.github.insideranh.stellarprotect.database.entries.LogEntry;
 import io.github.insideranh.stellarprotect.enums.ActionType;
 import io.github.insideranh.stellarprotect.utils.SerializerUtils;
 import lombok.Getter;
-import org.bson.Document;
 import org.bukkit.entity.Entity;
 
 import java.sql.ResultSet;
@@ -17,16 +16,6 @@ public class PlayerKillLogEntry extends LogEntry {
 
     private final String entityType;
     private final EntityData entityData;
-
-    public PlayerKillLogEntry(Document document, JsonObject jsonObject) {
-        super(document);
-        this.entityType = jsonObject.get("et").getAsString();
-        if (jsonObject.has("ed")) {
-            this.entityData = SerializerUtils.getGson().fromJson(jsonObject.get("ed").getAsString(), EntityData.class);
-        } else {
-            this.entityData = new EntityData();
-        }
-    }
 
     public PlayerKillLogEntry(ResultSet resultSet, JsonObject jsonObject) {
         super(resultSet);

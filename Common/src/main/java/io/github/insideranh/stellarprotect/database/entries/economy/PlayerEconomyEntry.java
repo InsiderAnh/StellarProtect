@@ -6,7 +6,6 @@ import io.github.insideranh.stellarprotect.enums.ActionType;
 import io.github.insideranh.stellarprotect.enums.MoneyVarType;
 import io.github.insideranh.stellarprotect.utils.StringCleanerUtils;
 import lombok.Getter;
-import org.bson.Document;
 import org.bukkit.Location;
 
 import java.sql.ResultSet;
@@ -16,13 +15,6 @@ public class PlayerEconomyEntry extends LogEntry {
 
     private final MoneyVarType variationType;
     private final double difference;
-
-    public PlayerEconomyEntry(Document document, JsonObject jsonObject) {
-        super(document);
-
-        this.variationType = MoneyVarType.getById(jsonObject.get("v").getAsInt());
-        this.difference = StringCleanerUtils.limitTo2Decimals(jsonObject.get("d").getAsDouble());
-    }
 
     public PlayerEconomyEntry(ResultSet resultSet, JsonObject jsonObject) {
         super(resultSet);

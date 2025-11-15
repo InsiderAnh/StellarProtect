@@ -9,7 +9,6 @@ import io.github.insideranh.stellarprotect.data.PlayerProtect;
 import io.github.insideranh.stellarprotect.database.entries.LogEntry;
 import io.github.insideranh.stellarprotect.database.entries.items.ItemLogEntry;
 import io.github.insideranh.stellarprotect.database.repositories.DatabaseConnection;
-import io.github.insideranh.stellarprotect.database.types.MongoConnection;
 import io.github.insideranh.stellarprotect.database.types.MySQLConnection;
 import io.github.insideranh.stellarprotect.database.types.SQLConnection;
 import io.github.insideranh.stellarprotect.items.ItemTemplate;
@@ -32,8 +31,6 @@ public class ProtectDatabase {
         String databaseType = stellarProtect.getConfig().getString("databases.type", "h2");
         if (databaseType.equalsIgnoreCase("mysql")) {
             this.databaseConnection = new MySQLConnection();
-        } else if (databaseType.equalsIgnoreCase("mongodb")) {
-            this.databaseConnection = new MongoConnection();
         } else {
             this.databaseConnection = new SQLConnection();
         }

@@ -7,7 +7,6 @@ import io.github.insideranh.stellarprotect.enums.ActionType;
 import io.github.insideranh.stellarprotect.items.ItemReference;
 import io.github.insideranh.stellarprotect.items.ItemTemplate;
 import lombok.Getter;
-import org.bson.Document;
 import org.bukkit.Location;
 
 import java.sql.ResultSet;
@@ -19,15 +18,6 @@ public class PlayerShopGUIEntry extends LogEntry {
     private final int amount;
     private final double price;
     private final byte shopAction;
-
-    public PlayerShopGUIEntry(Document document, JsonObject jsonObject) {
-        super(document);
-
-        this.itemId = jsonObject.get("i").getAsLong();
-        this.amount = jsonObject.get("a").getAsInt();
-        this.price = jsonObject.get("p").getAsDouble();
-        this.shopAction = jsonObject.get("s").getAsByte();
-    }
 
     public PlayerShopGUIEntry(ResultSet resultSet, JsonObject jsonObject) {
         super(resultSet);

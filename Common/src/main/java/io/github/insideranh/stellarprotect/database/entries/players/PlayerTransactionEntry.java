@@ -6,7 +6,6 @@ import io.github.insideranh.stellarprotect.database.entries.LogEntry;
 import io.github.insideranh.stellarprotect.enums.ActionType;
 import lombok.Getter;
 import lombok.SneakyThrows;
-import org.bson.Document;
 import org.bukkit.Location;
 
 import java.sql.ResultSet;
@@ -19,27 +18,6 @@ public class PlayerTransactionEntry extends LogEntry {
 
     private Map<Long, Integer> added = new HashMap<>();
     private Map<Long, Integer> removed = new HashMap<>();
-
-    public PlayerTransactionEntry(Document document, JsonObject jsonObject) {
-        super(document);
-
-        if (jsonObject.has("ai")) {
-            JsonObject addedItemsObj = jsonObject.get("ai").getAsJsonObject();
-            for (Map.Entry<String, JsonElement> entry : addedItemsObj.entrySet()) {
-                String base64Key = entry.getKey();
-                int amount = entry.getValue().getAsInt();
-                this.added.put(Long.parseLong(base64Key), amount);
-            }
-        }
-        if (jsonObject.has("ri")) {
-            JsonObject removedItemsObj = jsonObject.get("ri").getAsJsonObject();
-            for (Map.Entry<String, JsonElement> entry : removedItemsObj.entrySet()) {
-                String base64Key = entry.getKey();
-                int amount = entry.getValue().getAsInt();
-                this.removed.put(Long.parseLong(base64Key), amount);
-            }
-        }
-    }
 
     @SneakyThrows
     public PlayerTransactionEntry(ResultSet resultSet, JsonObject jsonObject) {

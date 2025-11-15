@@ -5,7 +5,6 @@ import io.github.insideranh.stellarprotect.database.entries.LogEntry;
 import io.github.insideranh.stellarprotect.enums.ActionType;
 import lombok.Getter;
 import lombok.SneakyThrows;
-import org.bson.Document;
 import org.bukkit.Location;
 
 import java.sql.ResultSet;
@@ -15,12 +14,6 @@ public class PlayerGameModeLogEntry extends LogEntry {
 
     private final byte lastGameMode;
     private final byte newGameMode;
-
-    public PlayerGameModeLogEntry(Document document, JsonObject jsonObject) {
-        super(document);
-        this.lastGameMode = jsonObject.has("l") ? jsonObject.get("l").getAsByte() : 0;
-        this.newGameMode = jsonObject.has("n") ? jsonObject.get("n").getAsByte() : 0;
-    }
 
     @SneakyThrows
     public PlayerGameModeLogEntry(ResultSet resultSet, JsonObject jsonObject) {

@@ -5,7 +5,6 @@ import io.github.insideranh.stellarprotect.database.entries.LogEntry;
 import io.github.insideranh.stellarprotect.enums.ActionType;
 import io.github.insideranh.stellarprotect.utils.WorldUtils;
 import lombok.Getter;
-import org.bson.Document;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 
@@ -15,12 +14,6 @@ import java.sql.ResultSet;
 public class PlayerHangingEntry extends LogEntry {
 
     private final String entityType;
-
-    public PlayerHangingEntry(Document document, JsonObject jsonObject) {
-        super(document);
-
-        this.entityType = jsonObject.get("et").getAsString();
-    }
 
     public PlayerHangingEntry(ResultSet resultSet, JsonObject jsonObject) {
         super(resultSet);

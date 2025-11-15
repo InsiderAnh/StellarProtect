@@ -8,7 +8,6 @@ import io.github.insideranh.stellarprotect.items.ItemReference;
 import io.github.insideranh.stellarprotect.items.ItemTemplate;
 import lombok.Getter;
 import lombok.SneakyThrows;
-import org.bson.Document;
 import org.bukkit.Location;
 
 import java.sql.ResultSet;
@@ -19,12 +18,6 @@ public class PlayerItemLogEntry extends LogEntry {
 
     private final long itemReferenceId;
     private final int amount;
-
-    public PlayerItemLogEntry(Document document, JsonObject jsonObject) {
-        super(document);
-        this.itemReferenceId = jsonObject.has("id") ? jsonObject.get("id").getAsLong() : jsonObject.get("it64").getAsLong();
-        this.amount = jsonObject.has("a") ? jsonObject.get("a").getAsInt() : 1;
-    }
 
     @SneakyThrows
     public PlayerItemLogEntry(ResultSet resultSet, JsonObject jsonObject) {

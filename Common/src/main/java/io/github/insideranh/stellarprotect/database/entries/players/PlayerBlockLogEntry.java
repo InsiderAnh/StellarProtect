@@ -9,7 +9,6 @@ import io.github.insideranh.stellarprotect.enums.ExtraDataType;
 import io.github.insideranh.stellarprotect.managers.BlocksManager;
 import lombok.Getter;
 import lombok.SneakyThrows;
-import org.bson.Document;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
@@ -27,22 +26,6 @@ public class PlayerBlockLogEntry extends LogEntry {
     private String nexoBlockId;
     private byte extraType;
     private String extraData;
-
-    public PlayerBlockLogEntry(Document document, JsonObject jsonObject) {
-        super(document);
-
-        this.blockId = getBlockId(jsonObject);
-        this.oldBlockId = getOldBlockId(jsonObject);
-        if (jsonObject.has("nbId")) {
-            this.nexoBlockId = jsonObject.get("nbId").getAsString();
-        }
-        if (jsonObject.has("xt")) {
-            this.extraType = jsonObject.get("xt").getAsByte();
-        }
-        if (jsonObject.has("xd")) {
-            this.extraData = jsonObject.get("xd").getAsString();
-        }
-    }
 
     @SneakyThrows
     public PlayerBlockLogEntry(ResultSet resultSet, JsonObject jsonObject) {

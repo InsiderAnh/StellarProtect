@@ -5,7 +5,6 @@ import io.github.insideranh.stellarprotect.database.entries.LogEntry;
 import io.github.insideranh.stellarprotect.enums.ActionType;
 import lombok.Getter;
 import lombok.SneakyThrows;
-import org.bson.Document;
 import org.bukkit.Location;
 
 import java.sql.ResultSet;
@@ -15,13 +14,6 @@ public class PlayerXKitEventLogEntry extends LogEntry {
 
     private final byte eventType;
     private final String kitId;
-
-    public PlayerXKitEventLogEntry(Document document, JsonObject jsonObject) {
-        super(document);
-
-        this.eventType = jsonObject.get("e").getAsByte();
-        this.kitId = jsonObject.get("k").getAsString();
-    }
 
     @SneakyThrows
     public PlayerXKitEventLogEntry(ResultSet resultSet, JsonObject jsonObject) {

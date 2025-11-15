@@ -6,7 +6,6 @@ import io.github.insideranh.stellarprotect.database.entries.LogEntry;
 import io.github.insideranh.stellarprotect.enums.ActionType;
 import io.github.insideranh.stellarprotect.enums.DeathCause;
 import lombok.Getter;
-import org.bson.Document;
 import org.bukkit.Location;
 
 import java.sql.ResultSet;
@@ -19,21 +18,6 @@ public class PlayerDeathEntry extends LogEntry {
     private final byte cause;
     // ID item -> amount
     private Map<Long, Integer> drops = new HashMap<>();
-
-    public PlayerDeathEntry(Document document, JsonObject jsonObject) {
-        super(document);
-
-        this.cause = jsonObject.get("c").getAsByte();
-
-        if (jsonObject.has("d")) {
-            JsonObject addedItemsObj = jsonObject.get("d").getAsJsonObject();
-            for (Map.Entry<String, JsonElement> entry : addedItemsObj.entrySet()) {
-                String base64Key = entry.getKey();
-                int amount = entry.getValue().getAsInt();
-                this.drops.put(Long.parseLong(base64Key), amount);
-            }
-        }
-    }
 
     public PlayerDeathEntry(ResultSet resultSet, JsonObject jsonObject) {
         super(resultSet);

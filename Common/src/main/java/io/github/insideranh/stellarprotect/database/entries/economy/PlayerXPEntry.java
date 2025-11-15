@@ -4,7 +4,6 @@ import com.google.gson.JsonObject;
 import io.github.insideranh.stellarprotect.database.entries.LogEntry;
 import io.github.insideranh.stellarprotect.enums.ActionType;
 import lombok.Getter;
-import org.bson.Document;
 import org.bukkit.Location;
 
 import java.sql.ResultSet;
@@ -13,12 +12,6 @@ import java.sql.ResultSet;
 public class PlayerXPEntry extends LogEntry {
 
     private final double difference;
-
-    public PlayerXPEntry(Document document, JsonObject jsonObject) {
-        super(document);
-
-        this.difference = jsonObject.get("d").getAsDouble();
-    }
 
     public PlayerXPEntry(ResultSet resultSet, JsonObject jsonObject) {
         super(resultSet);

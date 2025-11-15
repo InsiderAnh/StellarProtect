@@ -1,6 +1,6 @@
 package io.github.insideranh.stellarprotect.listeners.handlers;
 
-import com.mongodb.lang.Nullable;
+import javax.annotation.Nullable;
 import io.github.insideranh.stellarprotect.StellarProtect;
 import lombok.NonNull;
 import org.bukkit.Material;

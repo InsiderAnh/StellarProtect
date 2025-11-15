@@ -1,6 +1,6 @@
 package io.github.insideranh.stellarprotect.enums;
 
-import com.mongodb.lang.Nullable;
+import javax.annotation.Nullable;
 import io.github.insideranh.stellarprotect.config.WorldConfigType;
 import lombok.Getter;
 import lombok.Setter;

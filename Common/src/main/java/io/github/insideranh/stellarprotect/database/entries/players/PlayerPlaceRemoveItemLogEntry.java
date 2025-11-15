@@ -8,7 +8,6 @@ import io.github.insideranh.stellarprotect.enums.ActionType;
 import io.github.insideranh.stellarprotect.items.ItemReference;
 import lombok.Getter;
 import lombok.SneakyThrows;
-import org.bson.Document;
 import org.bukkit.block.Block;
 
 import java.sql.ResultSet;
@@ -20,15 +19,6 @@ public class PlayerPlaceRemoveItemLogEntry extends LogEntry {
     private final long itemReferenceId;
     private final int amount;
     private final byte placed;
-
-    public PlayerPlaceRemoveItemLogEntry(Document document, JsonObject jsonObject) {
-        super(document);
-        this.blockId = getBlockId(jsonObject);
-
-        this.itemReferenceId = jsonObject.has("id") ? jsonObject.get("id").getAsLong() : jsonObject.get("it64").getAsLong();
-        this.amount = jsonObject.has("a") ? jsonObject.get("a").getAsInt() : 1;
-        this.placed = jsonObject.has("p") ? jsonObject.get("p").getAsByte() : 0;
-    }
 
     @SneakyThrows
     public PlayerPlaceRemoveItemLogEntry(ResultSet resultSet, JsonObject jsonObject) {

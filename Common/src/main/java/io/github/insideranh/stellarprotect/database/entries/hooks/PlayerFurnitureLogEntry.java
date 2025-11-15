@@ -5,7 +5,6 @@ import io.github.insideranh.stellarprotect.database.entries.LogEntry;
 import io.github.insideranh.stellarprotect.enums.ActionType;
 import lombok.Getter;
 import lombok.SneakyThrows;
-import org.bson.Document;
 import org.bukkit.Location;
 
 import java.sql.ResultSet;
@@ -14,12 +13,6 @@ import java.sql.ResultSet;
 public class PlayerFurnitureLogEntry extends LogEntry {
 
     private final String nexoBlockId;
-
-    public PlayerFurnitureLogEntry(Document document, JsonObject jsonObject) {
-        super(document);
-
-        this.nexoBlockId = jsonObject.get("nbId").getAsString();
-    }
 
     @SneakyThrows
     public PlayerFurnitureLogEntry(ResultSet resultSet, JsonObject jsonObject) {

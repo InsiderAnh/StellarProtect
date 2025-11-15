@@ -2,7 +2,7 @@ package io.github.insideranh.stellarprotect.database.types.mysql;
 
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
-import com.mongodb.lang.Nullable;
+import javax.annotation.Nullable;
 import com.zaxxer.hikari.HikariDataSource;
 import io.github.insideranh.stellarprotect.StellarProtect;
 import io.github.insideranh.stellarprotect.arguments.DatabaseFilters;

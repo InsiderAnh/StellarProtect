@@ -4,7 +4,6 @@ import com.google.gson.JsonObject;
 import io.github.insideranh.stellarprotect.database.entries.LogEntry;
 import io.github.insideranh.stellarprotect.enums.ActionType;
 import lombok.Getter;
-import org.bson.Document;
 import org.bukkit.entity.Player;
 
 import java.sql.ResultSet;
@@ -13,11 +12,6 @@ import java.sql.ResultSet;
 public class PlayerChatEntry extends LogEntry {
 
     private final String message;
-
-    public PlayerChatEntry(Document document, JsonObject jsonObject) {
-        super(document);
-        this.message = jsonObject.get("m").getAsString();
-    }
 
     public PlayerChatEntry(ResultSet resultSet, JsonObject jsonObject) {
         super(resultSet);

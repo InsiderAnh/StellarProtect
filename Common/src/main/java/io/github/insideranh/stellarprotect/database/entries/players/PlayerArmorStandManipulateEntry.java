@@ -8,7 +8,6 @@ import io.github.insideranh.stellarprotect.items.ItemReference;
 import io.github.insideranh.stellarprotect.items.ItemTemplate;
 import io.github.insideranh.stellarprotect.utils.WorldUtils;
 import lombok.Getter;
-import org.bson.Document;
 import org.bukkit.Location;
 
 import java.sql.ResultSet;
@@ -19,14 +18,6 @@ public class PlayerArmorStandManipulateEntry extends LogEntry {
     private final long oldItemId;
     private final long newItemId;
     private final int slot;
-
-    public PlayerArmorStandManipulateEntry(Document document, JsonObject jsonObject) {
-        super(document);
-
-        this.oldItemId = jsonObject.get("oi").getAsLong();
-        this.newItemId = jsonObject.get("ni").getAsLong();
-        this.slot = jsonObject.get("s").getAsInt();
-    }
 
     public PlayerArmorStandManipulateEntry(ResultSet resultSet, JsonObject jsonObject) {
         super(resultSet);

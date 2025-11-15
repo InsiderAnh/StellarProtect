@@ -6,7 +6,6 @@ import io.github.insideranh.stellarprotect.enums.ActionType;
 import io.github.insideranh.stellarprotect.enums.TeleportType;
 import lombok.Getter;
 import lombok.SneakyThrows;
-import org.bson.Document;
 import org.bukkit.Location;
 
 import java.sql.ResultSet;
@@ -17,13 +16,6 @@ public class PlayerTeleportLogEntry extends LogEntry {
     private final float yaw;
     private final float pitch;
     private final int teleportType;
-
-    public PlayerTeleportLogEntry(Document document, JsonObject jsonObject) {
-        super(document);
-        this.yaw = jsonObject.has("y") ? jsonObject.get("y").getAsFloat() : 0;
-        this.pitch = jsonObject.has("p") ? jsonObject.get("p").getAsFloat() : 0;
-        this.teleportType = jsonObject.has("t") ? jsonObject.get("t").getAsInt() : TeleportType.UNKNOWN.getId();
-    }
 
     @SneakyThrows
     public PlayerTeleportLogEntry(ResultSet resultSet, JsonObject jsonObject) {

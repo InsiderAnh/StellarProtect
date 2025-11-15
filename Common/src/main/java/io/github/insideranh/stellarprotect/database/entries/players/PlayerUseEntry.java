@@ -5,7 +5,6 @@ import io.github.insideranh.stellarprotect.database.entries.LogEntry;
 import io.github.insideranh.stellarprotect.enums.ActionType;
 import lombok.Getter;
 import lombok.SneakyThrows;
-import org.bson.Document;
 import org.bukkit.block.Block;
 
 import java.sql.ResultSet;
@@ -14,11 +13,6 @@ import java.sql.ResultSet;
 public class PlayerUseEntry extends LogEntry {
 
     private final String material;
-
-    public PlayerUseEntry(Document document, JsonObject jsonObject) {
-        super(document);
-        this.material = jsonObject.get("m").getAsString();
-    }
 
     @SneakyThrows
     public PlayerUseEntry(ResultSet resultSet, JsonObject jsonObject) {

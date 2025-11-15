@@ -5,7 +5,6 @@ import io.github.insideranh.stellarprotect.utils.PlayerUtils;
 import io.github.insideranh.stellarprotect.utils.WorldUtils;
 import lombok.Getter;
 import lombok.SneakyThrows;
-import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
@@ -24,18 +23,6 @@ public class LogEntry {
     protected final int actionType;
     protected final long createdAt;
     private byte restored;
-
-    public LogEntry(Document document) {
-        this.id = document.containsKey("id") ? document.getLong("id") : -2L;
-        this.playerId = document.containsKey("player_id") ? document.getLong("player_id") : -2L;
-        this.worldId = document.getInteger("world_id");
-        this.x = document.getDouble("x");
-        this.y = document.getDouble("y");
-        this.z = document.getDouble("z");
-        this.actionType = document.getInteger("action_type");
-        this.createdAt = document.getLong("created_at");
-        this.restored = (byte) document.getInteger("restored", 0);
-    }
 
     @SneakyThrows
     public LogEntry(ResultSet resultSet) {

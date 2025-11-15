@@ -2,7 +2,7 @@ package io.github.insideranh.stellarprotect.database.types.sql;
 
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
-import com.mongodb.lang.Nullable;
+import javax.annotation.Nullable;
 import io.github.insideranh.stellarprotect.StellarProtect;
 import io.github.insideranh.stellarprotect.arguments.DatabaseFilters;
 import io.github.insideranh.stellarprotect.arguments.RadiusArg;

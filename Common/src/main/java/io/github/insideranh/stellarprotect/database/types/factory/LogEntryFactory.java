@@ -14,7 +14,6 @@ import io.github.insideranh.stellarprotect.database.entries.players.chat.PlayerC
 import io.github.insideranh.stellarprotect.database.entries.players.chat.PlayerCommandEntry;
 import io.github.insideranh.stellarprotect.database.entries.world.CropGrowLogEntry;
 import lombok.Getter;
-import org.bson.Document;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -29,13 +28,6 @@ public class LogEntryFactory {
         Arrays.stream(ActionLogType.values())
             .collect(Collectors.toMap(ActionLogType::getActionId, Function.identity()));
 
-    public static LogEntry fromDocument(Document document) {
-        int type = document.getInteger("action_type");
-        JsonObject extra = parseExtraJson(document.getString("extra_json"));
-
-        return createLogEntry(ACTION_TYPE_MAP.get(type), document, extra);
-    }
-
     public static LogEntry fromDatabase(ResultSet resultSet) throws SQLException {
         int type = resultSet.getInt("action_type");
         JsonObject extra = parseExtraJson(resultSet.getString("extra_json"));
@@ -45,20 +37,15 @@ public class LogEntryFactory {
 
     private static LogEntry createLogEntry(ActionLogType actionLogType, Object source, JsonObject extra) {
         if (actionLogType == null) {
-            return source instanceof Document ? new LogEntry((Document) source) : new LogEntry((ResultSet) source);
+            return new LogEntry((ResultSet) source);
         }
 
         try {
             Class<? extends LogEntry> entryClass = actionLogType.getEntryClass();
-            if (source instanceof Document) {
-                Document document = (Document) source;
-                return entryClass.getConstructor(Document.class, JsonObject.class).newInstance(document, extra);
-            } else {
-                ResultSet resultSet = (ResultSet) source;
-                return entryClass.getConstructor(ResultSet.class, JsonObject.class).newInstance(resultSet, extra);
-            }
+            ResultSet resultSet = (ResultSet) source;
+            return entryClass.getConstructor(ResultSet.class, JsonObject.class).newInstance(resultSet, extra);
         } catch (Exception e) {
-            return source instanceof Document ? new LogEntry((Document) source) : new LogEntry((ResultSet) source);
+            return new LogEntry((ResultSet) source);
         }
     }
 

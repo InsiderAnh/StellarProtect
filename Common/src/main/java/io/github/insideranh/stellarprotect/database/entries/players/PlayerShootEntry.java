@@ -5,7 +5,6 @@ import io.github.insideranh.stellarprotect.database.entries.LogEntry;
 import io.github.insideranh.stellarprotect.enums.ActionType;
 import io.github.insideranh.stellarprotect.utils.WorldUtils;
 import lombok.Getter;
-import org.bson.Document;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -20,15 +19,6 @@ public class PlayerShootEntry extends LogEntry {
     private final byte success;
 
     private final String shootEntityType;
-
-    public PlayerShootEntry(Document document, JsonObject jsonObject) {
-        super(document);
-
-        this.entityType = jsonObject.get("et").getAsString();
-        this.success = jsonObject.has("s") ? jsonObject.get("s").getAsByte() : 0;
-
-        this.shootEntityType = jsonObject.has("st") ? jsonObject.get("st").getAsString() : "";
-    }
 
     public PlayerShootEntry(ResultSet resultSet, JsonObject jsonObject) {
         super(resultSet);
