@@ -5,7 +5,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityResurrectEvent;
+import org.bukkit.event.entity.PlayerLeashEntityEvent;
 import org.bukkit.event.inventory.BrewEvent;
+import org.bukkit.event.player.PlayerUnleashEntityEvent;
 import org.bukkit.event.world.PortalCreateEvent;
 import org.spigotmc.event.entity.EntityDismountEvent;
 import org.spigotmc.event.entity.EntityMountEvent;
@@ -37,12 +39,22 @@ public class BlockListener_v1_13_R2 implements Listener {
 
     @EventHandler
     public void onMount(EntityMountEvent event) {
-        this.eventLogicHandler.onMount(event.getMount(), event.getEntity());
+        this.eventLogicHandler.onMount(event.getEntity(), event.getMount());
     }
 
     @EventHandler
     public void onDismount(EntityDismountEvent event) {
-        this.eventLogicHandler.onDismount(event.getDismounted(), event.getEntity());
+        this.eventLogicHandler.onDismount(event.getEntity(), event.getDismounted());
+    }
+
+    @EventHandler
+    public void onLeash(PlayerLeashEntityEvent event) {
+        this.eventLogicHandler.onLeash(event.getPlayer(), event.getEntity());
+    }
+
+    @EventHandler
+    public void onUnleash(PlayerUnleashEntityEvent event) {
+        this.eventLogicHandler.onUnleash(event.getPlayer(), event.getEntity());
     }
 
 }

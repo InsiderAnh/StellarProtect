@@ -21,4 +21,8 @@ public interface EventLogicHandler {
 
     void onDismount(Entity dismounted, Entity entity);
 
+    void onLeash(HumanEntity player, Entity entity);
+
+    void onUnleash(HumanEntity player, Entity entity);
+
 }

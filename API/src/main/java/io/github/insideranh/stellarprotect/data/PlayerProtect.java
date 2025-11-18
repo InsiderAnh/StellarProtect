@@ -25,6 +25,8 @@ public class PlayerProtect {
     private LookupSession lookupSession;
     private InspectSession inspectSession;
     private RestoreSession restoreSession;
+    private UndoSession undoSession;
+    private InventoryRollbackSession inventoryRollbackSession;
 
     private boolean inspect;
 

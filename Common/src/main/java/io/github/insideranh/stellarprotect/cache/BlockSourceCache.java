@@ -52,7 +52,6 @@ public class BlockSourceCache {
         INSTANCE.cleanupExpired();
     }
 
-    // Próximamente configurable tamaños de cache
     public static BlockSourceCache createSmall() {
         return new BlockSourceCache(2048, 10);
     }
@@ -61,12 +60,10 @@ public class BlockSourceCache {
         return new BlockSourceCache(4096, 10);
     }
 
-    // Próximamente configurable tamaños de cache
     public static BlockSourceCache createLarge() {
         return new BlockSourceCache(8192, 10);
     }
 
-    // Próximamente configurable tamaños de cache
     public static BlockSourceCache createXLarge() {
         return new BlockSourceCache(16384, 10);
     }

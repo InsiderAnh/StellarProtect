@@ -1,10 +1,7 @@
 package io.github.insideranh.stellarprotect.commands;
 
 import io.github.insideranh.stellarprotect.StellarProtect;
-import io.github.insideranh.stellarprotect.commands.arguments.PurgeArgument;
-import io.github.insideranh.stellarprotect.commands.arguments.RestoreArgument;
-import io.github.insideranh.stellarprotect.commands.arguments.RestoreSessionArgument;
-import io.github.insideranh.stellarprotect.commands.arguments.TeleportArgument;
+import io.github.insideranh.stellarprotect.commands.arguments.*;
 import io.github.insideranh.stellarprotect.commands.arguments.basic.DebugArgument;
 import io.github.insideranh.stellarprotect.commands.arguments.basic.MemoryArgument;
 import io.github.insideranh.stellarprotect.commands.arguments.basic.VersionArgument;
@@ -43,6 +40,10 @@ public class StellarProtectCMD implements TabExecutor {
         arguments.put("teleport", new TeleportArgument());
         arguments.put("view", new ViewArgument());
         arguments.put("rs", new RestoreSessionArgument());
+        arguments.put("undo", new UndoArgument());
+        arguments.put("us", new UndoSessionArgument());
+        arguments.put("invrollback", new InventoryRollbackArgument());
+        arguments.put("irs", new InventoryRollbackSessionArgument());
 
         completes.put("lookup", new LookupCompleter());
     }
@@ -152,6 +153,32 @@ public class StellarProtectCMD implements TabExecutor {
                 }
                 arguments.get("restore").onCommand(sender, Arrays.copyOfRange(args, 1, args.length));
                 break;
+            case "u":
+            case "undo":
+                if (hasBlockedPermission(sender, "rollback")) {
+                    return false;
+                }
+                arguments.get("undo").onCommand(sender, Arrays.copyOfRange(args, 1, args.length));
+                break;
+            case "us":
+                if (hasBlockedPermission(sender, "rollback")) {
+                    return false;
+                }
+                arguments.get("us").onCommand(sender, Arrays.copyOfRange(args, 1, args.length));
+                break;
+            case "invrollback":
+            case "inventoryrollback":
+                if (hasBlockedPermission(sender, "rollback")) {
+                    return false;
+                }
+                arguments.get("invrollback").onCommand(sender, Arrays.copyOfRange(args, 1, args.length));
+                break;
+            case "irs":
+                if (hasBlockedPermission(sender, "rollback")) {
+                    return false;
+                }
+                arguments.get("irs").onCommand(sender, Arrays.copyOfRange(args, 1, args.length));
+                break;
             case "help":
             default:
                 if (hasBlockedPermission(sender, "default")) {
@@ -167,12 +194,19 @@ public class StellarProtectCMD implements TabExecutor {
     public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
         if (args.length <= 1) {
             String arg = args.length == 1 ? args[0].toLowerCase() : "";
-            return Stream.of("reload", "version", "help", "lookup", "inspect", "purge", "memory", "debug", "restore").filter(s -> arg.isEmpty() || s.startsWith(arg)).collect(Collectors.toList());
+            return Stream.of("reload", "version", "help", "lookup", "inspect", "purge", "memory", "debug", "restore", "undo").filter(s -> arg.isEmpty() || s.startsWith(arg)).collect(Collectors.toList());
         }
         String arg = args[0].toLowerCase();
         switch (arg) {
             case "rs":
                 return arguments.get("rs").onTabComplete(sender, Arrays.copyOfRange(args, 1, args.length));
+            case "us":
+                return arguments.get("us").onTabComplete(sender, Arrays.copyOfRange(args, 1, args.length));
+            case "invrollback":
+            case "inventoryrollback":
+                return arguments.get("invrollback").onTabComplete(sender, Arrays.copyOfRange(args, 1, args.length));
+            case "irs":
+                return arguments.get("irs").onTabComplete(sender, Arrays.copyOfRange(args, 1, args.length));
             case "inspect":
             case "i": {
                 return arguments.get("inspect").onTabComplete(sender, Arrays.copyOfRange(args, 1, args.length));
@@ -198,14 +232,17 @@ public class StellarProtectCMD implements TabExecutor {
             case "rollback": {
                 return arguments.get("restore").onTabComplete(sender, Arrays.copyOfRange(args, 1, args.length));
             }
+            case "u":
+            case "undo": {
+                return arguments.get("undo").onTabComplete(sender, Arrays.copyOfRange(args, 1, args.length));
+            }
             default: {
-                return Stream.of("reload", "version", "help", "lookup", "inspect", "purge", "memory", "debug", "restore").filter(s -> s.startsWith(arg)).collect(Collectors.toList());
+                return Stream.of("reload", "version", "help", "lookup", "inspect", "purge", "memory", "debug", "restore", "undo").filter(s -> s.startsWith(arg)).collect(Collectors.toList());
             }
         }
     }
 
     void sendHelp(CommandSender sender) {
-        // Envoie des lignes depuis le fichier de langue (messages.help.*)
         plugin.getLangManager().sendMessage(sender, "messages.help.headerTop");
         plugin.getLangManager().sendMessage(sender, "messages.help.title");
         plugin.getLangManager().sendMessage(sender, "messages.help.headerBottom");
@@ -213,12 +250,25 @@ public class StellarProtectCMD implements TabExecutor {
         plugin.getLangManager().sendMessage(sender, "messages.help.reload");
         plugin.getLangManager().sendMessage(sender, "messages.help.help");
         plugin.getLangManager().sendMessage(sender, "messages.help.version");
-        plugin.getLangManager().sendMessage(sender, "messages.help.inspect");
-        plugin.getLangManager().sendMessage(sender, "messages.help.lookup");
-        plugin.getLangManager().sendMessage(sender, "messages.help.restore");
-        plugin.getLangManager().sendMessage(sender, "messages.help.purge");
-        plugin.getLangManager().sendMessage(sender, "messages.help.debug");
-        plugin.getLangManager().sendMessage(sender, "messages.help.memory");
+        if (!hasBlockedPermission(sender, "inspect")) {
+            plugin.getLangManager().sendMessage(sender, "messages.help.inspect");
+        }
+        if (!hasBlockedPermission(sender, "lookup")) {
+            plugin.getLangManager().sendMessage(sender, "messages.help.lookup");
+        }
+        if (!hasBlockedPermission(sender, "rollback")) {
+            plugin.getLangManager().sendMessage(sender, "messages.help.restore");
+            plugin.getLangManager().sendMessage(sender, "messages.help.undo");
+            plugin.getLangManager().sendMessage(sender, "messages.help.invrollback");
+            plugin.getLangManager().sendMessage(sender, "messages.help.irs");
+        }
+        if (!hasBlockedPermission(sender, "purge")) {
+            plugin.getLangManager().sendMessage(sender, "messages.help.purge");
+        }
+        if (!hasBlockedPermission(sender, "admin")) {
+            plugin.getLangManager().sendMessage(sender, "messages.help.debug");
+            plugin.getLangManager().sendMessage(sender, "messages.help.memory");
+        }
     }
 
 

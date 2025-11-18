@@ -78,14 +78,6 @@
                                     <shadedPattern>io.github.insideranh.stellarprotect.libs.nbtapi</shadedPattern>
                                 </relocation>
                                 <relocation>
-                                    <pattern>org.bson</pattern>
-                                    <shadedPattern>io.github.insideranh.stellarprotect.libs.bson</shadedPattern>
-                                </relocation>
-                                <relocation>
-                                    <pattern>com.mongodb</pattern>
-                                    <shadedPattern>io.github.insideranh.stellarprotect.libs.mongodb</shadedPattern>
-                                </relocation>
-                                <relocation>
                                     <pattern>com.zaxxer.hikari</pattern>
                                     <shadedPattern>io.github.insideranh.stellarprotect.libs.hikaricp</shadedPattern>
                                 </relocation>

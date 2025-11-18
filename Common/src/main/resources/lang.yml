@@ -19,6 +19,54 @@ messages:
   debugExtras: "&aDebug extras mode set to &7<state>"
   specifyRadius: "&cYou don't have radius specified, using default radius (10)."
   error: "&cA error occurred while processing this command. Report in discord."
+  undo:
+    preview: "&aPreview: §e<progress>% §7(§e<now>/§e<total>§7) §eUse §e/spt restore confirm §eto apply the changes."
+    preview-verbose: "&aVerbose Preview: §e<progress>% §7(§e<now>/§e<total>§7) §7- Detailed info shown above. §eUse §e/spt restore confirm §eto apply."
+    progress: "&bProgress: §e<progress>% §7(§e<now>/§e<total>§7)"
+    progress-verbose: "&bVerbose Progress: §e<progress>% §7(§e<now>/§e<total>§7) §7- Block details shown above."
+    error: "&cError section <section>: <error>"
+    success: "&aRollback completed! §e<total>§a logs processed."
+    success-verbose: "&aVerbose Rollback completed! §e<total>§a logs processed with detailed output."
+    success-silent: "&aRollback completed silently! §e<total>§a logs processed."
+    start: "&aStarting rollback of §e<total>§a logs in batches of §e<batch>§a..."
+    start-verbose: "&aStarting verbose rollback of §e<total>§a logs in batches of §e<batch>§a... (detailed mode enabled)"
+    start-silent: "&7Rollback started silently..."
+    sessions:
+      title: "&6=== Undo Sessions ==="
+      subtitle: "&7Click in the buttons to manage individual logs."
+      restore: |-
+        &aRestore action
+        &7Click to restore the action.
+      undo: |-
+        &cUndo action
+        &7Click to revert the action.
+      restoreall: "&8[&6Restore All&8]"
+      next: " &8[&eNext Page&8]"
+      exit: " &8[&cExit&8]"
+      restoreall-tip: |-
+        &7Restore all actions
+        &7Restore all visible logs in this session.
+      next-tip: |-
+        &7Next page
+        &7View the next logs.
+      exit-tip: |-
+        &7Exit
+        &7Close the session.
+      restored: "&aLog restored successfully!"
+      undone: "&cLog undone successfully!"
+      amount-restored: "&a<amount> logs restored successfully!"
+      block_break: |-
+        &7<time> &8| &d<player>&f break &8| &d(<data>)
+      block_place: |-
+        &7<time> &8| &d<player>&f place &8| &d(<data>)
+      block_spread: |-
+        &7<time> &8| &d<player>&f spread &8| &d(<data>)
+      inventory_transaction: |-
+        &7<time> &8| &d<player>&f inventory transaction &8| &a[View]
+      bucket_empty: |-
+        &7<time> &8| &d<player>&f bucket empty &8| &d(<data>)
+      bucket_fill: |-
+        &7<time> &8| &d<player>&f bucket fill &8| &d(<data>)
   sessions:
     title: "&6=== Restore Sessions ==="
     subtitle: "&7Click in the buttons to manage individual logs."
@@ -69,6 +117,17 @@ messages:
     start-verbose: "&aStarting verbose rollback of §e<total>§a logs in batches of §e<batch>§a... (detailed mode enabled)"
     start-silent: "&7Rollback started silently..."
 
+  inventoryRollback:
+    sessionStarted: "&aInventory rollback mode activated! Click on a container to restore its contents."
+    invalidBlock: "&cThis block doesn't have an inventory."
+    noTransactions: "&cNo inventory transactions found for this container."
+    success: "&aInventory successfully restored!"
+    cannotBreak: "&cYou cannot break blocks while in inventory rollback mode."
+    noActiveSession: "&cYou don't have an active inventory rollback session."
+    modeEnabled: "&aInventory rollback mode enabled."
+    modeDisabled: "&cInventory rollback mode disabled."
+    sessionStopped: "&cInventory rollback session stopped."
+
   help:
     headerTop: '&7&m+---------------------------------------+'
     title: '&8[!] &cStellarProtect &8[!]'
@@ -80,6 +139,9 @@ messages:
     inspect: '&e/spt inspect &7- &fEnable/disable inspection mode.'
     lookup: '&e/spt lookup p:<page> t:<time> r:<radius> &7- &fSearch for logs in a radius.'
     restore: '&e/spt restore p:<page> t:<time> r:<radius> &7- &fRestore logs in a radius.'
+    undo: '&e/spt undo t:<time> r:<radius> &7- &fUndo logs in a radius.'
+    invrollback: '&e/spt invrollback t:<time> r:<radius> &7- &fStart an inventory rollback session.'
+    irs: '&e/spt irs &7- &fControls active rollback session.'
     purge: '&e/spt purge p:<page> t:<time> r:<radius> &7- &fPurge logs in a radius.'
     debug: '&e/spt debug save|log|extras &7- &fEnable/disable debug mode.'
     memory: '&e/spt memory &7- &fShow memory analysis.'
@@ -157,6 +219,10 @@ messages:
       &7<time> &8| &d<player>&f mount &8| &d(<data>)
     dismount: |-
       &7<time> &8| &d<player>&f dismount &8| &d(<data>)
+    leash: |-
+      &7<time> &8| &d<player>&f leash &8| &d(<data>)
+    unleash: |-
+      &7<time> &8| &d<player>&f unleash &8| &d(<data>)
     hanging: |-
       &7<time> &8| &d<player>&f remove &8| &d(<data>)
     teleport: |-

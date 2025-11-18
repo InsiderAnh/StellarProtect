@@ -23,10 +23,14 @@ public class DataBlock_v1_21_R10 implements DataBlock {
         this.blockData = block.getBlockData();
         if (blockData instanceof Levelled) {
             Levelled levelled = (Levelled) blockData;
-            int currentLevel = levelled.getLevel();
-            int maxLevel = levelled.getMaximumLevel();
-            int newLevel = (currentLevel + 1) % (maxLevel + 1);
-            levelled.setLevel(newLevel);
+            try {
+                int currentLevel = levelled.getLevel();
+                int maxLevel = levelled.getMaximumLevel();
+                int newLevel = (currentLevel + 1) % (maxLevel + 1);
+                levelled.setLevel(newLevel);
+            } catch (Exception e) {
+                // Ignore exceptions related to level setting, like for cauldrons
+            }
             this.blockData = levelled;
         }
         this.blockDataString = blockData.getAsString();
@@ -36,10 +40,14 @@ public class DataBlock_v1_21_R10 implements DataBlock {
         this.blockData = block.getBlockData();
         if (blockData instanceof Levelled) {
             Levelled levelled = (Levelled) blockData;
-            int currentLevel = levelled.getLevel();
-            int maxLevel = levelled.getMaximumLevel();
-            int newLevel = (currentLevel + 1) % (maxLevel + 1);
-            levelled.setLevel(newLevel);
+            try {
+                int currentLevel = levelled.getLevel();
+                int maxLevel = levelled.getMaximumLevel();
+                int newLevel = (currentLevel + 1) % (maxLevel + 1);
+                levelled.setLevel(newLevel);
+            } catch (Exception e) {
+                // Ignore exceptions related to level setting, like for cauldrons
+            }
             this.blockData = levelled;
         }
         this.blockDataString = blockData.getAsString();

@@ -7,6 +7,7 @@ import io.github.insideranh.stellarprotect.data.PlayerProtect;
 import io.github.insideranh.stellarprotect.database.entries.entity.EntityResurrectEntry;
 import io.github.insideranh.stellarprotect.database.entries.players.PlayerBlockLogEntry;
 import io.github.insideranh.stellarprotect.database.entries.players.PlayerItemLogEntry;
+import io.github.insideranh.stellarprotect.database.entries.players.PlayerLeashEntry;
 import io.github.insideranh.stellarprotect.database.entries.players.PlayerMountEntry;
 import io.github.insideranh.stellarprotect.enums.ActionType;
 import io.github.insideranh.stellarprotect.items.ItemReference;
@@ -89,6 +90,36 @@ public class EventVersionHandler implements EventLogicHandler {
         if (playerProtect == null) return;
 
         PlayerMountEntry mountEntry = new PlayerMountEntry(playerProtect.getPlayerId(), player.getLocation(), entity, false);
+
+        LoggerCache.addLog(mountEntry);
+    }
+
+    @Override
+    public void onLeash(HumanEntity humanEntity, Entity entity) {
+        if (!(humanEntity instanceof Player)) return;
+
+        Player player = (Player) humanEntity;
+        if (ActionType.LEASH.shouldSkipLog(player.getWorld().getName(), entity.getType().name())) return;
+
+        PlayerProtect playerProtect = PlayerProtect.getPlayer(player);
+        if (playerProtect == null) return;
+
+        PlayerLeashEntry mountEntry = new PlayerLeashEntry(playerProtect.getPlayerId(), player.getLocation(), entity, true);
+
+        LoggerCache.addLog(mountEntry);
+    }
+
+    @Override
+    public void onUnleash(HumanEntity humanEntity, Entity entity) {
+        if (!(humanEntity instanceof Player)) return;
+
+        Player player = (Player) humanEntity;
+        if (ActionType.LEASH.shouldSkipLog(player.getWorld().getName(), entity.getType().name())) return;
+
+        PlayerProtect playerProtect = PlayerProtect.getPlayer(player);
+        if (playerProtect == null) return;
+
+        PlayerLeashEntry mountEntry = new PlayerLeashEntry(playerProtect.getPlayerId(), player.getLocation(), entity, false);
 
         LoggerCache.addLog(mountEntry);
     }

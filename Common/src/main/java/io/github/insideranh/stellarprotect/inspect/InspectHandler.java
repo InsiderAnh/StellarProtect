@@ -151,6 +151,7 @@ public class InspectHandler {
             handlers.put(ActionType.GAME_MODE, new GameModeActionHandler());
             handlers.put(ActionType.XP, new XPActionHandler());
             handlers.put(ActionType.MONEY, new EconomyActionHandler());
+            handlers.put(ActionType.LEASH, new LeashActionHandler());
 
             PlaceRemoveItemActionHandler placeRemoveActionHandler = new PlaceRemoveItemActionHandler();
             handlers.put(ActionType.PLACE_ITEM, placeRemoveActionHandler);
@@ -405,6 +406,24 @@ public class InspectHandler {
 
             PlayerMountEntry sessionEntry = (PlayerMountEntry) logEntry;
             String login = sessionEntry.getMount() == 1 ? "dismount" : "mount";
+            plugin.getLangManager().sendMessage(player, "messages.actions." + login,
+                text -> text
+                    .replace("<time>", TimeUtils.formatMillisAsAgo(logEntry.getCreatedAt()))
+                    .replace("<player>", PlayerUtils.getNameOfEntity(logEntry.getPlayerId()))
+                    .replace("<data>", minecraftItem.getCleanName())
+            );
+        }
+
+    }
+
+    public static class LeashActionHandler implements ActionHandler {
+
+        @Override
+        public void handle(Player player, LogEntry logEntry, StellarProtect plugin) {
+            MinecraftItem minecraftItem = StringCleanerUtils.parseMinecraftData(logEntry.getDataString());
+
+            PlayerLeashEntry sessionEntry = (PlayerLeashEntry) logEntry;
+            String login = sessionEntry.getLeash() == 1 ? "unleash" : "leash";
             plugin.getLangManager().sendMessage(player, "messages.actions." + login,
                 text -> text
                     .replace("<time>", TimeUtils.formatMillisAsAgo(logEntry.getCreatedAt()))

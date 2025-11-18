@@ -79,6 +79,9 @@ public class StellarProtect extends JavaPlugin {
     private final ItemsManager itemsManager;
     private final RestoreManager restoreManager;
     private final RestoreSessionManager restoreSessionManager;
+    private final UndoManager undoManager;
+    private final UndoSessionManager undoSessionManager;
+    private final ChestRollbackSessionManager chestRollbackSessionManager;
     private final TrackManager trackManager;
     private final BlocksManager blocksManager;
     private final ProtectDatabase protectDatabase;
@@ -114,6 +117,9 @@ public class StellarProtect extends JavaPlugin {
         this.itemsManager = new ItemsManager();
         this.restoreManager = new RestoreManager();
         this.restoreSessionManager = new RestoreSessionManager();
+        this.undoManager = new UndoManager();
+        this.undoSessionManager = new UndoSessionManager();
+        this.chestRollbackSessionManager = new ChestRollbackSessionManager();
         this.trackManager = new TrackManager();
         this.blocksManager = new BlocksManager();
         this.hooksManager = new HooksManager();
@@ -230,7 +236,7 @@ public class StellarProtect extends JavaPlugin {
             new JoinQuitListener(), new InspectListener(),
             new CraftListener(), new ChatListener(),
             new PickUpDropListener(), new PlayerLogListener(),
-            new EntityListener()));
+            new EntityListener(), new InventoryRollbackListener()));
     }
 
     public ProtectNMS getProtectNMS() {

@@ -9,8 +9,10 @@ import org.bukkit.event.block.BlockDispenseEvent;
 import org.bukkit.event.entity.EntityDismountEvent;
 import org.bukkit.event.entity.EntityMountEvent;
 import org.bukkit.event.entity.EntityResurrectEvent;
+import org.bukkit.event.entity.PlayerLeashEntityEvent;
 import org.bukkit.event.inventory.BrewEvent;
 import org.bukkit.event.inventory.SmithItemEvent;
+import org.bukkit.event.player.PlayerUnleashEntityEvent;
 import org.bukkit.event.world.PortalCreateEvent;
 
 import java.util.ArrayList;
@@ -46,12 +48,22 @@ public class BlockListener_v1_21_R6 implements Listener {
 
     @EventHandler
     public void onMount(EntityMountEvent event) {
-        this.eventLogicHandler.onMount(event.getMount(), event.getEntity());
+        this.eventLogicHandler.onMount(event.getEntity(), event.getMount());
     }
 
     @EventHandler
     public void onDismount(EntityDismountEvent event) {
-        this.eventLogicHandler.onDismount(event.getDismounted(), event.getEntity());
+        this.eventLogicHandler.onDismount(event.getEntity(), event.getDismounted());
+    }
+
+    @EventHandler
+    public void onLeash(PlayerLeashEntityEvent event) {
+        this.eventLogicHandler.onLeash(event.getPlayer(), event.getEntity());
+    }
+
+    @EventHandler
+    public void onUnleash(PlayerUnleashEntityEvent event) {
+        this.eventLogicHandler.onUnleash(event.getPlayer(), event.getEntity());
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

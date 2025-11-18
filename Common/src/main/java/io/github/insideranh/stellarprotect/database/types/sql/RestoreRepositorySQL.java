@@ -12,8 +12,6 @@ import io.github.insideranh.stellarprotect.callback.CallbackLookup;
 import io.github.insideranh.stellarprotect.database.entries.LogEntry;
 import io.github.insideranh.stellarprotect.database.repositories.RestoreRepository;
 import io.github.insideranh.stellarprotect.database.types.factory.LogEntryFactory;
-import io.github.insideranh.stellarprotect.database.types.mysql.LoggerRepositoryMySQL;
-import io.github.insideranh.stellarprotect.database.types.mysql.RestoreRepositoryMySQL;
 import io.github.insideranh.stellarprotect.enums.ActionType;
 import lombok.NonNull;
 

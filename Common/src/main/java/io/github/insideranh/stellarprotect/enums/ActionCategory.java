@@ -21,7 +21,7 @@ public enum ActionCategory {
     }),
     ENTITY_ACTIONS(2, "entity_actions", new ActionType[]{
         ActionType.KILL_ENTITY, ActionType.DEATH, ActionType.INTERACT, ActionType.USE, ActionType.TAME, ActionType.BREED,
-        ActionType.MOUNT, ActionType.ARMOR_STAND_MANIPULATE,
+        ActionType.MOUNT, ActionType.LEASH, ActionType.ARMOR_STAND_MANIPULATE,
         // NOT IMPLEMENTED
         ActionType.RAID
     }),
