@@ -1,5 +1,6 @@
 package io.github.insideranh.stellarprotect.listeners;
 
+import io.github.InsiderAnh.xPlayerKits.libs.xseries.XEntityType;
 import io.github.insideranh.stellarprotect.cache.LoggerCache;
 import io.github.insideranh.stellarprotect.database.entries.players.PlayerBlockLogEntry;
 import io.github.insideranh.stellarprotect.enums.ActionType;
@@ -31,8 +32,6 @@ public class ExplodeListener implements Listener {
         EntityType entityType = event.getEntityType();
         if (entityType == EntityType.CREEPER) {
             playerId = PlayerUtils.getEntityByDirectId("=creeper");
-        } else if (entityType == EntityType.PRIMED_TNT) {
-            playerId = PlayerUtils.getEntityByDirectId("=tnt");
         } else if (entityType == EntityType.WITHER) {
             playerId = PlayerUtils.getEntityByDirectId("=wither");
         } else if (entityType == EntityType.WITHER_SKULL) {
@@ -41,7 +40,9 @@ public class ExplodeListener implements Listener {
             playerId = PlayerUtils.getEntityByDirectId("=ghast");
         } else if (entityType.name().equals("MINECART_TNT")) {
             playerId = PlayerUtils.getEntityByDirectId("=tnt");
-        } else if (entityType == EntityType.ENDER_CRYSTAL) {
+        } else if (entityType == XEntityType.TNT.get()) {
+            playerId = PlayerUtils.getEntityByDirectId("=tnt");
+        } else if (entityType == XEntityType.END_CRYSTAL.get()) {
             playerId = PlayerUtils.getEntityByDirectId("=end_crystal");
         } else {
             playerId = PlayerUtils.getPlayerOrEntityId("=explosion");
