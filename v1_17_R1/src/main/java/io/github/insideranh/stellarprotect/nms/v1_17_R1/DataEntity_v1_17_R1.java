@@ -390,7 +390,6 @@ public class DataEntity_v1_17_R1 implements DataEntity {
                 String typeKey = getString(DataEntityType.VILLAGER_PROFESSION);
                 for (Villager.Profession profession : Villager.Profession.values()) {
                     if (profession.getKey().getKey().equals(typeKey)) {
-                        Bukkit.getLogger().info("Profession " + typeKey);
                         villager.setProfession(profession);
                         break;
                     }

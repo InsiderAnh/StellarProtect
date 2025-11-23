@@ -1,4 +1,4 @@
-package io.github.insideranh.stellarprotect.nms.v1_16_R5;
+package io.github.insideranh.stellarprotect.nms.v1_13_R2;
 
 import io.github.insideranh.stellarprotect.entities.DataEntity;
 import io.github.insideranh.stellarprotect.entities.DataEntityType;
@@ -15,22 +15,22 @@ import org.bukkit.util.EulerAngle;
 
 import java.util.*;
 
-public class DataEntity_v1_16_R5 implements DataEntity {
+public class DataEntity_v1_13_R2 implements DataEntity {
 
     private final HashMap<String, Object> data = new HashMap<>();
     private ItemStack[] armor;
     private ItemStack mainHand;
     private ItemStack offHand;
 
-    public DataEntity_v1_16_R5(Entity entity) {
+    public DataEntity_v1_13_R2(Entity entity) {
         readEntityData(entity);
     }
 
-    public DataEntity_v1_16_R5(HashMap<String, Object> data) {
+    public DataEntity_v1_13_R2(HashMap<String, Object> data) {
         this.data.putAll(data);
     }
 
-    public DataEntity_v1_16_R5() {
+    public DataEntity_v1_13_R2() {
     }
 
     private void readEntityData(Entity entity) {
@@ -104,7 +104,6 @@ public class DataEntity_v1_16_R5 implements DataEntity {
     }
 
     private void readMobData(Mob mob) {
-        setData(DataEntityType.AWARE, mob.isAware());
         if (mob.getTarget() != null) {
             setData(DataEntityType.TARGET_UUID, mob.getTarget().getUniqueId().toString());
         }
@@ -113,23 +112,18 @@ public class DataEntity_v1_16_R5 implements DataEntity {
     private void readSpecificMobData(LivingEntity entity) {
         if (entity instanceof Villager) {
             Villager villager = (Villager) entity;
-            setData(DataEntityType.VILLAGER_PROFESSION, villager.getProfession().getKey().getKey());
-            setData(DataEntityType.VILLAGER_TYPE, villager.getVillagerType().getKey().getKey());
-            setData(DataEntityType.VILLAGER_LEVEL, villager.getVillagerLevel());
-            setData(DataEntityType.VILLAGER_EXPERIENCE, villager.getVillagerExperience());
+            setData(DataEntityType.VILLAGER_PROFESSION, villager.getProfession().name());
 
             if (villager.getRecipes() != null && !villager.getRecipes().isEmpty()) {
                 List<String> tradesData = new ArrayList<>();
                 for (MerchantRecipe recipe : villager.getRecipes()) {
-                    // Formato: resultado|ingrediente1|ingrediente2|uses|maxUses|exp|priceMultiplier
+                    // Formato: resultado|ingrediente1|ingrediente2|uses|maxUses
                     StringBuilder tradeStr = new StringBuilder();
                     tradeStr.append(InventorySerializable.itemStackToBase64(recipe.getResult())).append("|");
                     tradeStr.append(InventorySerializable.itemStackToBase64(recipe.getIngredients().get(0))).append("|");
                     tradeStr.append(recipe.getIngredients().size() > 1 ? InventorySerializable.itemStackToBase64(recipe.getIngredients().get(1)) : "null").append("|");
                     tradeStr.append(recipe.getUses()).append("|");
-                    tradeStr.append(recipe.getMaxUses()).append("|");
-                    tradeStr.append(recipe.getVillagerExperience()).append("|");
-                    tradeStr.append(recipe.getPriceMultiplier());
+                    tradeStr.append(recipe.getMaxUses());
                     tradesData.add(tradeStr.toString());
                 }
                 setData(DataEntityType.VILLAGER_TRADES, String.join(";;", tradesData));
@@ -137,24 +131,12 @@ public class DataEntity_v1_16_R5 implements DataEntity {
         } else if (entity instanceof ZombieVillager) {
             ZombieVillager zVillager = (ZombieVillager) entity;
 
-            setData(DataEntityType.VILLAGER_PROFESSION, zVillager.getVillagerProfession().getKey().getKey());
-            setData(DataEntityType.VILLAGER_TYPE, zVillager.getVillagerType().getKey().getKey());
-            setData(DataEntityType.CONVERTING, zVillager.isConverting());
-            if (zVillager.isConverting()) {
-                setData(DataEntityType.CONVERSION_TIME, zVillager.getConversionTime());
-            }
+            setData(DataEntityType.VILLAGER_PROFESSION, zVillager.getVillagerProfession().name());
         } else if (entity instanceof Wolf) {
             Wolf wolf = (Wolf) entity;
             setData(DataEntityType.ANGRY, wolf.isAngry());
             if (wolf.isTamed()) {
                 Color collarColor = wolf.getCollarColor().getColor();
-                setData(DataEntityType.COLLAR_COLOR, collarColor.getRed() + "," + collarColor.getGreen() + "," + collarColor.getBlue());
-            }
-        } else if (entity instanceof Cat) {
-            Cat cat = (Cat) entity;
-            setData(DataEntityType.CAT_TYPE, cat.getCatType().name());
-            if (cat.isTamed()) {
-                Color collarColor = cat.getCollarColor().getColor();
                 setData(DataEntityType.COLLAR_COLOR, collarColor.getRed() + "," + collarColor.getGreen() + "," + collarColor.getBlue());
             }
         } else if (entity instanceof Horse) {
@@ -209,37 +191,9 @@ public class DataEntity_v1_16_R5 implements DataEntity {
             setData(DataEntityType.TROPICAL_FISH_PATTERN, fish.getPattern().name());
             setData(DataEntityType.TROPICAL_FISH_BODY_COLOR, fish.getBodyColor().name());
             setData(DataEntityType.TROPICAL_FISH_PATTERN_COLOR, fish.getPatternColor().name());
-        } else if (entity instanceof Bee) {
-            Bee bee = (Bee) entity;
-            setData(DataEntityType.BEE_HAS_NECTAR, bee.hasNectar());
-            setData(DataEntityType.BEE_HAS_STUNG, bee.hasStung());
-            setData(DataEntityType.BEE_ANGER, bee.getAnger());
-        } else if (entity instanceof Fox) {
-            Fox fox = (Fox) entity;
-            setData(DataEntityType.FOX_TYPE, fox.getFoxType().name());
-            setData(DataEntityType.FOX_CROUCHING, fox.isCrouching());
-            setData(DataEntityType.FOX_SLEEPING, fox.isSleeping());
-        } else if (entity instanceof Panda) {
-            Panda panda = (Panda) entity;
-            setData(DataEntityType.PANDA_MAIN_GENE, panda.getMainGene().name());
-            setData(DataEntityType.PANDA_HIDDEN_GENE, panda.getHiddenGene().name());
-        } else if (entity instanceof Piglin) {
-            Piglin piglin = (Piglin) entity;
-            setData(DataEntityType.PIGLIN_IMMUNE_TO_ZOMBIFICATION, piglin.isImmuneToZombification());
-            setData(DataEntityType.PIGLIN_BABY, piglin.isBaby());
-        } else if (entity instanceof Hoglin) {
-            Hoglin hoglin = (Hoglin) entity;
-            setData(DataEntityType.HOGLIN_IMMUNE_TO_ZOMBIFICATION, hoglin.isImmuneToZombification());
-            if (hoglin.isConverting()) {
-                setData(DataEntityType.HOGLIN_HUNTING_COOLDOWN, hoglin.getConversionTime());
-            }
-        } else if (entity instanceof Strider) {
-            Strider strider = (Strider) entity;
-            setData(DataEntityType.STRIDER_SADDLED, strider.isShivering());
         } else if (entity instanceof Zombie) {
             Zombie zombie = (Zombie) entity;
             setData(DataEntityType.ZOMBIE_BABY, zombie.isBaby());
-            setData(DataEntityType.ZOMBIE_CONVERTING_DROWNED, zombie.isConverting());
         } else if (entity instanceof IronGolem) {
             IronGolem golem = (IronGolem) entity;
             setData(DataEntityType.IRON_GOLEM_PLAYER_CREATED, golem.isPlayerCreated());
@@ -279,8 +233,6 @@ public class DataEntity_v1_16_R5 implements DataEntity {
     private void readItemFrameData(ItemFrame frame) {
         setData(DataEntityType.ITEM_FRAME_ITEM, frame.getItem());
         setData(DataEntityType.ITEM_FRAME_ROTATION, frame.getRotation().name());
-        setData(DataEntityType.ITEM_FRAME_VISIBLE, frame.isVisible());
-        setData(DataEntityType.ITEM_FRAME_FIXED, frame.isFixed());
     }
 
     public void applyToEntity(Entity entity) {
@@ -368,9 +320,6 @@ public class DataEntity_v1_16_R5 implements DataEntity {
     }
 
     private void applyMobData(Mob mob) {
-        if (hasData(DataEntityType.AWARE)) {
-            mob.setAware(getBoolean(DataEntityType.AWARE));
-        }
     }
 
     private void applySpecificMobData(LivingEntity entity) {
@@ -379,27 +328,11 @@ public class DataEntity_v1_16_R5 implements DataEntity {
             if (hasData(DataEntityType.VILLAGER_PROFESSION)) {
                 String typeKey = getString(DataEntityType.VILLAGER_PROFESSION);
                 for (Villager.Profession profession : Villager.Profession.values()) {
-                    if (profession.getKey().getKey().equals(typeKey)) {
+                    if (profession.name().equals(typeKey)) {
                         villager.setProfession(profession);
                         break;
                     }
                 }
-            }
-            if (hasData(DataEntityType.VILLAGER_TYPE)) {
-                String typeKey = getString(DataEntityType.VILLAGER_TYPE);
-                for (Villager.Type type : Villager.Type.values()) {
-                    if (type.getKey().getKey().equals(typeKey)) {
-                        Bukkit.getLogger().info("Type " + typeKey);
-                        villager.setVillagerType(type);
-                        break;
-                    }
-                }
-            }
-            if (hasData(DataEntityType.VILLAGER_LEVEL)) {
-                villager.setVillagerLevel(getInt(DataEntityType.VILLAGER_LEVEL));
-            }
-            if (hasData(DataEntityType.VILLAGER_EXPERIENCE)) {
-                villager.setVillagerExperience(getInt(DataEntityType.VILLAGER_EXPERIENCE));
             }
 
             if (hasData(DataEntityType.VILLAGER_TRADES)) {
@@ -414,8 +347,6 @@ public class DataEntity_v1_16_R5 implements DataEntity {
                     ItemStack ingredient2 = InventorySerializable.itemStackFromBase64(parts[2]);
                     int uses = Integer.parseInt(parts[3]);
                     int maxUses = Integer.parseInt(parts[4]);
-                    int exp = Integer.parseInt(parts[5]);
-                    float priceMultiplier = Float.parseFloat(parts[6]);
 
                     MerchantRecipe recipe = new MerchantRecipe(result, maxUses);
                     recipe.addIngredient(ingredient1);
@@ -423,8 +354,6 @@ public class DataEntity_v1_16_R5 implements DataEntity {
                         recipe.addIngredient(ingredient2);
                     }
                     recipe.setUses(uses);
-                    recipe.setVillagerExperience(exp);
-                    recipe.setPriceMultiplier(priceMultiplier);
 
                     recipes.add(recipe);
                 }
@@ -436,17 +365,8 @@ public class DataEntity_v1_16_R5 implements DataEntity {
             if (hasData(DataEntityType.VILLAGER_PROFESSION)) {
                 String typeKey = getString(DataEntityType.VILLAGER_PROFESSION);
                 for (Villager.Profession profession : Villager.Profession.values()) {
-                    if (profession.getKey().getKey().equals(typeKey)) {
+                    if (profession.name().equals(typeKey)) {
                         zVillager.setVillagerProfession(profession);
-                        break;
-                    }
-                }
-            }
-            if (hasData(DataEntityType.VILLAGER_TYPE)) {
-                String typeKey = getString(DataEntityType.VILLAGER_TYPE);
-                for (Villager.Type type : Villager.Type.values()) {
-                    if (type.getKey().getKey().equals(typeKey)) {
-                        zVillager.setVillagerType(type);
                         break;
                     }
                 }
@@ -462,23 +382,6 @@ public class DataEntity_v1_16_R5 implements DataEntity {
                 for (DyeColor dyeColor : DyeColor.values()) {
                     if (dyeColor.getColor().equals(color)) {
                         wolf.setCollarColor(dyeColor);
-                        break;
-                    }
-                }
-            }
-        } else if (entity instanceof Cat) {
-            Cat cat = (Cat) entity;
-            if (hasData(DataEntityType.CAT_TYPE)) {
-                String typeKey = getString(DataEntityType.CAT_TYPE);
-                Cat.Type type = Cat.Type.valueOf(typeKey);
-                cat.setCatType(type);
-            }
-            if (hasData(DataEntityType.COLLAR_COLOR) && cat.isTamed()) {
-                String[] rgb = getString(DataEntityType.COLLAR_COLOR).split(",");
-                Color color = Color.fromRGB(Integer.parseInt(rgb[0]), Integer.parseInt(rgb[1]), Integer.parseInt(rgb[2]));
-                for (DyeColor dyeColor : DyeColor.values()) {
-                    if (dyeColor.getColor().equals(color)) {
-                        cat.setCollarColor(dyeColor);
                         break;
                     }
                 }
@@ -563,54 +466,6 @@ public class DataEntity_v1_16_R5 implements DataEntity {
             if (hasData(DataEntityType.TROPICAL_FISH_PATTERN_COLOR)) {
                 fish.setPatternColor(DyeColor.valueOf(getString(DataEntityType.TROPICAL_FISH_PATTERN_COLOR)));
             }
-        } else if (entity instanceof Bee) {
-            Bee bee = (Bee) entity;
-            if (hasData(DataEntityType.BEE_HAS_NECTAR)) {
-                bee.setHasNectar(getBoolean(DataEntityType.BEE_HAS_NECTAR));
-            }
-            if (hasData(DataEntityType.BEE_HAS_STUNG)) {
-                bee.setHasStung(getBoolean(DataEntityType.BEE_HAS_STUNG));
-            }
-            if (hasData(DataEntityType.BEE_ANGER)) {
-                bee.setAnger(getInt(DataEntityType.BEE_ANGER));
-            }
-        } else if (entity instanceof Fox) {
-            Fox fox = (Fox) entity;
-            if (hasData(DataEntityType.FOX_TYPE)) {
-                fox.setFoxType(Fox.Type.valueOf(getString(DataEntityType.FOX_TYPE)));
-            }
-            if (hasData(DataEntityType.FOX_CROUCHING)) {
-                fox.setCrouching(getBoolean(DataEntityType.FOX_CROUCHING));
-            }
-            if (hasData(DataEntityType.FOX_SLEEPING)) {
-                fox.setSleeping(getBoolean(DataEntityType.FOX_SLEEPING));
-            }
-        } else if (entity instanceof Panda) {
-            Panda panda = (Panda) entity;
-            if (hasData(DataEntityType.PANDA_MAIN_GENE)) {
-                panda.setMainGene(Panda.Gene.valueOf(getString(DataEntityType.PANDA_MAIN_GENE)));
-            }
-            if (hasData(DataEntityType.PANDA_HIDDEN_GENE)) {
-                panda.setHiddenGene(Panda.Gene.valueOf(getString(DataEntityType.PANDA_HIDDEN_GENE)));
-            }
-        } else if (entity instanceof Piglin) {
-            Piglin piglin = (Piglin) entity;
-            if (hasData(DataEntityType.PIGLIN_IMMUNE_TO_ZOMBIFICATION)) {
-                piglin.setImmuneToZombification(getBoolean(DataEntityType.PIGLIN_IMMUNE_TO_ZOMBIFICATION));
-            }
-            if (hasData(DataEntityType.PIGLIN_BABY)) {
-                piglin.setBaby(getBoolean(DataEntityType.PIGLIN_BABY));
-            }
-        } else if (entity instanceof Hoglin) {
-            Hoglin hoglin = (Hoglin) entity;
-            if (hasData(DataEntityType.HOGLIN_IMMUNE_TO_ZOMBIFICATION)) {
-                hoglin.setImmuneToZombification(getBoolean(DataEntityType.HOGLIN_IMMUNE_TO_ZOMBIFICATION));
-            }
-        } else if (entity instanceof Strider) {
-            Strider strider = (Strider) entity;
-            if (hasData(DataEntityType.STRIDER_SADDLED)) {
-                strider.setSaddle(getBoolean(DataEntityType.STRIDER_SADDLED));
-            }
         } else if (entity instanceof Zombie) {
             Zombie zombie = (Zombie) entity;
             if (hasData(DataEntityType.ZOMBIE_BABY)) {
@@ -686,12 +541,6 @@ public class DataEntity_v1_16_R5 implements DataEntity {
         }
         if (hasData(DataEntityType.ITEM_FRAME_ROTATION)) {
             frame.setRotation(Rotation.valueOf(getString(DataEntityType.ITEM_FRAME_ROTATION)));
-        }
-        if (hasData(DataEntityType.ITEM_FRAME_VISIBLE)) {
-            frame.setVisible(getBoolean(DataEntityType.ITEM_FRAME_VISIBLE));
-        }
-        if (hasData(DataEntityType.ITEM_FRAME_FIXED)) {
-            frame.setFixed(getBoolean(DataEntityType.ITEM_FRAME_FIXED));
         }
     }
 

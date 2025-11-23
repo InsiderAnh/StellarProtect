@@ -1,10 +1,10 @@
 package io.github.insideranh.stellarprotect.listeners;
 
-import io.github.InsiderAnh.xPlayerKits.libs.xseries.XEntityType;
 import io.github.insideranh.stellarprotect.cache.LoggerCache;
 import io.github.insideranh.stellarprotect.database.entries.players.PlayerBlockLogEntry;
 import io.github.insideranh.stellarprotect.enums.ActionType;
 import io.github.insideranh.stellarprotect.utils.PlayerUtils;
+import io.github.insideranh.stellarprotect.xseries.XEntityType;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
