@@ -100,6 +100,32 @@ public class ArgumentsParser {
         return actionTypes;
     }
 
+    public static List<String> parseIncludesEntities(String[] arguments) {
+        String joined = String.join(" ", arguments).toLowerCase(Locale.ROOT).replace("\\", "").replace("'", "");
+
+        List<String> entities = new ArrayList<>();
+        for (String part : joined.split("\\s+")) {
+            if (part.startsWith("i:") || part.startsWith("include:")) {
+                String entityType = part.replaceFirst("^(i:|include:)", "");
+                Collections.addAll(entities, entityType.split(","));
+            }
+        }
+        return entities;
+    }
+
+    public static List<String> parseExcludesEntities(String[] arguments) {
+        String joined = String.join(" ", arguments).toLowerCase(Locale.ROOT).replace("\\", "").replace("'", "");
+
+        List<String> entities = new ArrayList<>();
+        for (String part : joined.split("\\s+")) {
+            if (part.startsWith("e:") || part.startsWith("exclude:")) {
+                String entityType = part.replaceFirst("^(e:|exclude:)", "");
+                Collections.addAll(entities, entityType.split(","));
+            }
+        }
+        return entities;
+    }
+
     public static @Nullable LocationArg parseLocation(String[] arguments) {
         String joined = String.join(" ", arguments).toLowerCase(Locale.ROOT).replace("\\", "").replace("'", "").replace(",", "");
 

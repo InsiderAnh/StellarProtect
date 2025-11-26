@@ -16,10 +16,7 @@ import io.github.insideranh.stellarprotect.commands.StellarProtectCMD;
 import io.github.insideranh.stellarprotect.database.ProtectDatabase;
 import io.github.insideranh.stellarprotect.entities.DataEntity;
 import io.github.insideranh.stellarprotect.enums.MinecraftVersion;
-import io.github.insideranh.stellarprotect.hooks.ShopGUIHookListener;
-import io.github.insideranh.stellarprotect.hooks.StellarTaskHook;
-import io.github.insideranh.stellarprotect.hooks.WorldEditHook;
-import io.github.insideranh.stellarprotect.hooks.XPlayerKitsListener;
+import io.github.insideranh.stellarprotect.hooks.*;
 import io.github.insideranh.stellarprotect.hooks.itemsadder.ItemsAdderHook;
 import io.github.insideranh.stellarprotect.hooks.itemsadder.ItemsAdderHookListener;
 import io.github.insideranh.stellarprotect.hooks.nexo.NexoDefaultHook;
@@ -220,6 +217,10 @@ public class StellarProtect extends JavaPlugin {
             if (hooksManager.isXPlayerKitsHook() && getServer().getPluginManager().isPluginEnabled("XPlayerKits")) {
                 Bukkit.getPluginManager().registerEvents(new XPlayerKitsListener(), this);
                 getLogger().info("XPlayerKits detected, enabling XPlayerKits hook...");
+            }
+            if (hooksManager.isTreeCuterHook() && getServer().getPluginManager().isPluginEnabled("TreeCuter")) {
+                Bukkit.getPluginManager().registerEvents(new TreeCuterListener(), this);
+                getLogger().info("TreeCuter detected, enabling TreeCuter hook...");
             }
             if (hooksManager.isWorldEditHook() && getServer().getPluginManager().isPluginEnabled("WorldEdit")) {
                 this.worldEditHook = new WorldEditHook();

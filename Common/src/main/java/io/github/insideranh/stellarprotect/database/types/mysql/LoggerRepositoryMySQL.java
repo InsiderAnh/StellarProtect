@@ -609,13 +609,15 @@ public class LoggerRepositoryMySQL implements LoggerRepository {
         queryBuilder.addCombinedIncludeFilters(
             databaseFilters.getAllIncludeFilters(),
             databaseFilters.getIncludeMaterialFilters(),
-            databaseFilters.getIncludeBlockFilters()
+            databaseFilters.getIncludeBlockFilters(),
+            databaseFilters.getIncludeEntityFilters()
         );
 
         queryBuilder.addCombinedExcludeFilters(
             databaseFilters.getAllExcludeFilters(),
             databaseFilters.getExcludeMaterialFilters(),
-            databaseFilters.getExcludeBlockFilters()
+            databaseFilters.getExcludeBlockFilters(),
+            databaseFilters.getExcludeEntityFilters()
         );
 
         return queryBuilder.addActionTypesFilter(databaseFilters.getActionTypesFilter());
@@ -715,7 +717,7 @@ public class LoggerRepositoryMySQL implements LoggerRepository {
             return this;
         }
 
-        public QueryBuilder addCombinedIncludeFilters(List<Long> allIncludeFilters, List<Long> materialFilters, List<Long> blockFilters) {
+        public QueryBuilder addCombinedIncludeFilters(List<Long> allIncludeFilters, List<Long> materialFilters, List<Long> blockFilters, List<String> entityFilters) {
             List<String> allIncludeConditions = new ArrayList<>();
 
             if (allIncludeFilters != null && !allIncludeFilters.isEmpty()) {
@@ -775,6 +777,15 @@ public class LoggerRepositoryMySQL implements LoggerRepository {
                 }
             }
 
+            if (entityFilters != null && !entityFilters.isEmpty()) {
+                List<String> entityConditions = new ArrayList<>();
+                for (String entityType : entityFilters) {
+                    entityConditions.add("ple.extra_json LIKE ?");
+                    parameters.add("%\"et\":\"" + entityType.toUpperCase(Locale.ROOT) + "\"%");
+                }
+                allIncludeConditions.add("(" + String.join(" OR ", entityConditions) + ")");
+            }
+
             if (!allIncludeConditions.isEmpty()) {
                 whereConditions.add("(" + String.join(" OR ", allIncludeConditions) + ")");
             }
@@ -782,7 +793,7 @@ public class LoggerRepositoryMySQL implements LoggerRepository {
             return this;
         }
 
-        public QueryBuilder addCombinedExcludeFilters(List<Long> allExcludeFilters, List<Long> materialFilters, List<Long> blockFilters) {
+        public QueryBuilder addCombinedExcludeFilters(List<Long> allExcludeFilters, List<Long> materialFilters, List<Long> blockFilters, List<String> entityFilters) {
             List<String> allExcludeConditions = new ArrayList<>();
 
             if (allExcludeFilters != null && !allExcludeFilters.isEmpty()) {
@@ -839,6 +850,13 @@ public class LoggerRepositoryMySQL implements LoggerRepository {
                     parameters.add("{\"nb\":\"%\",\"lb\":\"" + blockId + "\"}");
 
                     allExcludeConditions.add("(" + String.join(" AND ", blockExcludeConditions) + ")");
+                }
+            }
+
+            if (entityFilters != null && !entityFilters.isEmpty()) {
+                for (String entityType : entityFilters) {
+                    whereConditions.add("ple.extra_json NOT LIKE ?");
+                    parameters.add("%\"et\":\"" + entityType.toUpperCase(Locale.ROOT) + "\"%");
                 }
             }
 

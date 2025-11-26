@@ -2,19 +2,15 @@ package io.github.insideranh.stellarprotect.nms.v1_8_R3;
 
 import io.github.insideranh.stellarprotect.entities.DataEntity;
 import io.github.insideranh.stellarprotect.entities.DataEntityType;
-import io.github.insideranh.stellarprotect.utils.InventorySerializable;
 import org.bukkit.Color;
 import org.bukkit.DyeColor;
 import org.bukkit.Rotation;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.MerchantRecipe;
 import org.bukkit.util.EulerAngle;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 public class DataEntity_v1_8_R3 implements DataEntity {
 
@@ -64,25 +60,6 @@ public class DataEntity_v1_8_R3 implements DataEntity {
         if (entity instanceof Villager) {
             Villager villager = (Villager) entity;
             setData(DataEntityType.VILLAGER_PROFESSION, villager.getProfession().name());
-
-            if (villager.getRecipes() != null && !villager.getRecipes().isEmpty()) {
-                List<String> tradesData = new ArrayList<>();
-                for (MerchantRecipe recipe : villager.getRecipes()) {
-                    // Formato: resultado|ingrediente1|ingrediente2|uses|maxUses
-                    StringBuilder tradeStr = new StringBuilder();
-                    tradeStr.append(InventorySerializable.itemStackToBase64(recipe.getResult())).append("|");
-                    tradeStr.append(InventorySerializable.itemStackToBase64(recipe.getIngredients().get(0))).append("|");
-                    tradeStr.append(recipe.getIngredients().size() > 1 ? InventorySerializable.itemStackToBase64(recipe.getIngredients().get(1)) : "null").append("|");
-                    tradeStr.append(recipe.getUses()).append("|");
-                    tradeStr.append(recipe.getMaxUses());
-                    tradesData.add(tradeStr.toString());
-                }
-                setData(DataEntityType.VILLAGER_TRADES, String.join(";;", tradesData));
-            }
-        } else if (entity instanceof ZombieVillager) {
-            ZombieVillager zVillager = (ZombieVillager) entity;
-
-            setData(DataEntityType.VILLAGER_PROFESSION, zVillager.getVillagerProfession().name());
         } else if (entity instanceof Wolf) {
             Wolf wolf = (Wolf) entity;
             setData(DataEntityType.ANGRY, wolf.isAngry());
@@ -114,8 +91,6 @@ public class DataEntity_v1_8_R3 implements DataEntity {
         } else if (entity instanceof Creeper) {
             Creeper creeper = (Creeper) entity;
             setData(DataEntityType.CREEPER_POWERED, creeper.isPowered());
-            setData(DataEntityType.CREEPER_MAX_FUSE, creeper.getMaxFuseTicks());
-            setData(DataEntityType.CREEPER_EXPLOSION_RADIUS, creeper.getExplosionRadius());
         } else if (entity instanceof Enderman) {
             Enderman enderman = (Enderman) entity;
             /*if (enderman.getCarriedMaterial() != null) {
@@ -130,9 +105,6 @@ public class DataEntity_v1_8_R3 implements DataEntity {
         } else if (entity instanceof IronGolem) {
             IronGolem golem = (IronGolem) entity;
             setData(DataEntityType.IRON_GOLEM_PLAYER_CREATED, golem.isPlayerCreated());
-        } else if (entity instanceof Snowman) {
-            Snowman snowman = (Snowman) entity;
-            setData(DataEntityType.SNOWMAN_DERP, snowman.isDerp());
         }
     }
 
@@ -153,8 +125,7 @@ public class DataEntity_v1_8_R3 implements DataEntity {
         if (stand.getEquipment() != null) {
             EntityEquipment eq = stand.getEquipment();
             this.armor = eq.getArmorContents();
-            this.mainHand = eq.getItemInMainHand();
-            this.offHand = eq.getItemInOffHand();
+            this.mainHand = eq.getItemInHand();
         }
     }
 
@@ -198,43 +169,6 @@ public class DataEntity_v1_8_R3 implements DataEntity {
                 for (Villager.Profession profession : Villager.Profession.values()) {
                     if (profession.name().equals(typeKey)) {
                         villager.setProfession(profession);
-                        break;
-                    }
-                }
-            }
-
-            if (hasData(DataEntityType.VILLAGER_TRADES)) {
-                String tradesStr = getString(DataEntityType.VILLAGER_TRADES);
-                String[] tradesArray = tradesStr.split(";;");
-                List<MerchantRecipe> recipes = new ArrayList<>();
-
-                for (String tradeData : tradesArray) {
-                    String[] parts = tradeData.split("\\|");
-                    ItemStack result = InventorySerializable.itemStackFromBase64(parts[0]);
-                    ItemStack ingredient1 = InventorySerializable.itemStackFromBase64(parts[1]);
-                    ItemStack ingredient2 = InventorySerializable.itemStackFromBase64(parts[2]);
-                    int uses = Integer.parseInt(parts[3]);
-                    int maxUses = Integer.parseInt(parts[4]);
-
-                    MerchantRecipe recipe = new MerchantRecipe(result, maxUses);
-                    recipe.addIngredient(ingredient1);
-                    if (ingredient2 != null) {
-                        recipe.addIngredient(ingredient2);
-                    }
-                    recipe.setUses(uses);
-
-                    recipes.add(recipe);
-                }
-
-                villager.setRecipes(recipes);
-            }
-        } else if (entity instanceof ZombieVillager) {
-            ZombieVillager zVillager = (ZombieVillager) entity;
-            if (hasData(DataEntityType.VILLAGER_PROFESSION)) {
-                String typeKey = getString(DataEntityType.VILLAGER_PROFESSION);
-                for (Villager.Profession profession : Villager.Profession.values()) {
-                    if (profession.name().equals(typeKey)) {
-                        zVillager.setVillagerProfession(profession);
                         break;
                     }
                 }
@@ -291,12 +225,6 @@ public class DataEntity_v1_8_R3 implements DataEntity {
             if (hasData(DataEntityType.CREEPER_POWERED)) {
                 creeper.setPowered(getBoolean(DataEntityType.CREEPER_POWERED));
             }
-            if (hasData(DataEntityType.CREEPER_MAX_FUSE)) {
-                creeper.setMaxFuseTicks(getInt(DataEntityType.CREEPER_MAX_FUSE));
-            }
-            if (hasData(DataEntityType.CREEPER_EXPLOSION_RADIUS)) {
-                creeper.setExplosionRadius(getInt(DataEntityType.CREEPER_EXPLOSION_RADIUS));
-            }
         } else if (entity instanceof Enderman) {
             Enderman enderman = (Enderman) entity;
             /*if (hasData(DataEntityType.ENDERMAN_CARRIED_BLOCK)) {
@@ -316,11 +244,6 @@ public class DataEntity_v1_8_R3 implements DataEntity {
             IronGolem golem = (IronGolem) entity;
             if (hasData(DataEntityType.IRON_GOLEM_PLAYER_CREATED)) {
                 golem.setPlayerCreated(getBoolean(DataEntityType.IRON_GOLEM_PLAYER_CREATED));
-            }
-        } else if (entity instanceof Snowman) {
-            Snowman snowman = (Snowman) entity;
-            if (hasData(DataEntityType.SNOWMAN_DERP)) {
-                snowman.setDerp(getBoolean(DataEntityType.SNOWMAN_DERP));
             }
         }
     }
@@ -366,8 +289,7 @@ public class DataEntity_v1_8_R3 implements DataEntity {
         if (stand.getEquipment() != null) {
             EntityEquipment eq = stand.getEquipment();
             if (armor != null) eq.setArmorContents(armor);
-            if (mainHand != null) eq.setItemInMainHand(mainHand);
-            if (offHand != null) eq.setItemInOffHand(offHand);
+            if (mainHand != null) eq.setItemInHand(mainHand);
         }
     }
 

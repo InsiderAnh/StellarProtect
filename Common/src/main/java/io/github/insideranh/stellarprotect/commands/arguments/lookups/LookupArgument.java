@@ -42,6 +42,8 @@ public class LookupArgument extends StellarArgument {
         List<ActionType> actionTypesArg = ArgumentsParser.parseActionTypes(arguments);
         List<String> includesArg = ArgumentsParser.parseIncludesMaterials(arguments);
         List<String> excludesArg = ArgumentsParser.parseExcludesMaterials(arguments);
+        List<String> includesEntitiesArg = ArgumentsParser.parseIncludesEntities(arguments);
+        List<String> excludesEntitiesArg = ArgumentsParser.parseExcludesEntities(arguments);
 
         Map<String, List<String>> includesMap = ArgumentsParser.parseIncludeMaterials(arguments);
         Map<String, List<String>> excludesMap = ArgumentsParser.parseExcludeMaterials(arguments);
@@ -65,6 +67,8 @@ public class LookupArgument extends StellarArgument {
             databaseFilters.setExcludeBlockFilters(blocksCache.findIdsByTypeNameContains(excludesArg, BlocksCache.FieldType.LOWER_TYPE_NAME));
             databaseFilters.setIncludeMaterialFilters(itemsCache.findIdsContains(includesMap));
             databaseFilters.setExcludeMaterialFilters(itemsCache.findIdsContains(excludesMap));
+            databaseFilters.setIncludeEntityFilters(includesEntitiesArg);
+            databaseFilters.setExcludeEntityFilters(excludesEntitiesArg);
 
             databaseFilters.setActionTypesFilter(actionTypesArg.stream().map(ActionType::getId).collect(Collectors.toCollection(ArrayList::new)));
             databaseFilters.setUserFilters(usersArg);

@@ -21,6 +21,10 @@ public class BlockRestore_v1_21_R4 extends BlockRestore {
         super(data);
     }
 
+    public BlockRestore_v1_21_R4(String data, byte extraType, String extraData) {
+        super(data, extraType, extraData);
+    }
+
     @Override
     public void reset(Gson gson, Location location) {
         BlockData blockData = Bukkit.createBlockData(data);

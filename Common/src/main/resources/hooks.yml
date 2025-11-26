@@ -9,3 +9,5 @@ hooks:
     enabled: true
   worldedit:
     enabled: true
+  treecuter:
+    enabled: true

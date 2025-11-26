@@ -36,6 +36,47 @@ public class BlockListener implements Listener {
 
     private final StellarProtect plugin = StellarProtect.getInstance();
 
+    public static void processBlockBreak(Block block, @Nullable Player player, long defaultId) {
+        StellarProtect plugin = StellarProtect.getInstance();
+        Material material = block.getType();
+        if (block.getType().equals(Material.AIR) || ActionType.BLOCK_BREAK.shouldSkipLog(block.getWorld().getName(), material.name()))
+            return;
+
+        long playerId = getPlayerId(player, defaultId);
+
+        if (plugin.getNexoHook() != null && plugin.getNexoHook().isNexoBlock(block)) {
+            return;
+        }
+        if (plugin.getItemsAdderHook() != null && plugin.getItemsAdderHook().isItemsAdderBlock(block)) {
+            return;
+        }
+
+        if (AdjacentType.isUp(material)) {
+            List<Block> affectedBlocks = AdjacentTracker.getAffectedBlocksAbove(block);
+            for (Block affectedBlock : affectedBlocks) {
+                LoggerCache.addLog(new PlayerBlockLogEntry(playerId, affectedBlock, ActionType.BLOCK_BREAK));
+            }
+        }
+
+        if (AdjacentType.isSide(material)) {
+            List<Block> affectedBlocks = AdjacentTracker.getAffectedBlocksSide(block);
+            for (Block affectedBlock : affectedBlocks) {
+                LoggerCache.addLog(new PlayerBlockLogEntry(playerId, affectedBlock, ActionType.BLOCK_BREAK));
+            }
+        }
+
+        LoggerCache.addLog(new PlayerBlockLogEntry(playerId, block, ActionType.BLOCK_BREAK));
+    }
+
+    static long getPlayerId(@Nullable Player player, long defaultId) {
+        if (player == null) return defaultId;
+
+        PlayerProtect playerProtect = PlayerProtect.getPlayer(player);
+        if (playerProtect == null) return defaultId;
+
+        return playerProtect.getPlayerId();
+    }
+
     @EventHandler(priority = EventPriority.MONITOR)
     public void onBlockBreak(BlockBreakEvent event) {
         if (event.isCancelled()) return;
@@ -45,6 +86,36 @@ public class BlockListener implements Listener {
 
         processBlockBreak(block, player, -2L);
     }
+
+    /*@EventHandler(priority = EventPriority.MONITOR)
+    public void onBlockFade(BlockFadeEvent event) {
+        if (event.isCancelled()) return;
+
+        Block block = event.getBlock();
+        Material material = block.getType();
+        if (ActionType.BLOCK_BREAK.shouldSkipLog(block.getWorld().getName(), material.name())) return;
+
+        long playerId;
+
+        if (material == Material.ICE || material.name().contains("FROSTED_ICE")) {
+            playerId = PlayerUtils.getPlayerOrEntityId("=ice_melt");
+        } else if (material == Material.SNOW || material == Material.SNOW_BLOCK || material.name().contains("POWDER_SNOW")) {
+            playerId = PlayerUtils.getPlayerOrEntityId("=snow_fall");
+        } else if (material == Material.FIRE || material.name().contains("FIRE")) {
+            playerId = PlayerUtils.getPlayerOrEntityId("=fire");
+        } else if (material.name().contains("CORAL")) {
+            playerId = PlayerUtils.getPlayerOrEntityId("=natural");
+        } else {
+            playerId = PlayerUtils.getPlayerOrEntityId("=natural");
+        }
+
+        BlockState newState = event.getNewState();
+        if (newState.getType() != Material.AIR) {
+            processBlockStatePlace(block.getLocation(), block.getState(), newState, playerId);
+        } else {
+            processBlockBreak(block, null, playerId);
+        }
+    }*/
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onBlockIgnite(BlockIgniteEvent event) {
@@ -108,36 +179,6 @@ public class BlockListener implements Listener {
 
         processBlockBreak(event.getBlock(), null, playerId);
     }
-
-    /*@EventHandler(priority = EventPriority.MONITOR)
-    public void onBlockFade(BlockFadeEvent event) {
-        if (event.isCancelled()) return;
-
-        Block block = event.getBlock();
-        Material material = block.getType();
-        if (ActionType.BLOCK_BREAK.shouldSkipLog(block.getWorld().getName(), material.name())) return;
-
-        long playerId;
-
-        if (material == Material.ICE || material.name().contains("FROSTED_ICE")) {
-            playerId = PlayerUtils.getPlayerOrEntityId("=ice_melt");
-        } else if (material == Material.SNOW || material == Material.SNOW_BLOCK || material.name().contains("POWDER_SNOW")) {
-            playerId = PlayerUtils.getPlayerOrEntityId("=snow_fall");
-        } else if (material == Material.FIRE || material.name().contains("FIRE")) {
-            playerId = PlayerUtils.getPlayerOrEntityId("=fire");
-        } else if (material.name().contains("CORAL")) {
-            playerId = PlayerUtils.getPlayerOrEntityId("=natural");
-        } else {
-            playerId = PlayerUtils.getPlayerOrEntityId("=natural");
-        }
-
-        BlockState newState = event.getNewState();
-        if (newState.getType() != Material.AIR) {
-            processBlockStatePlace(block.getLocation(), block.getState(), newState, playerId);
-        } else {
-            processBlockBreak(block, null, playerId);
-        }
-    }*/
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onBlockMultiPlace(BlockMultiPlaceEvent event) {
@@ -265,37 +306,6 @@ public class BlockListener implements Listener {
         processBlockStatePlace(event.getBlock().getLocation(), blockState, newState, playerId);
     }
 
-    void processBlockBreak(Block block, @Nullable Player player, long defaultId) {
-        Material material = block.getType();
-        if (block.getType().equals(Material.AIR) || ActionType.BLOCK_BREAK.shouldSkipLog(block.getWorld().getName(), material.name()))
-            return;
-
-        long playerId = getPlayerId(player, defaultId);
-
-        if (plugin.getNexoHook() != null && plugin.getNexoHook().isNexoBlock(block)) {
-            return;
-        }
-        if (plugin.getItemsAdderHook() != null && plugin.getItemsAdderHook().isItemsAdderBlock(block)) {
-            return;
-        }
-
-        if (AdjacentType.isUp(material)) {
-            List<Block> affectedBlocks = AdjacentTracker.getAffectedBlocksAbove(block);
-            for (Block affectedBlock : affectedBlocks) {
-                LoggerCache.addLog(new PlayerBlockLogEntry(playerId, affectedBlock, ActionType.BLOCK_BREAK));
-            }
-        }
-
-        if (AdjacentType.isSide(material)) {
-            List<Block> affectedBlocks = AdjacentTracker.getAffectedBlocksSide(block);
-            for (Block affectedBlock : affectedBlocks) {
-                LoggerCache.addLog(new PlayerBlockLogEntry(playerId, affectedBlock, ActionType.BLOCK_BREAK));
-            }
-        }
-
-        LoggerCache.addLog(new PlayerBlockLogEntry(playerId, block, ActionType.BLOCK_BREAK));
-    }
-
     void processBlockStatePlace(Location location, BlockState blockState, BlockState newState, long playerId) {
         if (newState.getType().equals(Material.AIR) || ActionType.BLOCK_SPREAD.shouldSkipLog(newState.getWorld().getName(), newState.getType().name()))
             return;
@@ -317,15 +327,6 @@ public class BlockListener implements Listener {
         }
 
         LoggerCache.addLog(new PlayerBlockLogEntry(playerId, block, ActionType.BLOCK_PLACE));
-    }
-
-    long getPlayerId(@Nullable Player player, long defaultId) {
-        if (player == null) return defaultId;
-
-        PlayerProtect playerProtect = PlayerProtect.getPlayer(player);
-        if (playerProtect == null) return defaultId;
-
-        return playerProtect.getPlayerId();
     }
 
     @EventHandler(priority = EventPriority.MONITOR)

@@ -40,7 +40,6 @@ public class DataEntity_v1_9_R4 implements DataEntity {
         }
         setData(DataEntityType.CUSTOM_NAME_VISIBLE, entity.isCustomNameVisible());
         setData(DataEntityType.GLOWING, entity.isGlowing());
-        setData(DataEntityType.GRAVITY, entity.hasGravity());
         setData(DataEntityType.INVULNERABLE, entity.isInvulnerable());
         setData(DataEntityType.SILENT, entity.isSilent());
 
@@ -118,10 +117,6 @@ public class DataEntity_v1_9_R4 implements DataEntity {
                 }
                 setData(DataEntityType.VILLAGER_TRADES, String.join(";;", tradesData));
             }
-        } else if (entity instanceof ZombieVillager) {
-            ZombieVillager zVillager = (ZombieVillager) entity;
-
-            setData(DataEntityType.VILLAGER_PROFESSION, zVillager.getVillagerProfession().name());
         } else if (entity instanceof Wolf) {
             Wolf wolf = (Wolf) entity;
             setData(DataEntityType.ANGRY, wolf.isAngry());
@@ -140,13 +135,6 @@ public class DataEntity_v1_9_R4 implements DataEntity {
             if (horse.getInventory().getArmor() != null) {
                 setData(DataEntityType.HORSE_ARMOR, horse.getInventory().getArmor());
             }
-        } else if (entity instanceof Llama) {
-            Llama llama = (Llama) entity;
-            setData(DataEntityType.LLAMA_COLOR, llama.getColor().name());
-            setData(DataEntityType.LLAMA_STRENGTH, llama.getStrength());
-            if (llama.getInventory().getDecor() != null) {
-                setData(DataEntityType.LLAMA_CARPET, llama.getInventory().getDecor());
-            }
         } else if (entity instanceof Rabbit) {
             Rabbit rabbit = (Rabbit) entity;
             setData(DataEntityType.RABBIT_TYPE, rabbit.getRabbitType().name());
@@ -160,8 +148,6 @@ public class DataEntity_v1_9_R4 implements DataEntity {
         } else if (entity instanceof Creeper) {
             Creeper creeper = (Creeper) entity;
             setData(DataEntityType.CREEPER_POWERED, creeper.isPowered());
-            setData(DataEntityType.CREEPER_MAX_FUSE, creeper.getMaxFuseTicks());
-            setData(DataEntityType.CREEPER_EXPLOSION_RADIUS, creeper.getExplosionRadius());
         } else if (entity instanceof Enderman) {
             Enderman enderman = (Enderman) entity;
             /*if (enderman.getCarriedBlock() != null) {
@@ -179,11 +165,6 @@ public class DataEntity_v1_9_R4 implements DataEntity {
         } else if (entity instanceof Snowman) {
             Snowman snowman = (Snowman) entity;
             setData(DataEntityType.SNOWMAN_DERP, snowman.isDerp());
-        } else if (entity instanceof Shulker) {
-            Shulker shulker = (Shulker) entity;
-            if (shulker.getColor() != null) {
-                setData(DataEntityType.SHULKER_COLOR, shulker.getColor().name());
-            }
         }
     }
 
@@ -220,7 +201,6 @@ public class DataEntity_v1_9_R4 implements DataEntity {
         }
         entity.setCustomNameVisible(getBoolean(DataEntityType.CUSTOM_NAME_VISIBLE));
         entity.setGlowing(getBoolean(DataEntityType.GLOWING));
-        entity.setGravity(getBoolean(DataEntityType.GRAVITY));
         entity.setInvulnerable(getBoolean(DataEntityType.INVULNERABLE));
         entity.setSilent(getBoolean(DataEntityType.SILENT));
 
@@ -332,17 +312,6 @@ public class DataEntity_v1_9_R4 implements DataEntity {
 
                 villager.setRecipes(recipes);
             }
-        } else if (entity instanceof ZombieVillager) {
-            ZombieVillager zVillager = (ZombieVillager) entity;
-            if (hasData(DataEntityType.VILLAGER_PROFESSION)) {
-                String typeKey = getString(DataEntityType.VILLAGER_PROFESSION);
-                for (Villager.Profession profession : Villager.Profession.values()) {
-                    if (profession.name().equals(typeKey)) {
-                        zVillager.setVillagerProfession(profession);
-                        break;
-                    }
-                }
-            }
         } else if (entity instanceof Wolf) {
             Wolf wolf = (Wolf) entity;
             if (hasData(DataEntityType.ANGRY)) {
@@ -372,17 +341,6 @@ public class DataEntity_v1_9_R4 implements DataEntity {
             if (hasData(DataEntityType.HORSE_ARMOR)) {
                 horse.getInventory().setArmor((ItemStack) getData(DataEntityType.HORSE_ARMOR));
             }
-        } else if (entity instanceof Llama) {
-            Llama llama = (Llama) entity;
-            if (hasData(DataEntityType.LLAMA_COLOR)) {
-                llama.setColor(Llama.Color.valueOf(getString(DataEntityType.LLAMA_COLOR)));
-            }
-            if (hasData(DataEntityType.LLAMA_STRENGTH)) {
-                llama.setStrength(getInt(DataEntityType.LLAMA_STRENGTH));
-            }
-            if (hasData(DataEntityType.LLAMA_CARPET)) {
-                llama.getInventory().setDecor((ItemStack) getData(DataEntityType.LLAMA_CARPET));
-            }
         } else if (entity instanceof Rabbit) {
             Rabbit rabbit = (Rabbit) entity;
             if (hasData(DataEntityType.RABBIT_TYPE)) {
@@ -406,12 +364,6 @@ public class DataEntity_v1_9_R4 implements DataEntity {
             if (hasData(DataEntityType.CREEPER_POWERED)) {
                 creeper.setPowered(getBoolean(DataEntityType.CREEPER_POWERED));
             }
-            if (hasData(DataEntityType.CREEPER_MAX_FUSE)) {
-                creeper.setMaxFuseTicks(getInt(DataEntityType.CREEPER_MAX_FUSE));
-            }
-            if (hasData(DataEntityType.CREEPER_EXPLOSION_RADIUS)) {
-                creeper.setExplosionRadius(getInt(DataEntityType.CREEPER_EXPLOSION_RADIUS));
-            }
         } else if (entity instanceof Slime) {
             Slime slime = (Slime) entity;
             if (hasData(DataEntityType.SLIME_SIZE)) {
@@ -431,11 +383,6 @@ public class DataEntity_v1_9_R4 implements DataEntity {
             Snowman snowman = (Snowman) entity;
             if (hasData(DataEntityType.SNOWMAN_DERP)) {
                 snowman.setDerp(getBoolean(DataEntityType.SNOWMAN_DERP));
-            }
-        } else if (entity instanceof Shulker) {
-            Shulker shulker = (Shulker) entity;
-            if (hasData(DataEntityType.SHULKER_COLOR)) {
-                shulker.setColor(DyeColor.valueOf(getString(DataEntityType.SHULKER_COLOR)));
             }
         }
     }

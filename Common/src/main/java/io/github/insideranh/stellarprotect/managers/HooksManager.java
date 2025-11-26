@@ -15,6 +15,7 @@ public class HooksManager {
     private boolean itemsAdderHook;
     private boolean xPlayerKitsHook;
     private boolean worldEditHook;
+    private boolean treeCuterHook;
 
     public void load() {
         if (config == null) {
@@ -23,11 +24,12 @@ public class HooksManager {
             config.reload();
         }
 
-        shopGuiHook = config.getBoolean("hooks.shop_gui.enabled");
-        nexoHook = config.getBoolean("hooks.nexo.enabled");
-        itemsAdderHook = config.getBoolean("hooks.itemsAdder.enabled");
-        xPlayerKitsHook = config.getBoolean("hooks.xplayerkits.enabled");
-        worldEditHook = config.getBoolean("hooks.worldedit.enabled");
+        this.shopGuiHook = config.getBoolean("hooks.shop_gui.enabled");
+        this.nexoHook = config.getBoolean("hooks.nexo.enabled");
+        this.itemsAdderHook = config.getBoolean("hooks.itemsAdder.enabled");
+        this.xPlayerKitsHook = config.getBoolean("hooks.xplayerkits.enabled");
+        this.worldEditHook = config.getBoolean("hooks.worldedit.enabled");
+        this.treeCuterHook = config.getBoolean("hooks.treecuter.enabled");
     }
 
 }

@@ -20,11 +20,13 @@ public class DatabaseFilters {
     private List<Long> excludeMaterialFilters = new ArrayList<>();
     private List<Long> includeBlockFilters = new ArrayList<>();
     private List<Long> excludeBlockFilters = new ArrayList<>();
+    private List<String> includeEntityFilters = new ArrayList<>();
+    private List<String> excludeEntityFilters = new ArrayList<>();
     private UsersArg userFilters;
 
     public boolean isIgnoreCache() {
         return !allIncludeFilters.isEmpty() || !allExcludeFilters.isEmpty() || !includeMaterialFilters.isEmpty() || !excludeMaterialFilters.isEmpty()
-            || !includeBlockFilters.isEmpty() || !excludeBlockFilters.isEmpty();
+            || !includeBlockFilters.isEmpty() || !excludeBlockFilters.isEmpty() || !includeEntityFilters.isEmpty() || !excludeEntityFilters.isEmpty();
     }
 
 }
