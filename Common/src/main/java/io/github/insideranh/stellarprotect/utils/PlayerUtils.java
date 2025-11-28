@@ -11,6 +11,8 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class PlayerUtils {
@@ -48,6 +50,14 @@ public class PlayerUtils {
         specialIds.put("=warden", -26L);
         specialIds.put("=evoker", -27L);
         specialIds.put("=ravager", -28L);
+
+        specialIds.put("=creeper", -29L);
+        specialIds.put("=tnt", -30L);
+        specialIds.put("=ghast", -31L);
+        specialIds.put("=end_crystal", -32L);
+        specialIds.put("=wither_skull", -33L);
+        specialIds.put("=minecart_tnt", -34L);
+        specialIds.put("=fireball", -35L);
     }
 
     public static long getNextLogId() {
@@ -117,6 +127,47 @@ public class PlayerUtils {
             return specialIds.get(keyId);
         }
         return -2L;
+    }
+
+    public static Set<Long> getExplosionRelatedIds() {
+        Set<Long> explosionIds = new HashSet<>();
+
+        if (specialIds.containsKey("=explosion")) {
+            explosionIds.add(specialIds.get("=explosion"));
+        }
+
+        String[] explosiveEntities = {
+            "=creeper", "=wither", "=ghast", "=tnt",
+            "=end_crystal", "=wither_skull", "=minecart_tnt"
+        };
+
+        for (String entity : explosiveEntities) {
+            if (specialIds.containsKey(entity)) {
+                explosionIds.add(specialIds.get(entity));
+            }
+        }
+
+        return explosionIds;
+    }
+
+    public static boolean isExplosiveEntity(String userName) {
+        if (userName == null || userName.isEmpty()) {
+            return false;
+        }
+
+        String normalized = userName.toLowerCase().startsWith("=")
+            ? userName.toLowerCase()
+            : "=" + userName.toLowerCase();
+
+        return normalized.equals("=explosion")
+            || normalized.equals("=creeper")
+            || normalized.equals("=wither")
+            || normalized.equals("=ghast")
+            || normalized.equals("=tnt")
+            || normalized.equals("=end_crystal")
+            || normalized.equals("=wither_skull")
+            || normalized.equals("=minecart_tnt")
+            || normalized.equals("=fireball");
     }
 
     public static String getNameOfEntity(long entityId) {

@@ -30,7 +30,7 @@ import org.bukkit.event.inventory.FurnaceExtractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
+import java.util.*;
 
 public class BlockListener implements Listener {
 
@@ -51,21 +51,60 @@ public class BlockListener implements Listener {
             return;
         }
 
-        if (AdjacentType.isUp(material)) {
-            List<Block> affectedBlocks = AdjacentTracker.getAffectedBlocksAbove(block);
-            for (Block affectedBlock : affectedBlocks) {
-                LoggerCache.addLog(new PlayerBlockLogEntry(playerId, affectedBlock, ActionType.BLOCK_BREAK));
+        Map<Location, Block> blockMap = new HashMap<>();
+        blockMap.put(block.getLocation(), block);
+
+        scanAdjacentBlocks(blockMap);
+
+        for (Map.Entry<Location, Block> entry : blockMap.entrySet()) {
+            Block affectedBlock = entry.getValue();
+            if (ActionType.BLOCK_BREAK.shouldSkipLog(affectedBlock.getWorld().getName(), affectedBlock.getType().name())) {
+                continue;
+            }
+            LoggerCache.addLog(new PlayerBlockLogEntry(playerId, affectedBlock, ActionType.BLOCK_BREAK));
+        }
+    }
+
+    private static void scanAdjacentBlocks(Map<Location, Block> blockMap) {
+        Queue<Block> blocksToScan = new LinkedList<>(blockMap.values());
+
+        while (!blocksToScan.isEmpty()) {
+            Block block = blocksToScan.poll();
+            Material material = block.getType();
+
+            Block above = block.getRelative(0, 1, 0);
+            if (AdjacentType.isUp(above.getType()) && !blockMap.containsKey(above.getLocation())) {
+                blockMap.put(above.getLocation(), above);
+                blocksToScan.add(above);
+
+                List<Block> affectedAbove = AdjacentTracker.getAffectedBlocksAbove(block);
+                for (Block affectedBlock : affectedAbove) {
+                    if (!blockMap.containsKey(affectedBlock.getLocation())) {
+                        blockMap.put(affectedBlock.getLocation(), affectedBlock);
+                        blocksToScan.add(affectedBlock);
+                    }
+                }
+            }
+
+            List<Block> affectedSides = AdjacentTracker.getAffectedBlocksSide(block);
+            for (Block affectedBlock : affectedSides) {
+                if (!blockMap.containsKey(affectedBlock.getLocation())) {
+                    blockMap.put(affectedBlock.getLocation(), affectedBlock);
+                    blocksToScan.add(affectedBlock);
+                }
+            }
+
+            if (material.hasGravity()) {
+                Block gravityBlock = block.getRelative(0, 1, 0);
+                while (gravityBlock.getType().hasGravity() && gravityBlock.getY() < gravityBlock.getWorld().getMaxHeight()) {
+                    if (!blockMap.containsKey(gravityBlock.getLocation())) {
+                        blockMap.put(gravityBlock.getLocation(), gravityBlock);
+                        blocksToScan.add(gravityBlock);
+                    }
+                    gravityBlock = gravityBlock.getRelative(0, 1, 0);
+                }
             }
         }
-
-        if (AdjacentType.isSide(material)) {
-            List<Block> affectedBlocks = AdjacentTracker.getAffectedBlocksSide(block);
-            for (Block affectedBlock : affectedBlocks) {
-                LoggerCache.addLog(new PlayerBlockLogEntry(playerId, affectedBlock, ActionType.BLOCK_BREAK));
-            }
-        }
-
-        LoggerCache.addLog(new PlayerBlockLogEntry(playerId, block, ActionType.BLOCK_BREAK));
     }
 
     static long getPlayerId(@Nullable Player player, long defaultId) {

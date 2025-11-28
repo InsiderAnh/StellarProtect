@@ -263,17 +263,28 @@ public class ArgumentsParser {
                 return CompletableFuture.supplyAsync(() -> {
                     Set<Long> userIds = new HashSet<>();
                     List<String> notFoundNames = new ArrayList<>();
+
                     for (String userName : userNames) {
                         userName = userName.trim();
                         if (!userName.isEmpty()) {
-                            long userId = PlayerUtils.getPlayerOrEntityId(userName);
-                            if (userId != -2) {
-                                userIds.add(userId);
+                            if (userName.equalsIgnoreCase("=explosion")) {
+                                Set<Long> explosionIds = PlayerUtils.getExplosionRelatedIds();
+                                userIds.addAll(explosionIds);
+                                notFoundNames.add("=explosion");
                             } else {
-                                notFoundNames.add(userName);
+                                long userId = PlayerUtils.getPlayerOrEntityId(userName);
+                                if (userId != -2) {
+                                    userIds.add(userId);
+                                    if (PlayerUtils.isExplosiveEntity(userName)) {
+                                        notFoundNames.add(userName);
+                                    }
+                                } else {
+                                    notFoundNames.add(userName);
+                                }
                             }
                         }
                     }
+
                     List<Long> dbUserIds = StellarProtect.getInstance().getProtectDatabase().getIdsByNames(notFoundNames);
                     userIds.addAll(dbUserIds);
 

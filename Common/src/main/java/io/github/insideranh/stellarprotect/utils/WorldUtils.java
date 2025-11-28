@@ -4,6 +4,7 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import io.github.insideranh.stellarprotect.StellarProtect;
 import io.github.insideranh.stellarprotect.cache.keys.LocationCache;
+import io.github.insideranh.stellarprotect.xseries.XMaterial;
 import org.bukkit.Material;
 
 import java.nio.charset.StandardCharsets;
@@ -68,8 +69,9 @@ public class WorldUtils {
             material.equals(Material.TRAPPED_CHEST) ||
             material.equals(Material.ENDER_CHEST) ||
             material.equals(Material.DROPPER) ||
-            material.name().contains("SHULKER_BOX") ||
-            material.name().contains("BARREL");
+            material.name().endsWith("SHULKER_BOX") ||
+            material.name().contains("BARREL") ||
+            material.name().endsWith("COPPER_CHEST");
     }
 
 }
