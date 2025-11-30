@@ -457,7 +457,7 @@ public class LoggerRepositorySQL implements LoggerRepository {
 
         String countQuery = "SELECT COUNT(*) FROM " + stellarProtect.getConfigManager().getTablesLogEntries() + " ple " +
             "WHERE ple.created_at BETWEEN ? AND ? " +
-            "AND ple.x = ? AND ple.y = ? AND ple.z = ?" + actionTypeFilter;
+            "AND ROUND(ple.x) = ? AND ROUND(ple.y) = ? AND ROUND(ple.z) = ?" + actionTypeFilter;
 
         long startTime = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(30);
         long endTime = System.currentTimeMillis();
@@ -465,9 +465,9 @@ public class LoggerRepositorySQL implements LoggerRepository {
         try (PreparedStatement countStmt = connection.prepareStatement(countQuery)) {
             countStmt.setLong(1, startTime);
             countStmt.setLong(2, endTime);
-            countStmt.setDouble(3, location.getBlockX());
-            countStmt.setDouble(4, location.getBlockY());
-            countStmt.setDouble(5, location.getBlockZ());
+            countStmt.setInt(3, location.getBlockX());
+            countStmt.setInt(4, location.getBlockY());
+            countStmt.setInt(5, location.getBlockZ());
 
             if (actionType != null) {
                 countStmt.setInt(6, actionType.getId());
@@ -493,9 +493,9 @@ public class LoggerRepositorySQL implements LoggerRepository {
         String dataQuery =
             "SELECT ple.*, p.name, p.uuid " +
                 "FROM " + stellarProtect.getConfigManager().getTablesLogEntries() + " ple " +
-                "JOIN " + stellarProtect.getConfigManager().getTablesPlayers() + " p ON ple.player_id = p.id " +
+                "LEFT JOIN " + stellarProtect.getConfigManager().getTablesPlayers() + " p ON ple.player_id = p.id " +
                 "WHERE ple.created_at BETWEEN ? AND ? " +
-                "AND ple.x = ? AND ple.y = ? AND ple.z = ? " + actionTypeFilter +
+                "AND ROUND(ple.x) = ? AND ROUND(ple.y) = ? AND ROUND(ple.z) = ? " + actionTypeFilter +
                 "ORDER BY ple.created_at DESC " +
                 "LIMIT ? OFFSET ?";
 
@@ -505,9 +505,9 @@ public class LoggerRepositorySQL implements LoggerRepository {
         try (PreparedStatement dataStmt = connection.prepareStatement(dataQuery)) {
             dataStmt.setLong(1, startTime);
             dataStmt.setLong(2, endTime);
-            dataStmt.setDouble(3, location.getBlockX());
-            dataStmt.setDouble(4, location.getBlockY());
-            dataStmt.setDouble(5, location.getBlockZ());
+            dataStmt.setInt(3, location.getBlockX());
+            dataStmt.setInt(4, location.getBlockY());
+            dataStmt.setInt(5, location.getBlockZ());
 
             if (actionType != null) {
                 dataStmt.setInt(6, actionType.getId());
@@ -872,7 +872,7 @@ public class LoggerRepositorySQL implements LoggerRepository {
         public String getDataQuery() {
             String whereClause = whereConditions.isEmpty() ? "" : " WHERE " + String.join(" AND ", whereConditions);
             return "FROM " + tablesLogEntries + " ple " +
-                "JOIN " + tablesPlayers + " p ON ple.player_id = p.id" + whereClause;
+                "LEFT JOIN " + tablesPlayers + " p ON ple.player_id = p.id" + whereClause;
         }
 
         public List<Object> getParameters() {

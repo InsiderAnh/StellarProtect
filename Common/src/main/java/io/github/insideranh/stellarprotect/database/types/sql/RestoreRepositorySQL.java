@@ -447,7 +447,7 @@ public class RestoreRepositorySQL implements RestoreRepository {
         public String getDataQuery() {
             String whereClause = whereConditions.isEmpty() ? "" : " WHERE " + String.join(" AND ", whereConditions);
             return "FROM " + tablesLogEntries + " ple " +
-                "JOIN " + tablesPlayers + " p ON ple.player_id = p.id" + whereClause;
+                "LEFT JOIN " + tablesPlayers + " p ON ple.player_id = p.id" + whereClause;
         }
 
         public List<Object> getParameters() {

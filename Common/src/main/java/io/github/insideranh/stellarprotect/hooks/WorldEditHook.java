@@ -5,6 +5,8 @@ import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.world.World;
+import io.github.insideranh.stellarprotect.StellarProtect;
+import io.github.insideranh.stellarprotect.api.WorldEditHandler;
 import io.github.insideranh.stellarprotect.arguments.RadiusArg;
 import io.github.insideranh.stellarprotect.utils.WorldUtils;
 import org.bukkit.Bukkit;
@@ -12,6 +14,16 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 public class WorldEditHook {
+
+    private final WorldEditLogListenerImpl logListener;
+
+    public WorldEditHook() {
+        logListener = new WorldEditLogListenerImpl();
+        WorldEditHandler worldEditHandler = StellarProtect.getInstance().getWorldEditHandler();
+        if (worldEditHandler != null) {
+            worldEditHandler.load();
+        }
+    }
 
     public RadiusArg getRadiusArgWorldEdit(Player player) {
         try {
@@ -63,6 +75,13 @@ public class WorldEditHook {
         }
 
         return (WorldEditPlugin) plugin;
+    }
+
+    public void cleanup() {
+        if (logListener != null) {
+            logListener.unregister();
+            Bukkit.getLogger().info("[StellarProtect] WorldEdit logging system unregistered");
+        }
     }
 
 }

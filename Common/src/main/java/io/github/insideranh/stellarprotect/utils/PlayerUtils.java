@@ -58,6 +58,8 @@ public class PlayerUtils {
         specialIds.put("=wither_skull", -33L);
         specialIds.put("=minecart_tnt", -34L);
         specialIds.put("=fireball", -35L);
+
+        specialIds.put("=worldedit", -1000L);
     }
 
     public static long getNextLogId() {

@@ -53,6 +53,7 @@ public enum ActionCategory {
     WORLD_ACTIONS(11, "world_actions", new ActionType[]{
         ActionType.TREE_GROW, ActionType.BLOCK_SPREAD
     }),
+    WORLD_EDIT_ACTIONS(49, "world_edit_actions", new ActionType[]{}),
     UNKNOWN_ACTIONS(50, "unknown_actions", ActionType.values());
 
     private final int id;

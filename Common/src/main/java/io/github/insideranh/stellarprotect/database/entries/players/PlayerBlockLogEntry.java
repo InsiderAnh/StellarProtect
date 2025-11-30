@@ -56,6 +56,15 @@ public class PlayerBlockLogEntry extends LogEntry {
         super(playerId, actionType.getId(), blockState.getLocation(), System.currentTimeMillis());
         BlockTemplate itemTemplate = blocksManager.getBlockTemplate(blockState);
         this.blockId = itemTemplate.getId();
+
+        if (actionType.getId() != ActionType.BLOCK_PLACE.getId() && actionType.getId() != ActionType.BLOCK_BREAK.getId())
+            return;
+        if (blockState instanceof InventoryHolder) {
+            Inventory inventory = ((InventoryHolder) blockState).getInventory();
+            JsonObject jsonObject = StellarProtect.getInstance().getChestTransactionTracker().getInventoryContent(inventory);
+            this.extraType = ExtraDataType.INVENTORY_CONTENT.getId();
+            this.extraData = jsonObject.toString();
+        }
     }
 
     public PlayerBlockLogEntry(long playerId, Location location, Block block, ActionType actionType) {

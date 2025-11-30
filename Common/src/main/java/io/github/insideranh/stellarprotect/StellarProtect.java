@@ -7,6 +7,7 @@ import com.google.common.util.concurrent.MoreExecutors;
 import io.github.insideranh.stellarprotect.api.ColorUtils;
 import io.github.insideranh.stellarprotect.api.ItemsProviderRegistry;
 import io.github.insideranh.stellarprotect.api.ProtectNMS;
+import io.github.insideranh.stellarprotect.api.WorldEditHandler;
 import io.github.insideranh.stellarprotect.api.events.DecorativeLogicHandler;
 import io.github.insideranh.stellarprotect.api.events.EventLogicHandler;
 import io.github.insideranh.stellarprotect.blocks.DataBlock;
@@ -194,6 +195,10 @@ public class StellarProtect extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        if (worldEditHook != null) {
+            worldEditHook.cleanup();
+        }
+
         this.protectDatabase.close();
         this.bStats.shutdown();
     }
@@ -342,6 +347,15 @@ public class StellarProtect extends JavaPlugin {
     @SneakyThrows
     public DataEntity getDataEntity(HashMap<String, Object> map) {
         return Class.forName("io.github.insideranh.stellarprotect.nms." + completer + ".DataEntity_" + completer).asSubclass(DataEntity.class).getConstructor(HashMap.class).newInstance(map);
+    }
+
+    @SneakyThrows
+    public WorldEditHandler getWorldEditHandler() {
+        if (!completer.startsWith("v1_21")) {
+            Bukkit.getLogger().info("[StellarProtect] WorldEdit hook is only available for Minecraft 1.21.x versions in BETA.");
+            return null;
+        }
+        return Class.forName("io.github.insideranh.stellarprotect.nms.v1_21.WorldEditHandler_v1_21").asSubclass(WorldEditHandler.class).getConstructor().newInstance();
     }
 
     public StellarTaskHook getStellarTaskHook(Runnable runnable) {

@@ -4,7 +4,6 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import io.github.insideranh.stellarprotect.StellarProtect;
 import io.github.insideranh.stellarprotect.cache.keys.LocationCache;
-import io.github.insideranh.stellarprotect.xseries.XMaterial;
 import org.bukkit.Material;
 
 import java.nio.charset.StandardCharsets;
