@@ -50,11 +50,11 @@ optimizations:
   item-save-period: 30
   # Block save period, save default: 30 seconds
   block-save-period: 30
-  # Queue process period, save default: 30 seconds
+  # Queue process period, save default: 5 seconds
   # Period to process logs from SQLite queue to permanent database
-  queue-process-period: 30
+  queue-process-period: 5
   # Batch queue size, save default: 5000
-  batch-queue-size: 5000
+  batch-queue-size: 50000
   # Economy disabled, save default: false
   # If you don't need logs for economy, you can disable it
   # to optimize the plugin.

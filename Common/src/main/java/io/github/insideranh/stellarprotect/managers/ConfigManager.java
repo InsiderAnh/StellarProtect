@@ -74,7 +74,7 @@ public class ConfigManager {
         this.maxCores = Math.max(plugin.getConfig().getInt("optimizations.maxCores"), 4);
         this.savePeriod = plugin.getConfig().getInt("optimizations.save-period");
         this.batchSize = plugin.getConfig().getInt("optimizations.batch-size");
-        this.batchSize = plugin.getConfig().getInt("optimizations.batch-queue-size");
+        this.batchQueueSize = plugin.getConfig().getInt("optimizations.batch-queue-size");
         this.maxLogsPerLocation = plugin.getConfig().getInt("optimizations.max-logs-per-location");
         this.timeForCacheClear = plugin.getConfig().getLong("optimizations.time-for-cache-clear") * 60 * 1000L;
         this.daysToKeepLogs = plugin.getConfig().getInt("optimizations.days-to-keep-logs");

@@ -39,7 +39,7 @@ public class SQLQueueConnection {
                 stmt.execute("PRAGMA journal_mode = MEMORY");
                 stmt.execute("PRAGMA temp_store = MEMORY");
                 stmt.execute("PRAGMA locking_mode = EXCLUSIVE");
-                stmt.execute("PRAGMA cache_size = -128000");
+                stmt.execute("PRAGMA cache_size = -32000");
                 stmt.execute("PRAGMA count_changes = OFF");
                 stmt.execute("PRAGMA auto_vacuum = NONE");
                 stmt.execute("PRAGMA page_size = 8192");
@@ -88,6 +88,10 @@ public class SQLQueueConnection {
     }
 
     public void save(List<LogEntry> logEntries) {
+        if (logEntries == null || logEntries.isEmpty()) {
+            return;
+        }
+
         singleThreadExecutor.execute(() -> {
             long startTime = System.currentTimeMillis();
             try {
@@ -112,6 +116,7 @@ public class SQLQueueConnection {
                 Debugger.debugSave("Flushed " + logEntries.size() + " logs to queue in " + (System.currentTimeMillis() - startTime) + " ms");
             } catch (SQLException e) {
                 stellarProtect.getLogger().warning("Error flushing queue: " + e.getMessage());
+                e.printStackTrace();
                 try {
                     connection.rollback();
                 } catch (SQLException ex) {
@@ -122,105 +127,77 @@ public class SQLQueueConnection {
     }
 
     public List<QueuedLog> getLogs(int maxLogs) {
+        List<QueuedLog> logs = new ArrayList<>();
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+
         try {
-            return singleThreadExecutor.submit(() -> {
-                List<QueuedLog> logs = new ArrayList<>();
-                try {
-                    String logEntriesTable = stellarProtect.getConfigManager().getTablesLogEntries();
+            String logEntriesTable = stellarProtect.getConfigManager().getTablesLogEntries();
 
-                    PreparedStatement countStmt = connection.prepareStatement(
-                        "SELECT COUNT(*) as total FROM " + logEntriesTable
-                    );
-                    ResultSet countRs = countStmt.executeQuery();
-                    int totalLogs = 0;
-                    if (countRs.next()) {
-                        totalLogs = countRs.getInt("total");
-                    }
-                    countRs.close();
-                    countStmt.close();
+            long currentLastId = lastProcessedId.get();
 
-                    if (totalLogs == 0) {
-                        lastProcessedId.set(0);
-                        Debugger.debugSave("Queue is empty, reset lastProcessedId to 0");
-                        return logs;
-                    }
+            stmt = connection.prepareStatement(
+                "SELECT * FROM " + logEntriesTable +
+                    " WHERE id > ? ORDER BY id LIMIT ?"
+            );
+            stmt.setLong(1, currentLastId);
+            stmt.setInt(2, maxLogs);
 
-                    long currentLastId = lastProcessedId.get();
-                    if (currentLastId == 0) {
-                        PreparedStatement minStmt = connection.prepareStatement(
-                            "SELECT MIN(id) as min_id FROM " + logEntriesTable
-                        );
-                        ResultSet minRs = minStmt.executeQuery();
-                        if (minRs.next()) {
-                            long minId = minRs.getLong("min_id");
-                            if (minId > 0) {
-                                currentLastId = minId - 1;
-                                lastProcessedId.set(currentLastId);
-                                Debugger.debugSave("Initialized lastProcessedId to " + currentLastId + " (min_id - 1)");
-                            }
-                        }
-                        minRs.close();
-                        minStmt.close();
-                    }
+            rs = stmt.executeQuery();
 
-                    PreparedStatement stmt = connection.prepareStatement(
-                        "SELECT * FROM " + logEntriesTable +
-                            " WHERE id > ? ORDER BY id LIMIT ?"
-                    );
-                    stmt.setLong(1, currentLastId);
-                    stmt.setInt(2, maxLogs);
+            long maxId = currentLastId;
+            while (rs.next()) {
+                long id = rs.getLong("id");
+                maxId = Math.max(maxId, id);
 
-                    ResultSet rs = stmt.executeQuery();
+                QueuedLog log = QueuedLog.builder()
+                    .id(id)
+                    .playerId(rs.getLong("player_id"))
+                    .worldId(rs.getInt("world_id"))
+                    .x(rs.getDouble("x"))
+                    .y(rs.getDouble("y"))
+                    .z(rs.getDouble("z"))
+                    .actionType(rs.getInt("action_type"))
+                    .restored(rs.getInt("restored") == 1)
+                    .extraJson(rs.getString("extra_json"))
+                    .createdAt(rs.getLong("created_at"))
+                    .build();
 
-                    long maxId = currentLastId;
-                    while (rs.next()) {
-                        long id = rs.getLong("id");
-                        maxId = Math.max(maxId, id);
+                logs.add(log);
+            }
 
-                        QueuedLog log = QueuedLog.builder()
-                            .id(id)
-                            .playerId(rs.getLong("player_id"))
-                            .worldId(rs.getInt("world_id"))
-                            .x(rs.getDouble("x"))
-                            .y(rs.getDouble("y"))
-                            .z(rs.getDouble("z"))
-                            .actionType(rs.getInt("action_type"))
-                            .restored(rs.getInt("restored") == 1)
-                            .extraJson(rs.getString("extra_json"))
-                            .createdAt(rs.getLong("created_at"))
-                            .build();
+            if (!logs.isEmpty()) {
+                lastProcessedId.set(maxId);
+                Debugger.debugSave("Fetched " + logs.size() + " logs from queue (IDs " + logs.get(0).getId() + " to " + maxId + ")");
+            } else {
+                Debugger.debugSave("No new logs to fetch from queue (lastProcessedId: " + currentLastId + ")");
+            }
 
-                        logs.add(log);
-                    }
-
-                    if (!logs.isEmpty()) {
-                        lastProcessedId.set(maxId);
-                        Debugger.debugSave("Fetched " + logs.size() + " logs from queue, updated lastProcessedId to " + maxId);
-                    }
-
-                    rs.close();
-                    stmt.close();
-
-                } catch (SQLException e) {
-                    stellarProtect.getLogger().warning("Error getting logs from queue: " + e.getMessage());
-                    e.printStackTrace();
-                }
-
-                return logs;
-            }).get();
-        } catch (Exception e) {
-            stellarProtect.getLogger().warning("Error executing getLogs: " + e.getMessage());
+        } catch (SQLException e) {
+            stellarProtect.getLogger().warning("Error getting logs from queue: " + e.getMessage());
             e.printStackTrace();
-            return new ArrayList<>();
+        } finally {
+            try {
+                if (rs != null) rs.close();
+                if (stmt != null) stmt.close();
+            } catch (SQLException e) {
+                stellarProtect.getLogger().warning("Error closing resources: " + e.getMessage());
+            }
         }
+
+        return logs;
     }
 
     public void deleteProcessedLogs(long maxId) {
         singleThreadExecutor.execute(() -> {
+            PreparedStatement stmt = null;
+            PreparedStatement countStmt = null;
+            ResultSet countRs = null;
+
             try {
                 String logEntriesTable = stellarProtect.getConfigManager().getTablesLogEntries();
 
-                PreparedStatement stmt = connection.prepareStatement(
+                stmt = connection.prepareStatement(
                     "DELETE FROM " + logEntriesTable + " WHERE id <= ?"
                 );
                 stmt.setLong(1, maxId);
@@ -229,35 +206,36 @@ public class SQLQueueConnection {
                 connection.commit();
 
                 if (deleted > 0) {
-                    Debugger.debugSave("Deleted " + deleted + " processed logs from queue");
+                    Debugger.debugSave("Deleted " + deleted + " processed logs from queue (up to ID " + maxId + ")");
                 }
 
-                stmt.close();
-
-                PreparedStatement countStmt = connection.prepareStatement(
+                countStmt = connection.prepareStatement(
                     "SELECT COUNT(*) as remaining FROM " + logEntriesTable
                 );
-                ResultSet countRs = countStmt.executeQuery();
+                countRs = countStmt.executeQuery();
                 int remaining = 0;
                 if (countRs.next()) {
                     remaining = countRs.getInt("remaining");
                 }
-                countRs.close();
-                countStmt.close();
 
-                if (remaining == 0) {
-                    lastProcessedId.set(0);
-                    Debugger.debugSave("Queue is now empty, reset lastProcessedId to 0");
-                } else {
-                    Debugger.debugSave(remaining + " logs remaining in queue");
-                }
-
+                Debugger.debugSave(remaining + " logs remaining in queue");
             } catch (SQLException e) {
                 stellarProtect.getLogger().warning("Error deleting processed logs: " + e.getMessage());
+                e.printStackTrace();
                 try {
-                    connection.rollback();
+                    if (connection != null) {
+                        connection.rollback();
+                    }
                 } catch (SQLException ex) {
                     stellarProtect.getLogger().warning("Error rolling back delete: " + ex.getMessage());
+                }
+            } finally {
+                try {
+                    if (countRs != null) countRs.close();
+                    if (countStmt != null) countStmt.close();
+                    if (stmt != null) stmt.close();
+                } catch (SQLException e) {
+                    stellarProtect.getLogger().warning("Error closing resources: " + e.getMessage());
                 }
             }
         });
@@ -267,14 +245,23 @@ public class SQLQueueConnection {
         try {
             singleThreadExecutor.shutdown();
             if (!singleThreadExecutor.awaitTermination(10, java.util.concurrent.TimeUnit.SECONDS)) {
+                stellarProtect.getLogger().warning("Executor did not terminate in time, forcing shutdown...");
                 singleThreadExecutor.shutdownNow();
             }
 
+            if (insertStatement != null && !insertStatement.isClosed()) {
+                insertStatement.close();
+            }
+
             if (connection != null && !connection.isClosed()) {
+                connection.commit();
                 connection.close();
             }
+
+            stellarProtect.getLogger().info("Queue database closed.");
         } catch (Exception e) {
             stellarProtect.getLogger().warning("Error on close SQLite connection: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
