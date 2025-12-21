@@ -20,7 +20,11 @@ public class InspectArgument extends StellarArgument {
             plugin.getLangManager().sendMessage(sender, "messages.onlyPlayer");
             return;
         }
-        Player player = (Player) sender;
+        Player player = arguments.length > 1 && sender.hasPermission("stellarprotect.inspect.others") ? plugin.getServer().getPlayer(arguments[1]) : (Player) sender;
+        if (player == null) {
+            plugin.getLangManager().sendMessage(sender, "messages.offlinePlayer");
+            return;
+        }
         PlayerProtect playerProtect = PlayerProtect.getPlayer(player);
         if (playerProtect == null) {
             plugin.getLangManager().sendMessage(sender, "messages.noPlayer");

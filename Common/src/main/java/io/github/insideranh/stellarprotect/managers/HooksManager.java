@@ -16,6 +16,7 @@ public class HooksManager {
     private boolean xPlayerKitsHook;
     private boolean worldEditHook;
     private boolean treeCuterHook;
+    private boolean placeholderApiHook;
 
     public void load() {
         if (config == null) {
@@ -30,6 +31,7 @@ public class HooksManager {
         this.xPlayerKitsHook = config.getBoolean("hooks.xplayerkits.enabled");
         this.worldEditHook = config.getBoolean("hooks.worldedit.enabled");
         this.treeCuterHook = config.getBoolean("hooks.treecuter.enabled");
+        this.placeholderApiHook = config.getBoolean("hooks.placeholderapi.enabled");
     }
 
 }

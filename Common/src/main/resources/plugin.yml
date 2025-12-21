@@ -12,6 +12,7 @@ softdepend:
   - Vault
   - WorldEdit
   - FastAsyncWorldEdit
+  - PlaceholderAPI
 commands:
   stellarprotect:
     aliases:

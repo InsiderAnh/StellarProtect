@@ -169,10 +169,7 @@ public class SQLQueueConnection {
             if (!logs.isEmpty()) {
                 lastProcessedId.set(maxId);
                 Debugger.debugSave("Fetched " + logs.size() + " logs from queue (IDs " + logs.get(0).getId() + " to " + maxId + ")");
-            } else {
-                Debugger.debugSave("No new logs to fetch from queue (lastProcessedId: " + currentLastId + ")");
             }
-
         } catch (SQLException e) {
             stellarProtect.getLogger().warning("Error getting logs from queue: " + e.getMessage());
             e.printStackTrace();

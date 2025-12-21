@@ -19,6 +19,7 @@ messages:
   debugExtras: "&aDebug extras mode set to &7<state>"
   specifyRadius: "&cYou don't have radius specified, using default radius (10)."
   error: "&cA error occurred while processing this command. Report in discord."
+  offlinePlayer: "&cPlayer &7<player> &cis offline or doesn't exist."
   undo:
     preview: "&aPreview: §e<progress>% §7(§e<now>/§e<total>§7) §eUse §e/spt restore confirm §eto apply the changes."
     preview-verbose: "&aVerbose Preview: §e<progress>% §7(§e<now>/§e<total>§7) §7- Detailed info shown above. §eUse §e/spt restore confirm §eto apply."

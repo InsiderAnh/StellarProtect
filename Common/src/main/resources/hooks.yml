@@ -11,3 +11,5 @@ hooks:
     enabled: true
   treecuter:
     enabled: true
+  placeholderapi:
+    enabled: true

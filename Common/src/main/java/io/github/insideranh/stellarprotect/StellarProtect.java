@@ -44,6 +44,7 @@ import io.github.insideranh.stellarprotect.nms.v1_8_R3.ColorUtils_v1_8_R3;
 import io.github.insideranh.stellarprotect.nms.v1_8_R3.ProtectNMS_v1_8_R3;
 import io.github.insideranh.stellarprotect.nms.v1_9_R4.ColorUtils_v1_9_R4;
 import io.github.insideranh.stellarprotect.nms.v1_9_R4.ProtectNMS_v1_9_R4;
+import io.github.insideranh.stellarprotect.placeholders.SPTPlaceholders;
 import io.github.insideranh.stellarprotect.providers.ItemsProviderImpl;
 import io.github.insideranh.stellarprotect.restore.BlockRestore;
 import io.github.insideranh.stellarprotect.trackers.BlockTracker;
@@ -230,6 +231,10 @@ public class StellarProtect extends JavaPlugin {
             if (hooksManager.isWorldEditHook() && getServer().getPluginManager().isPluginEnabled("WorldEdit")) {
                 this.worldEditHook = new WorldEditHook();
                 getLogger().info("WorldEdit detected, enabling WorldEdit hook...");
+            }
+            if (hooksManager.isPlaceholderApiHook() && getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+                new SPTPlaceholders().register();
+                getLogger().info("PlaceholderAPI detected, enabling PlaceholderAPI hook...");
             }
         }).runTask(10);
     }
