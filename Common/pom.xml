@@ -287,6 +287,12 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
+            <groupId>io.github.insideranh.stellarprotect</groupId>
+            <artifactId>v1_21_R11</artifactId>
+            <version>1.0.0</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
             <groupId>dev.folia</groupId>
             <artifactId>folia-api</artifactId>
             <version>1.21.8-R0.1-SNAPSHOT</version>

@@ -16,8 +16,8 @@ public class InspectArgument extends StellarArgument {
 
     @Override
     public void onCommand(@NotNull CommandSender sender, String[] arguments) {
-        if (!(sender instanceof Player)) {
-            plugin.getLangManager().sendMessage(sender, "messages.onlyPlayer");
+        if (!(sender instanceof Player) && arguments.length < 2) {
+            plugin.getLangManager().sendMessage(sender, "messages.onlyPlayers");
             return;
         }
         Player player = arguments.length > 1 && sender.hasPermission("stellarprotect.inspect.others") ? plugin.getServer().getPlayer(arguments[1]) : (Player) sender;
