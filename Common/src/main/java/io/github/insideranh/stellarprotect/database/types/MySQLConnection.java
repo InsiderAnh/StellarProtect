@@ -5,6 +5,7 @@ import com.zaxxer.hikari.HikariDataSource;
 import io.github.insideranh.stellarprotect.StellarProtect;
 import io.github.insideranh.stellarprotect.database.repositories.*;
 import io.github.insideranh.stellarprotect.database.types.mysql.*;
+import io.github.insideranh.stellarprotect.utils.Debugger;
 import lombok.Getter;
 
 import java.sql.Connection;
@@ -149,27 +150,28 @@ public class MySQLConnection implements DatabaseConnection {
 
         try (Connection connection = dataSource.getConnection()) {
             try (Statement stmt = connection.createStatement()) {
-                stmt.execute("CREATE INDEX IF NOT EXISTS idx_query_main ON " + logEntries + " (created_at, action_type, x, y, z)");
-                stmt.execute("CREATE INDEX IF NOT EXISTS idx_log_entries_optimized ON " + logEntries + " (created_at DESC, action_type, x, y, z, player_id)");
-                stmt.execute("CREATE INDEX IF NOT EXISTS idx_action_time_coords ON " + logEntries + " (action_type, created_at, x, y, z)");
-                stmt.execute("CREATE INDEX IF NOT EXISTS idx_log_entries_filtering ON " + logEntries + " (created_at, x, y, z)");
+                stmt.execute("DROP INDEX idx_query_main ON " + logEntries + ";");
+                stmt.execute("DROP INDEX idx_log_entries_optimized ON " + logEntries + ";");
+                stmt.execute("DROP INDEX idx_action_time_coords ON " + logEntries + ";");
+                stmt.execute("DROP INDEX idx_log_entries_filtering ON " + logEntries + ";");
+                stmt.execute("DROP INDEX idx_query_optimized ON " + logEntries + ";");
+                stmt.execute("DROP INDEX idx_covering_query ON " + logEntries + ";");
+                stmt.execute("DROP INDEX idx_coords_time ON " + logEntries + ";");
 
-                stmt.execute("CREATE INDEX IF NOT EXISTS idx_time_action ON " + logEntries + " (created_at, action_type)");
-                stmt.execute("CREATE INDEX IF NOT EXISTS idx_player_time ON " + logEntries + " (player_id, created_at)");
-                stmt.execute("CREATE INDEX IF NOT EXISTS idx_world_time ON " + logEntries + " (world_id, created_at)");
+                stmt.execute("DROP INDEX idx_item_hash ON " + itemTemplates + ";");
+                stmt.execute("DROP INDEX idx_item_access_count ON " + itemTemplates + ";");
+                stmt.execute("DROP INDEX idx_item_last_accessed ON " + itemTemplates + ";");
+                stmt.execute("DROP INDEX idx_item_total_used ON " + itemTemplates + ";");
 
-                stmt.execute("CREATE INDEX IF NOT EXISTS idx_query_optimized ON " + logEntries + " (x, y, z, created_at DESC, action_type, player_id);");
-                stmt.execute("CREATE INDEX IF NOT EXISTS idx_covering_query ON " + logEntries + " (x, y, z, created_at, action_type, player_id, id);");
-                stmt.execute("CREATE INDEX IF NOT EXISTS idx_coords_time ON " + logEntries + " (x, y, z, created_at DESC);");
-                stmt.execute("CREATE INDEX IF NOT EXISTS idx_players_id ON " + players + " (id);");
+                stmt.execute("CREATE INDEX idx_location_time_lookup ON " + logEntries + " (created_at DESC, x, y, z, action_type)");
+                stmt.execute("CREATE INDEX idx_player_time ON " + logEntries + " (player_id, created_at)");
+                stmt.execute("CREATE INDEX idx_world_time ON " + logEntries + " (world_id, created_at)");
+                stmt.execute("CREATE INDEX idx_time_action ON " + logEntries + " (created_at, action_type)");
 
-                stmt.execute("CREATE INDEX IF NOT EXISTS idx_item_hash ON " + itemTemplates + " (base64)");
-                stmt.execute("CREATE INDEX IF NOT EXISTS idx_item_access_count ON " + itemTemplates + " (access_count DESC)");
-                stmt.execute("CREATE INDEX IF NOT EXISTS idx_item_last_accessed ON " + itemTemplates + " (last_accessed DESC)");
-                stmt.execute("CREATE INDEX IF NOT EXISTS idx_item_total_used ON " + itemTemplates + " (total_quantity_used DESC)");
+                stmt.execute("CREATE INDEX idx_players_id ON " + players + " (id)");
             }
         } catch (SQLException e) {
-            stellarProtect.getLogger().info("Failed to create indexes " + e.getMessage());
+            stellarProtect.getLogger().warning("Failed to create indexes: " + e.getMessage());
         }
 
         updateTables();
@@ -190,7 +192,7 @@ public class MySQLConnection implements DatabaseConnection {
                 stmt.execute("ALTER TABLE " + logEntries + " ADD COLUMN restored TINYINT DEFAULT 0;");
             }
         } catch (SQLException ex) {
-            stellarProtect.getLogger().info("The realname and hash column already exists, ignoring...");
+            Debugger.debugExtras("The realname and hash column already exists, ignoring...");
         }
     }
 

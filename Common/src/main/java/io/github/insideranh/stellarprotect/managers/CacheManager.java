@@ -15,6 +15,7 @@ public class CacheManager {
     private TaskCanceller deleteOldTask;
     private TaskCanceller saveItemTask;
     private TaskCanceller blockSaveTask;
+    private TaskCanceller queueProcessTask;
 
     public void load() {
         if (saveTask != null) {
@@ -29,6 +30,9 @@ public class CacheManager {
         if (blockSaveTask != null) {
             blockSaveTask.cancel();
         }
+        if (queueProcessTask != null) {
+            queueProcessTask.cancel();
+        }
 
         saveTask = plugin.getStellarTaskHook(() -> {
             plugin.getProtectDatabase().save(LoggerCache.getFlushLogsToDatabase());
@@ -41,6 +45,7 @@ public class CacheManager {
         }).runTaskTimerAsynchronously(plugin.getConfigManager().getDeleteOldPeriod() * 20L, plugin.getConfigManager().getDeleteOldPeriod() * 20L);
         saveItemTask = plugin.getStellarTaskHook(() -> plugin.getItemsManager().saveItems()).runTaskTimerAsynchronously(plugin.getConfigManager().getSaveItemPeriod() + ThreadLocalRandom.current().nextInt(0, 5) * 20L, plugin.getConfigManager().getSaveItemPeriod() * 20L);
         blockSaveTask = plugin.getStellarTaskHook(() -> plugin.getBlocksManager().saveBlocks()).runTaskTimerAsynchronously(plugin.getConfigManager().getSaveBlockPeriod() + ThreadLocalRandom.current().nextInt(0, 5) * 20L, plugin.getConfigManager().getSaveBlockPeriod() * 20L);
+        queueProcessTask = plugin.getStellarTaskHook(() -> plugin.getProtectDatabase().processQueueLogs()).runTaskTimerAsynchronously(plugin.getConfigManager().getQueueProcessPeriod() * 20L, plugin.getConfigManager().getQueueProcessPeriod() * 20L);
     }
 
     public void forceSave(ActionCategory actionCategory) {

@@ -4,6 +4,7 @@ import io.github.insideranh.stellarprotect.cache.keys.LocationCache;
 import io.github.insideranh.stellarprotect.utils.PlayerUtils;
 import io.github.insideranh.stellarprotect.utils.WorldUtils;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -23,6 +24,8 @@ public class LogEntry {
     protected final int actionType;
     protected final long createdAt;
     private byte restored;
+    @Setter
+    private String forcedJson;
 
     @SneakyThrows
     public LogEntry(ResultSet resultSet) {
@@ -84,6 +87,9 @@ public class LogEntry {
     }
 
     public String toSaveJson() {
+        if (forcedJson != null) {
+            return forcedJson;
+        }
         return "";
     }
 

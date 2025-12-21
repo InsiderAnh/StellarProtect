@@ -131,30 +131,76 @@ public class SQLConnection implements DatabaseConnection {
     @Override
     public void createIndexes() {
         String logEntries = stellarProtect.getConfigManager().getTablesLogEntries();
-        String itemTemplates = stellarProtect.getConfigManager().getTablesItemTemplates();
         String players = stellarProtect.getConfigManager().getTablesPlayers();
 
         try (Statement stmt = connection.createStatement()) {
-            stmt.execute("CREATE INDEX IF NOT EXISTS idx_query_main ON " + logEntries + " (created_at, action_type, x, y, z)");
-            stmt.execute("CREATE INDEX IF NOT EXISTS idx_log_entries_optimized ON " + logEntries + " (created_at DESC, action_type, x, y, z, player_id)");
-            stmt.execute("CREATE INDEX IF NOT EXISTS idx_action_time_coords ON " + logEntries + " (action_type, created_at, x, y, z)");
-            stmt.execute("CREATE INDEX IF NOT EXISTS idx_log_entries_filtering ON " + logEntries + " (created_at, x, y, z)");
+            try {
+                stmt.execute("DROP INDEX IF EXISTS idx_query_main;");
+            } catch (SQLException ignored) {
+            }
+            try {
+                stmt.execute("DROP INDEX IF EXISTS idx_log_entries_optimized;");
+            } catch (SQLException ignored) {
+            }
+            try {
+                stmt.execute("DROP INDEX IF EXISTS idx_action_time_coords;");
+            } catch (SQLException ignored) {
+            }
+            try {
+                stmt.execute("DROP INDEX IF EXISTS idx_log_entries_filtering;");
+            } catch (SQLException ignored) {
+            }
+            try {
+                stmt.execute("DROP INDEX IF EXISTS idx_query_optimized;");
+            } catch (SQLException ignored) {
+            }
+            try {
+                stmt.execute("DROP INDEX IF EXISTS idx_covering_query;");
+            } catch (SQLException ignored) {
+            }
+            try {
+                stmt.execute("DROP INDEX IF EXISTS idx_coords_time;");
+            } catch (SQLException ignored) {
+            }
+            try {
+                stmt.execute("DROP INDEX IF EXISTS idx_item_hash;");
+            } catch (SQLException ignored) {
+            }
+            try {
+                stmt.execute("DROP INDEX IF EXISTS idx_item_access_count;");
+            } catch (SQLException ignored) {
+            }
+            try {
+                stmt.execute("DROP INDEX IF EXISTS idx_item_last_accessed;");
+            } catch (SQLException ignored) {
+            }
+            try {
+                stmt.execute("DROP INDEX IF EXISTS idx_item_total_used;");
+            } catch (SQLException ignored) {
+            }
 
-            stmt.execute("CREATE INDEX IF NOT EXISTS idx_time_action ON " + logEntries + " (created_at, action_type)");
-            stmt.execute("CREATE INDEX IF NOT EXISTS idx_player_time ON " + logEntries + " (player_id, created_at)");
-            stmt.execute("CREATE INDEX IF NOT EXISTS idx_world_time ON " + logEntries + " (world_id, created_at)");
-
-            stmt.execute("CREATE INDEX IF NOT EXISTS idx_query_optimized ON " + logEntries + " (x, y, z, created_at DESC, action_type, player_id);");
-            stmt.execute("CREATE INDEX IF NOT EXISTS idx_covering_query ON " + logEntries + " (x, y, z, created_at, action_type, player_id, id);");
-            stmt.execute("CREATE INDEX IF NOT EXISTS idx_coords_time ON " + logEntries + " (x, y, z, created_at DESC);");
-            stmt.execute("CREATE INDEX IF NOT EXISTS idx_players_id ON " + players + " (id);");
-
-            stmt.execute("CREATE INDEX IF NOT EXISTS idx_item_hash ON " + itemTemplates + " (base64)");
-            stmt.execute("CREATE INDEX IF NOT EXISTS idx_item_access_count ON " + itemTemplates + " (access_count DESC)");
-            stmt.execute("CREATE INDEX IF NOT EXISTS idx_item_last_accessed ON " + itemTemplates + " (last_accessed DESC)");
-            stmt.execute("CREATE INDEX IF NOT EXISTS idx_item_total_used ON " + itemTemplates + " (total_quantity_used DESC)");
+            try {
+                stmt.execute("CREATE INDEX IF NOT EXISTS idx_location_time_lookup ON " + logEntries + " (created_at DESC, x, y, z, action_type)");
+            } catch (SQLException ignored) {
+            }
+            try {
+                stmt.execute("CREATE INDEX IF NOT EXISTS idx_player_time ON " + logEntries + " (player_id, created_at)");
+            } catch (SQLException ignored) {
+            }
+            try {
+                stmt.execute("CREATE INDEX IF NOT EXISTS idx_world_time ON " + logEntries + " (world_id, created_at)");
+            } catch (SQLException ignored) {
+            }
+            try {
+                stmt.execute("CREATE INDEX IF NOT EXISTS idx_time_action ON " + logEntries + " (created_at, action_type)");
+            } catch (SQLException ignored) {
+            }
+            try {
+                stmt.execute("CREATE INDEX IF NOT EXISTS idx_players_id ON " + players + " (id)");
+            } catch (SQLException ignored) {
+            }
         } catch (SQLException e) {
-            stellarProtect.getLogger().info("Failed to create indexes");
+            stellarProtect.getLogger().warning("Failed to create indexes: " + e.getMessage());
         }
 
         updateTables();

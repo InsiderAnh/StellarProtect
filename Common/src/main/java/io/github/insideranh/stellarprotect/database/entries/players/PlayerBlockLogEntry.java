@@ -54,8 +54,8 @@ public class PlayerBlockLogEntry extends LogEntry {
 
     public PlayerBlockLogEntry(long playerId, BlockState blockState, ActionType actionType) {
         super(playerId, actionType.getId(), blockState.getLocation(), System.currentTimeMillis());
-        BlockTemplate itemTemplate = blocksManager.getBlockTemplate(blockState);
-        this.blockId = itemTemplate.getId();
+        BlockTemplate blockTemplate = blocksManager.getBlockTemplate(blockState);
+        this.blockId = blockTemplate.getId();
 
         if (actionType.getId() != ActionType.BLOCK_PLACE.getId() && actionType.getId() != ActionType.BLOCK_BREAK.getId())
             return;
@@ -69,14 +69,14 @@ public class PlayerBlockLogEntry extends LogEntry {
 
     public PlayerBlockLogEntry(long playerId, Location location, Block block, ActionType actionType) {
         super(playerId, actionType.getId(), location, System.currentTimeMillis());
-        BlockTemplate itemTemplate = blocksManager.getBlockTemplate(block);
-        this.blockId = itemTemplate.getId();
+        BlockTemplate blockTemplate = blocksManager.getBlockTemplate(block);
+        this.blockId = blockTemplate.getId();
     }
 
     public PlayerBlockLogEntry(long playerId, Block block, ActionType actionType) {
         super(playerId, actionType.getId(), block.getLocation(), System.currentTimeMillis());
-        BlockTemplate itemTemplate = blocksManager.getBlockTemplate(block);
-        this.blockId = itemTemplate.getId();
+        BlockTemplate blockTemplate = blocksManager.getBlockTemplate(block);
+        this.blockId = blockTemplate.getId();
 
         if (actionType.getId() != ActionType.BLOCK_PLACE.getId() && actionType.getId() != ActionType.BLOCK_BREAK.getId())
             return;
@@ -90,8 +90,8 @@ public class PlayerBlockLogEntry extends LogEntry {
 
     public PlayerBlockLogEntry(long playerId, Block block, ActionType actionType, String nexoBlockId) {
         super(playerId, actionType.getId(), block.getLocation(), System.currentTimeMillis());
-        BlockTemplate itemTemplate = blocksManager.getBlockTemplate(block);
-        this.blockId = itemTemplate.getId();
+        BlockTemplate blockTemplate = blocksManager.getBlockTemplate(block);
+        this.blockId = blockTemplate.getId();
         this.nexoBlockId = "nexo:" + nexoBlockId;
     }
 
@@ -119,8 +119,8 @@ public class PlayerBlockLogEntry extends LogEntry {
             return nexoBlockId;
         }
 
-        BlockTemplate itemTemplate = blocksManager.getBlockTemplate(blockId);
-        return itemTemplate.getDataBlock().getBlockDataString();
+        BlockTemplate blockTemplate = blocksManager.getBlockTemplate(blockId);
+        return blockTemplate.getDataBlock().getBlockDataString();
     }
 
     @Override

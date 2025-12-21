@@ -21,10 +21,10 @@ public enum MinecraftVersion {
     v1_19_R1,
     v1_19_R2,
     v1_19_R3,
-    v1_20_R1,
-    v1_20_R2,
-    v1_20_R3,
-    v1_20_R4,
+    v1_20_R1("1.20.1-R0.1-SNAPSHOT"),
+    v1_20_R2("1.20.2-R0.1-SNAPSHOT"),
+    v1_20_R3("1.20.3-R0.1-SNAPSHOT", "1.20.4-R0.1-SNAPSHOT"),
+    v1_20_R4("1.20.5-R0.1-SNAPSHOT", "1.20.6-R0.1-SNAPSHOT"),
     v1_20(false),
     v1_21_R1("1.21.1-R0.1-SNAPSHOT"),
     v1_21_R2("1.21.2-R0.1-SNAPSHOT"),
@@ -36,6 +36,7 @@ public enum MinecraftVersion {
     v1_21_R8("1.21.8-R0.1-SNAPSHOT"),
     v1_21_R9("1.21.9-R0.1-SNAPSHOT"),
     v1_21_R10("1.21.10-R0.1-SNAPSHOT"),
+    v1_21_R11("1.21.11-R0.1-SNAPSHOT"),
     v1_21("1.21-R0.1-SNAPSHOT"),
     v1_22;
 

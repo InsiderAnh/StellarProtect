@@ -464,21 +464,30 @@ public class LoggerRepositoryMySQL implements LoggerRepository {
         String countQuery =
             "SELECT COUNT(*) FROM " + stellarProtect.getConfigManager().getTablesLogEntries() + " ple " +
                 "WHERE ple.created_at BETWEEN ? AND ? " +
-                "AND ROUND(ple.x) = ? AND ROUND(ple.y) = ? AND ROUND(ple.z) = ? " + actionTypeFilter;
+                "AND ple.x BETWEEN ? AND ? " +
+                "AND ple.y BETWEEN ? AND ? " +
+                "AND ple.z BETWEEN ? AND ? " + actionTypeFilter;
 
         long startTime = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(30);
         long endTime = System.currentTimeMillis();
+
+        int blockX = location.getBlockX();
+        int blockY = location.getBlockY();
+        int blockZ = location.getBlockZ();
 
         try (Connection connection = getConnection();
              PreparedStatement countStmt = connection.prepareStatement(countQuery)) {
             countStmt.setLong(1, startTime);
             countStmt.setLong(2, endTime);
-            countStmt.setInt(3, location.getBlockX());
-            countStmt.setInt(4, location.getBlockY());
-            countStmt.setInt(5, location.getBlockZ());
+            countStmt.setDouble(3, blockX - 0.5);
+            countStmt.setDouble(4, blockX + 0.5);
+            countStmt.setDouble(5, blockY - 0.5);
+            countStmt.setDouble(6, blockY + 0.5);
+            countStmt.setDouble(7, blockZ - 0.5);
+            countStmt.setDouble(8, blockZ + 0.5);
 
             if (actionType != null) {
-                countStmt.setInt(6, actionType.getId());
+                countStmt.setInt(9, actionType.getId());
             }
 
             try (ResultSet resultSet = countStmt.executeQuery()) {
@@ -503,28 +512,37 @@ public class LoggerRepositoryMySQL implements LoggerRepository {
                 "FROM " + stellarProtect.getConfigManager().getTablesLogEntries() + " ple " +
                 "LEFT JOIN " + stellarProtect.getConfigManager().getTablesPlayers() + " p ON ple.player_id = p.id " +
                 "WHERE ple.created_at BETWEEN ? AND ? " +
-                "AND ROUND(ple.x) = ? AND ROUND(ple.y) = ? AND ROUND(ple.z) = ? " + actionTypeFilter +
+                "AND ple.x BETWEEN ? AND ? " +
+                "AND ple.y BETWEEN ? AND ? " +
+                "AND ple.z BETWEEN ? AND ? " + actionTypeFilter +
                 "ORDER BY ple.created_at DESC " +
                 "LIMIT ? OFFSET ?";
 
         long startTime = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(30);
         long endTime = System.currentTimeMillis();
 
+        int blockX = location.getBlockX();
+        int blockY = location.getBlockY();
+        int blockZ = location.getBlockZ();
+
         try (Connection connection = getConnection();
              PreparedStatement dataStmt = connection.prepareStatement(dataQuery)) {
             dataStmt.setLong(1, startTime);
             dataStmt.setLong(2, endTime);
-            dataStmt.setInt(3, location.getBlockX());
-            dataStmt.setInt(4, location.getBlockY());
-            dataStmt.setInt(5, location.getBlockZ());
+            dataStmt.setDouble(3, blockX - 0.5);
+            dataStmt.setDouble(4, blockX + 1.5);
+            dataStmt.setDouble(5, blockY - 0.5);
+            dataStmt.setDouble(6, blockY + 1.5);
+            dataStmt.setDouble(7, blockZ - 0.5);
+            dataStmt.setDouble(8, blockZ + 1.5);
 
             if (actionType != null) {
-                dataStmt.setInt(6, actionType.getId());
-                dataStmt.setInt(7, limit);
-                dataStmt.setInt(8, skip);
+                dataStmt.setInt(9, actionType.getId());
+                dataStmt.setInt(10, limit);
+                dataStmt.setInt(11, skip);
             } else {
-                dataStmt.setInt(6, limit);
-                dataStmt.setInt(7, skip);
+                dataStmt.setInt(9, limit);
+                dataStmt.setInt(10, skip);
             }
 
             try (ResultSet rs = dataStmt.executeQuery()) {

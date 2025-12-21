@@ -331,13 +331,7 @@ public class BlockListener implements Listener {
             playerId = PlayerUtils.getEntityByDirectId("=vine");
         } else if (newMaterial == Material.FIRE || newMaterial.name().contains("FIRE")) {
             playerId = PlayerUtils.getEntityByDirectId("=fire");
-        } /*else if (newMaterial.name().contains("MUSHROOM")) {
-            playerId = PlayerUtils.getEntityByDirectId("=natural");
-        } else if (newMaterial.name().equals("GRASS_BLOCK") || newMaterial.name().equals("GRASS") || newMaterial.name().equals("MYCELIUM")) {
-            playerId = PlayerUtils.getEntityByDirectId("=natural");
-        } else if (newMaterial.name().contains("KELP") || newMaterial.name().contains("SEAGRASS")) {
-            playerId = PlayerUtils.getEntityByDirectId("=natural");
-        }*/ else {
+        } else {
             playerId = PlayerUtils.getEntityByDirectId("=natural");
             return;
         }

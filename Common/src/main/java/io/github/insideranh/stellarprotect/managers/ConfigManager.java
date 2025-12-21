@@ -30,6 +30,7 @@ public class ConfigManager {
     private boolean liquidTracking;
     private int maxCores;
     private int batchSize;
+    private int batchQueueSize;
     private int savePeriod;
     private int maxLogsPerLocation;
     private int deleteOldPeriod;
@@ -38,6 +39,7 @@ public class ConfigManager {
     private int daysToKeepLogs;
     private int saveItemPeriod;
     private int saveBlockPeriod;
+    private int queueProcessPeriod;
     private boolean suspiciousPatterns;
     private boolean checkUpdates;
     private boolean economyDisabled;
@@ -72,6 +74,7 @@ public class ConfigManager {
         this.maxCores = Math.max(plugin.getConfig().getInt("optimizations.maxCores"), 4);
         this.savePeriod = plugin.getConfig().getInt("optimizations.save-period");
         this.batchSize = plugin.getConfig().getInt("optimizations.batch-size");
+        this.batchSize = plugin.getConfig().getInt("optimizations.batch-queue-size");
         this.maxLogsPerLocation = plugin.getConfig().getInt("optimizations.max-logs-per-location");
         this.timeForCacheClear = plugin.getConfig().getLong("optimizations.time-for-cache-clear") * 60 * 1000L;
         this.daysToKeepLogs = plugin.getConfig().getInt("optimizations.days-to-keep-logs");
@@ -79,6 +82,7 @@ public class ConfigManager {
         this.cleanPlacedCachePeriod = plugin.getConfig().getLong("optimizations.clean-placed-cache-period") * 1000L;
         this.saveItemPeriod = plugin.getConfig().getInt("optimizations.item-save-period");
         this.saveBlockPeriod = plugin.getConfig().getInt("optimizations.block-save-period");
+        this.queueProcessPeriod = plugin.getConfig().getInt("optimizations.queue-process-period", 30);
         this.economyDisabled = plugin.getConfig().getBoolean("optimizations.economy-disabled");
         this.economyCheckInterval = plugin.getConfig().getInt("optimizations.economy-check-interval");
 
