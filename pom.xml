@@ -70,10 +70,18 @@
                                         <exclude>META-INF/*.DSA</exclude>
                                         <exclude>META-INF/*.RSA</exclude>
                                         <exclude>META-INF/MANIFEST.MF</exclude>
+                                        <exclude>com/cryptomorin/xseries/XBiome*</exclude>
+                                        <exclude>com/cryptomorin/xseries/NMSExtras*</exclude>
+                                        <exclude>com/cryptomorin/xseries/NoteBlockMusic*</exclude>
+                                        <exclude>com/cryptomorin/xseries/SkullCacheListener*</exclude>
                                     </excludes>
                                 </filter>
                             </filters>
                             <relocations>
+                                <relocation>
+                                    <pattern>com.cryptomorin.xseries</pattern>
+                                    <shadedPattern>io.github.insideranh.stellarprotect.libs.xseries</shadedPattern>
+                                </relocation>
                                 <relocation>
                                     <pattern>de.tr7zw.changeme.nbtapi</pattern>
                                     <shadedPattern>io.github.insideranh.stellarprotect.libs.nbtapi</shadedPattern>
