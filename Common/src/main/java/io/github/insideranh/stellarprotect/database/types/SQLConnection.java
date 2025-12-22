@@ -206,6 +206,16 @@ public class SQLConnection implements DatabaseConnection {
         updateTables();
     }
 
+    @Override
+    public void vacuum() {
+        try (Statement stmt = connection.createStatement()) {
+            stmt.execute("VACUUM;");
+            stellarProtect.getLogger().info("SQLite database vacuumed successfully.");
+        } catch (SQLException e) {
+            stellarProtect.getLogger().warning("Failed to vacuum SQLite database: " + e.getMessage());
+        }
+    }
+
     public void updateTables() {
         String logEntries = stellarProtect.getConfigManager().getTablesLogEntries();
         String players = stellarProtect.getConfigManager().getTablesPlayers();

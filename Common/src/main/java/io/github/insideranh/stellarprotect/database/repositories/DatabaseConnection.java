@@ -6,6 +6,8 @@ public interface DatabaseConnection {
 
     void createIndexes();
 
+    void vacuum();
+
     void close();
 
     IdsRepository getIdsRepository();

@@ -177,6 +177,17 @@ public class MySQLConnection implements DatabaseConnection {
         updateTables();
     }
 
+    @Override
+    public void vacuum() {
+        try (Connection connection = dataSource.getConnection();
+             Statement stmt = connection.createStatement()) {
+            stmt.execute("OPTIMIZE TABLE " + stellarProtect.getConfigManager().getTablesLogEntries() + ";");
+            stmt.execute("OPTIMIZE TABLE " + stellarProtect.getConfigManager().getTablesItemTemplates() + ";");
+        } catch (SQLException e) {
+            stellarProtect.getLogger().warning("Failed to optimize tables: " + e.getMessage());
+        }
+    }
+
     public void updateTables() {
         String logEntries = stellarProtect.getConfigManager().getTablesLogEntries();
         String players = stellarProtect.getConfigManager().getTablesPlayers();
