@@ -1,5 +1,6 @@
 package io.github.insideranh.stellarprotect.inspect;
 
+import com.cryptomorin.xseries.XItemFlag;
 import io.github.insideranh.stellarprotect.StellarProtect;
 import io.github.insideranh.stellarprotect.data.PlayerProtect;
 import io.github.insideranh.stellarprotect.database.entries.LogEntry;
@@ -30,7 +31,7 @@ public class ItemLogActionHandler implements InspectHandler.ActionHandler {
     }
 
     private static boolean hasEnchants(ItemStack item) {
-        return item.hasItemMeta() && item.getItemMeta().hasEnchants();
+        return item.hasItemMeta() && item.getItemMeta().hasEnchants() && !item.getItemMeta().hasItemFlag(XItemFlag.HIDE_ENCHANTS.get());
     }
 
     @Override
