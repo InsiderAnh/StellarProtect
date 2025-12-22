@@ -9,6 +9,8 @@ import org.bukkit.World;
 @UtilityClass
 public class LocationUtils {
 
+    public String FORMAT_LOCATION = "x<x>/y<y>/z<z>/<world>";
+
     public static String getStringLocation(@NonNull Location location) {
         if (location.getWorld() == null) return null;
         return location.getWorld().getName() + ";" + location.getX() + ";" + location.getY() + ";" + location.getZ();
@@ -16,7 +18,11 @@ public class LocationUtils {
 
     public static String getFormattedStringLocation(@NonNull Location location) {
         if (location.getWorld() == null) return "";
-        return "x" + location.getBlockX() + "/y" + location.getBlockY() + "/z" + location.getBlockZ() + "/" + location.getWorld().getName();
+        return FORMAT_LOCATION
+            .replace("<x>", String.valueOf(location.getBlockX()))
+            .replace("<y>", String.valueOf(location.getBlockY()))
+            .replace("<z>", String.valueOf(location.getBlockZ()))
+            .replace("<world>", location.getWorld().getName());
     }
 
     public static Location getLocationString(@NonNull String location) {

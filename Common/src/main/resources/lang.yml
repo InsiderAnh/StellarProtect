@@ -164,6 +164,7 @@ messages:
   actions:
     lookup: "&7----- &6StellarProtect &8| &6Lookup &7-----"
     location: "&7&l      ˄   &7(<location>) &7&l   ˄"
+    locationFormat: "x<x>/y<y>/z<z>/<world>"
     transactions_title: "&7+ &6StellarProtect &8| &7(<location>) &8| &6Items &7+"
     added_item: "&7<time> &8| &a<player>&f added &8| &d<data> &7(x<amount>)"
     removed_item: "&7<time> &8| &c<player>&f removed &8| &d<data> &7(x<amount>)"

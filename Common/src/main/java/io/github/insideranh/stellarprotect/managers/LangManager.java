@@ -2,6 +2,7 @@ package io.github.insideranh.stellarprotect.managers;
 
 import io.github.insideranh.stellarprotect.StellarProtect;
 import io.github.insideranh.stellarprotect.settings.InsiderConfig;
+import io.github.insideranh.stellarprotect.utils.LocationUtils;
 import lombok.Getter;
 import lombok.NonNull;
 import org.bukkit.command.CommandSender;
@@ -21,6 +22,8 @@ public class LangManager {
         } else {
             this.lang.reload();
         }
+
+        LocationUtils.FORMAT_LOCATION = lang.getStringOrDefault("messages.actions.locationFormat", "x<x>/y<y>/z<z>/<world>");
     }
 
     public void sendMessage(@NonNull CommandSender sender, @NonNull String path) {
