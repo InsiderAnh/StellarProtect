@@ -58,6 +58,12 @@ public class StellarProtectCMD implements TabExecutor {
             return false;
         }
         switch (args[0].toLowerCase()) {
+            case "vacuum":
+                if (hasBlockedPermission(sender, "admin")) {
+                    return false;
+                }
+                plugin.getProtectDatabase().vacuum();
+                break;
             case "rs":
                 if (hasBlockedPermission(sender, "rollback")) {
                     return false;

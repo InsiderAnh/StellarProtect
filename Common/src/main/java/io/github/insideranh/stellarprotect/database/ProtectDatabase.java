@@ -52,6 +52,10 @@ public class ProtectDatabase {
         this.stellarProtect.getLookupExecutor().execute(() -> this.databaseConnection.getBlocksRepository().loadBlockDatas());
     }
 
+    public void vacuum() {
+        this.databaseConnection.vacuum();
+    }
+
     public void close() {
         this.databaseConnection.close();
     }
