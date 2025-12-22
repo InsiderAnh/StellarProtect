@@ -1,12 +1,12 @@
 package io.github.insideranh.stellarprotect.listeners;
 
+import com.cryptomorin.xseries.XEntityType;
 import io.github.insideranh.stellarprotect.blocks.adjacents.AdjacentTracker;
 import io.github.insideranh.stellarprotect.blocks.adjacents.AdjacentType;
 import io.github.insideranh.stellarprotect.cache.LoggerCache;
 import io.github.insideranh.stellarprotect.database.entries.players.PlayerBlockLogEntry;
 import io.github.insideranh.stellarprotect.enums.ActionType;
 import io.github.insideranh.stellarprotect.utils.PlayerUtils;
-import io.github.insideranh.stellarprotect.xseries.XEntityType;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
