@@ -26,7 +26,7 @@ public class IdsRepositoryMySQL implements IdsRepository {
     public void loadWorlds() {
         try (Connection connection = getConnection()) {
             try (PreparedStatement stmt = connection.prepareStatement(
-                "SELECT * FROM " + stellarProtect.getConfigManager().getTablesWorlds()
+                    "SELECT * FROM " + stellarProtect.getConfigManager().getTablesWorlds()
             )) {
                 ResultSet rs = stmt.executeQuery();
                 while (rs.next()) {
@@ -46,7 +46,7 @@ public class IdsRepositoryMySQL implements IdsRepository {
     public void loadEntityIds() {
         try (Connection connection = getConnection()) {
             try (PreparedStatement stmt = connection.prepareStatement(
-                "SELECT * FROM " + stellarProtect.getConfigManager().getTablesEntityIds()
+                    "SELECT * FROM " + stellarProtect.getConfigManager().getTablesEntityIds()
             )) {
                 ResultSet rs = stmt.executeQuery();
                 while (rs.next()) {
@@ -69,7 +69,7 @@ public class IdsRepositoryMySQL implements IdsRepository {
         try {
             try (Connection connection = getConnection()) {
                 try (PreparedStatement stmt = connection.prepareStatement(
-                    "INSERT INTO " + stellarProtect.getConfigManager().getTablesWorlds() + " (id, name) VALUES (?, ?)"
+                        "INSERT INTO " + stellarProtect.getConfigManager().getTablesWorlds() + " (id, name) VALUES (?, ?)"
                 )) {
                     stmt.setInt(1, id);
                     stmt.setString(2, world);
@@ -87,7 +87,7 @@ public class IdsRepositoryMySQL implements IdsRepository {
     public void saveEntityId(String entityType, long id) {
         try (Connection connection = getConnection()) {
             try (PreparedStatement stmt = connection.prepareStatement(
-                "INSERT INTO " + stellarProtect.getConfigManager().getTablesEntityIds() + " (entityType, id) VALUES (?, ?)"
+                    "INSERT INTO " + stellarProtect.getConfigManager().getTablesEntityIds() + " (entityType, id) VALUES (?, ?)"
             )) {
                 stmt.setString(1, entityType);
                 stmt.setLong(2, id);

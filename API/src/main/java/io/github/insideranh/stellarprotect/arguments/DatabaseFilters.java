@@ -41,17 +41,17 @@ public class DatabaseFilters {
 
     public boolean isIgnoreCache() {
         return !allIncludeFilters.isEmpty() || !allExcludeFilters.isEmpty()
-            || !includeMaterialFilters.isEmpty() || !excludeMaterialFilters.isEmpty()
-            || !includeBlockFilters.isEmpty() || !excludeBlockFilters.isEmpty()
-            || !includeEntityFilters.isEmpty() || !excludeEntityFilters.isEmpty()
-            || !includeDisplayFilters.isEmpty() || !excludeDisplayFilters.isEmpty()
-            || !includeLoreFilters.isEmpty() || !excludeLoreFilters.isEmpty()
-            || !includeEnchantFilters.isEmpty() || !excludeEnchantFilters.isEmpty()
-            || minAmount != null || maxAmount != null
-            || chunkX != null || chunkZ != null
-            || (biomeFilter != null && !biomeFilter.isEmpty())
-            || (toolFilter != null && !toolFilter.isEmpty())
-            || regex;
+                || !includeMaterialFilters.isEmpty() || !excludeMaterialFilters.isEmpty()
+                || !includeBlockFilters.isEmpty() || !excludeBlockFilters.isEmpty()
+                || !includeEntityFilters.isEmpty() || !excludeEntityFilters.isEmpty()
+                || !includeDisplayFilters.isEmpty() || !excludeDisplayFilters.isEmpty()
+                || !includeLoreFilters.isEmpty() || !excludeLoreFilters.isEmpty()
+                || !includeEnchantFilters.isEmpty() || !excludeEnchantFilters.isEmpty()
+                || minAmount != null || maxAmount != null
+                || chunkX != null || chunkZ != null
+                || (biomeFilter != null && !biomeFilter.isEmpty())
+                || (toolFilter != null && !toolFilter.isEmpty())
+                || regex;
     }
 
 }

@@ -1,18 +1,14 @@
 package io.github.insideranh.stellarprotect.database.entries.players;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import io.github.insideranh.stellarprotect.StellarProtect;
 import io.github.insideranh.stellarprotect.database.entries.LogEntry;
 import io.github.insideranh.stellarprotect.enums.ActionType;
-import io.github.insideranh.stellarprotect.items.ItemReference;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 
 import java.sql.ResultSet;
-import java.util.Base64;
 
 @Getter
 public class PlayerInventorySnapshotEntry extends LogEntry {

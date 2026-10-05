@@ -14,7 +14,6 @@ import org.bukkit.block.BlockState;
 import org.bukkit.block.TileState;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 
 public class BlockRestore {
@@ -47,6 +46,30 @@ public class BlockRestore {
         this.oldData = oldData;
         this.blockEntityNbt = blockEntityNbt;
         this.oldBlockEntityNbt = oldBlockEntityNbt;
+    }
+
+    private static org.bukkit.block.data.BlockData createBlockDataSafe(String s) {
+        try {
+            return Bukkit.createBlockData(s);
+        } catch (Exception e) {
+            return Material.AIR.createBlockData();
+        }
+    }
+
+    public static BlockRestore fromData(String data) {
+        return new BlockRestore(data);
+    }
+
+    public static BlockRestore fromData(String data, byte extraType, String extraData) {
+        return new BlockRestore(data, extraType, extraData);
+    }
+
+    public static BlockRestore fromData(String data, byte extraType, String extraData, boolean isPlace) {
+        return new BlockRestore(data, extraType, extraData, isPlace);
+    }
+
+    public static BlockRestore fromData(String data, byte extraType, String extraData, boolean isPlace, String oldData, String blockEntityNbt, String oldBlockEntityNbt) {
+        return new BlockRestore(data, extraType, extraData, isPlace, oldData, blockEntityNbt, oldBlockEntityNbt);
     }
 
     public void reset(Gson gson, Location location) {
@@ -92,12 +115,29 @@ public class BlockRestore {
         return isPlace;
     }
 
-    public String getData() { return data; }
-    public byte getExtraType() { return extraType; }
-    public String getExtraData() { return extraData; }
-    public String getOldData() { return oldData; }
-    public String getBlockEntityNbt() { return blockEntityNbt; }
-    public String getOldBlockEntityNbt() { return oldBlockEntityNbt; }
+    public String getData() {
+        return data;
+    }
+
+    public byte getExtraType() {
+        return extraType;
+    }
+
+    public String getExtraData() {
+        return extraData;
+    }
+
+    public String getOldData() {
+        return oldData;
+    }
+
+    public String getBlockEntityNbt() {
+        return blockEntityNbt;
+    }
+
+    public String getOldBlockEntityNbt() {
+        return oldBlockEntityNbt;
+    }
 
     protected void applyNewBlockData(Block block) {
         if (data == null) {
@@ -118,7 +158,8 @@ public class BlockRestore {
                 BlockData blockData = Bukkit.createBlockData(oldData);
                 block.setBlockData(blockData, false);
                 return;
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+            }
         }
         if (data != null) {
             try {
@@ -127,7 +168,8 @@ public class BlockRestore {
                 state.setBlockData(blockData);
                 state.update(true, false);
                 return;
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+            }
         }
         block.setType(Material.AIR);
     }
@@ -140,37 +182,14 @@ public class BlockRestore {
                 JsonObject obj = new JsonParser().parse(extraData).getAsJsonObject();
                 SerializerUtils.setInventoryContent(((InventoryHolder) state).getInventory(), obj);
             }
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+        }
     }
 
     protected void applyBlockNbt(Block block) {
         if (blockEntityNbt != null && block.getState() instanceof TileState) {
             NbtUtils.applyBlockEntity((TileState) block.getState(), blockEntityNbt);
         }
-    }
-
-    private static org.bukkit.block.data.BlockData createBlockDataSafe(String s) {
-        try {
-            return Bukkit.createBlockData(s);
-        } catch (Exception e) {
-            return Material.AIR.createBlockData();
-        }
-    }
-
-    public static BlockRestore fromData(String data) {
-        return new BlockRestore(data);
-    }
-
-    public static BlockRestore fromData(String data, byte extraType, String extraData) {
-        return new BlockRestore(data, extraType, extraData);
-    }
-
-    public static BlockRestore fromData(String data, byte extraType, String extraData, boolean isPlace) {
-        return new BlockRestore(data, extraType, extraData, isPlace);
-    }
-
-    public static BlockRestore fromData(String data, byte extraType, String extraData, boolean isPlace, String oldData, String blockEntityNbt, String oldBlockEntityNbt) {
-        return new BlockRestore(data, extraType, extraData, isPlace, oldData, blockEntityNbt, oldBlockEntityNbt);
     }
 
 }

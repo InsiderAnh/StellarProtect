@@ -42,81 +42,81 @@ public class SQLConnection implements DatabaseConnection {
                 String blockTemplatesTable = stellarProtect.getConfigManager().getTablesBlockTemplates();
 
                 statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + playersTable + " (" +
-                    "id BIGINT PRIMARY KEY," +
-                    "uuid VARCHAR(36) NOT NULL," +
-                    "name VARCHAR(36)," +
-                    "realname VARCHAR(36)" +
-                    ")");
+                        "id BIGINT PRIMARY KEY," +
+                        "uuid VARCHAR(36) NOT NULL," +
+                        "name VARCHAR(36)," +
+                        "realname VARCHAR(36)" +
+                        ")");
 
                 statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + worldsTable + " (" +
-                    "id INT PRIMARY KEY," +
-                    "name TEXT NOT NULL" +
-                    ")");
+                        "id INT PRIMARY KEY," +
+                        "name TEXT NOT NULL" +
+                        ")");
 
                 statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + entityIdsTable + " (" +
-                    "id BIGINT PRIMARY KEY," +
-                    "entityType TEXT NOT NULL" +
-                    ")");
+                        "id BIGINT PRIMARY KEY," +
+                        "entityType TEXT NOT NULL" +
+                        ")");
 
                 statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + logEntriesTable + " (" +
-                    "id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                    "player_id BIGINT," +
-                    "world_id INT," +
-                    "x DECIMAL(8, 2)," +
-                    "y DECIMAL(8, 2)," +
-                    "z DECIMAL(8, 2)," +
-                    "action_type INT," +
-                    "restored TINYINT DEFAULT 0," +
-                    "extra_json TEXT," +
-                    "created_at BIGINT," +
-                    "block_id INT DEFAULT NULL," +
-                    "old_block_id INT DEFAULT NULL," +
-                    "item_id BIGINT DEFAULT NULL," +
-                    "amount INT DEFAULT 0," +
-                    "entity_type VARCHAR(48) DEFAULT NULL," +
-                    "chunk_key BIGINT DEFAULT NULL," +
-                    "FOREIGN KEY (player_id) REFERENCES " + playersTable + "(id)," +
-                    "FOREIGN KEY (world_id) REFERENCES " + worldsTable + "(id)" +
-                    ")");
+                        "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                        "player_id BIGINT," +
+                        "world_id INT," +
+                        "x DECIMAL(8, 2)," +
+                        "y DECIMAL(8, 2)," +
+                        "z DECIMAL(8, 2)," +
+                        "action_type INT," +
+                        "restored TINYINT DEFAULT 0," +
+                        "extra_json TEXT," +
+                        "created_at BIGINT," +
+                        "block_id INT DEFAULT NULL," +
+                        "old_block_id INT DEFAULT NULL," +
+                        "item_id BIGINT DEFAULT NULL," +
+                        "amount INT DEFAULT 0," +
+                        "entity_type VARCHAR(48) DEFAULT NULL," +
+                        "chunk_key BIGINT DEFAULT NULL," +
+                        "FOREIGN KEY (player_id) REFERENCES " + playersTable + "(id)," +
+                        "FOREIGN KEY (world_id) REFERENCES " + worldsTable + "(id)" +
+                        ")");
 
                 statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + idCounterTable + " (" +
-                    "table_name TEXT PRIMARY KEY," +
-                    "current_id BIGINT)");
+                        "table_name TEXT PRIMARY KEY," +
+                        "current_id BIGINT)");
 
                 statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + itemTemplatesTable + " (" +
-                    "id INTEGER PRIMARY KEY," +
-                    "base64 TEXT," +
-                    "hash INTEGER," +
-                    "s TINYINT," +
-                    "access_count INTEGER DEFAULT 0," +
-                    "last_accessed TIMESTAMP DEFAULT CURRENT_TIMESTAMP," +
-                    "total_quantity_used INTEGER DEFAULT 0," +
-                    "created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP" +
-                    ")");
+                        "id INTEGER PRIMARY KEY," +
+                        "base64 TEXT," +
+                        "hash INTEGER," +
+                        "s TINYINT," +
+                        "access_count INTEGER DEFAULT 0," +
+                        "last_accessed TIMESTAMP DEFAULT CURRENT_TIMESTAMP," +
+                        "total_quantity_used INTEGER DEFAULT 0," +
+                        "created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP" +
+                        ")");
 
                 statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + blockTemplatesTable + " (" +
-                    "id INT PRIMARY KEY," +
-                    "block_data TEXT" +
-                    ")");
+                        "id INT PRIMARY KEY," +
+                        "block_data TEXT" +
+                        ")");
 
                 // New: inventory snapshots (whole-inventory dumps, restore)
                 statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + stellarProtect.getConfigManager().getTablesPrefix() + "inv_snapshots (" +
-                    "log_entry_id BIGINT NOT NULL," +
-                    "slot SMALLINT NOT NULL," +
-                    "item_id BIGINT DEFAULT NULL," +
-                    "amount INT DEFAULT 0," +
-                    "nbt TEXT DEFAULT NULL," +
-                    "PRIMARY KEY (log_entry_id, slot)" +
-                    ")");
+                        "log_entry_id BIGINT NOT NULL," +
+                        "slot SMALLINT NOT NULL," +
+                        "item_id BIGINT DEFAULT NULL," +
+                        "amount INT DEFAULT 0," +
+                        "nbt TEXT DEFAULT NULL," +
+                        "PRIMARY KEY (log_entry_id, slot)" +
+                        ")");
 
                 // New: per-item diffs for chest transactions (for #item queries)
                 statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + stellarProtect.getConfigManager().getTablesPrefix() + "inv_txns (" +
-                    "log_entry_id BIGINT NOT NULL," +
-                    "item_id BIGINT NOT NULL," +
-                    "amount_delta INT NOT NULL," +
-                    "is_added BOOLEAN NOT NULL," +
-                    "PRIMARY KEY (log_entry_id, item_id, is_added)" +
-                    ")");
+                        "log_entry_id BIGINT NOT NULL," +
+                        "item_id BIGINT NOT NULL," +
+                        "amount_delta INT NOT NULL," +
+                        "is_added BOOLEAN NOT NULL," +
+                        "PRIMARY KEY (log_entry_id, item_id, is_added)" +
+                        ")");
 
                 ResultSet resultSet = statement.executeQuery("SELECT COUNT(*) FROM " + logEntriesTable);
                 if (resultSet.next()) {
@@ -323,23 +323,23 @@ public class SQLConnection implements DatabaseConnection {
         // Phase 1: inventory snapshot/txn tables
         try (Statement stmt = connection.createStatement()) {
             stmt.execute("CREATE TABLE IF NOT EXISTS " + prefix + "inv_snapshots (" +
-                "log_entry_id BIGINT NOT NULL," +
-                "slot SMALLINT NOT NULL," +
-                "item_id BIGINT DEFAULT NULL," +
-                "amount INT DEFAULT 0," +
-                "nbt TEXT DEFAULT NULL," +
-                "PRIMARY KEY (log_entry_id, slot)" +
-                ")");
+                    "log_entry_id BIGINT NOT NULL," +
+                    "slot SMALLINT NOT NULL," +
+                    "item_id BIGINT DEFAULT NULL," +
+                    "amount INT DEFAULT 0," +
+                    "nbt TEXT DEFAULT NULL," +
+                    "PRIMARY KEY (log_entry_id, slot)" +
+                    ")");
         } catch (SQLException ignored) {
         }
         try (Statement stmt = connection.createStatement()) {
             stmt.execute("CREATE TABLE IF NOT EXISTS " + prefix + "inv_txns (" +
-                "log_entry_id BIGINT NOT NULL," +
-                "item_id BIGINT NOT NULL," +
-                "amount_delta INT NOT NULL," +
-                "is_added BOOLEAN NOT NULL," +
-                "PRIMARY KEY (log_entry_id, item_id, is_added)" +
-                ")");
+                    "log_entry_id BIGINT NOT NULL," +
+                    "item_id BIGINT NOT NULL," +
+                    "amount_delta INT NOT NULL," +
+                    "is_added BOOLEAN NOT NULL," +
+                    "PRIMARY KEY (log_entry_id, item_id, is_added)" +
+                    ")");
         } catch (SQLException ignored) {
         }
     }

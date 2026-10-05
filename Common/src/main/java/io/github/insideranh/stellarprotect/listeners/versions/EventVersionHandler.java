@@ -71,7 +71,7 @@ public class EventVersionHandler implements EventLogicHandler {
         PlayerProtect playerProtect = PlayerProtect.getPlayer(player);
         if (playerProtect == null) return;
         io.github.insideranh.stellarprotect.database.entries.players.PlayerMountEntry mountEntry =
-            new io.github.insideranh.stellarprotect.database.entries.players.PlayerMountEntry(playerProtect.getPlayerId(), player.getLocation(), entity, true);
+                new io.github.insideranh.stellarprotect.database.entries.players.PlayerMountEntry(playerProtect.getPlayerId(), player.getLocation(), entity, true);
         LoggerCache.addLog(mountEntry);
     }
 
@@ -83,7 +83,7 @@ public class EventVersionHandler implements EventLogicHandler {
         PlayerProtect playerProtect = PlayerProtect.getPlayer(player);
         if (playerProtect == null) return;
         io.github.insideranh.stellarprotect.database.entries.players.PlayerMountEntry mountEntry =
-            new io.github.insideranh.stellarprotect.database.entries.players.PlayerMountEntry(playerProtect.getPlayerId(), player.getLocation(), entity, false);
+                new io.github.insideranh.stellarprotect.database.entries.players.PlayerMountEntry(playerProtect.getPlayerId(), player.getLocation(), entity, false);
         LoggerCache.addLog(mountEntry);
     }
 
@@ -95,7 +95,7 @@ public class EventVersionHandler implements EventLogicHandler {
         PlayerProtect playerProtect = PlayerProtect.getPlayer(player);
         if (playerProtect == null) return;
         io.github.insideranh.stellarprotect.database.entries.players.PlayerLeashEntry mountEntry =
-            new io.github.insideranh.stellarprotect.database.entries.players.PlayerLeashEntry(playerProtect.getPlayerId(), player.getLocation(), entity, true);
+                new io.github.insideranh.stellarprotect.database.entries.players.PlayerLeashEntry(playerProtect.getPlayerId(), player.getLocation(), entity, true);
         LoggerCache.addLog(mountEntry);
     }
 
@@ -107,7 +107,7 @@ public class EventVersionHandler implements EventLogicHandler {
         PlayerProtect playerProtect = PlayerProtect.getPlayer(player);
         if (playerProtect == null) return;
         io.github.insideranh.stellarprotect.database.entries.players.PlayerLeashEntry mountEntry =
-            new io.github.insideranh.stellarprotect.database.entries.players.PlayerLeashEntry(playerProtect.getPlayerId(), player.getLocation(), entity, false);
+                new io.github.insideranh.stellarprotect.database.entries.players.PlayerLeashEntry(playerProtect.getPlayerId(), player.getLocation(), entity, false);
         LoggerCache.addLog(mountEntry);
     }
 

@@ -31,9 +31,9 @@ public class UndoSessionManager {
         session.getProcessedLogHashes().clear();
 
         plugin.getProtectDatabase().getRestoreActions(
-            session.getDatabaseFilters(),
-            session.getCurrentOffset(),
-            session.getLogsPerPage()
+                session.getDatabaseFilters(),
+                session.getCurrentOffset(),
+                session.getLogsPerPage()
         ).thenAccept(callbackLookup -> {
             Map<LocationCache, Set<LogEntry>> groupedLogs = callbackLookup.getLogs();
 
@@ -106,23 +106,23 @@ public class UndoSessionManager {
         if (isUndone) {
             actionButton = new TextComponent("§8[§cX§8] ");
             actionButton.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
-                "/stellarprotect us redo " + logHash));
+                    "/stellarprotect us redo " + logHash));
             actionButton.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                TextComponent.fromLegacyText(plugin.getLangManager().get("messages.undo.sessions.redo"))));
+                    TextComponent.fromLegacyText(plugin.getLangManager().get("messages.undo.sessions.redo"))));
         } else {
             actionButton = new TextComponent("§8[§e>>§8] ");
             actionButton.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
-                "/stellarprotect us undo " + logHash));
+                    "/stellarprotect us undo " + logHash));
             actionButton.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                TextComponent.fromLegacyText(plugin.getLangManager().get("messages.undo.sessions.undo"))));
+                    TextComponent.fromLegacyText(plugin.getLangManager().get("messages.undo.sessions.undo"))));
         }
 
         message.addExtra(actionButton);
         message.addExtra(new TextComponent(plugin.getLangManager().get("messages.undo.sessions." + action,
-            text -> text
-                .replace("<time>", TimeUtils.formatMillisAsAgo(logEntry.getCreatedAt()))
-                .replace("<player>", PlayerUtils.getNameOfEntity(logEntry.getPlayerId()))
-                .replace("<data>", data)
+                text -> text
+                        .replace("<time>", TimeUtils.formatMillisAsAgo(logEntry.getCreatedAt()))
+                        .replace("<player>", PlayerUtils.getNameOfEntity(logEntry.getPlayerId()))
+                        .replace("<data>", data)
         )));
         player.spigot().sendMessage(message);
     }
@@ -134,21 +134,21 @@ public class UndoSessionManager {
 
         TextComponent undoAllButton = new TextComponent(plugin.getLangManager().get("messages.undo.sessions.undoall"));
         undoAllButton.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
-            "/stellarprotect us undoall"));
+                "/stellarprotect us undoall"));
         undoAllButton.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-            TextComponent.fromLegacyText(plugin.getLangManager().get("messages.undo.sessions.undoall-tip"))));
+                TextComponent.fromLegacyText(plugin.getLangManager().get("messages.undo.sessions.undoall-tip"))));
 
         TextComponent nextPageButton = new TextComponent(plugin.getLangManager().get("messages.undo.sessions.next"));
         nextPageButton.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
-            "/stellarprotect us next"));
+                "/stellarprotect us next"));
         nextPageButton.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-            TextComponent.fromLegacyText(plugin.getLangManager().get("messages.undo.sessions.next-tip"))));
+                TextComponent.fromLegacyText(plugin.getLangManager().get("messages.undo.sessions.next-tip"))));
 
         TextComponent exitButton = new TextComponent(plugin.getLangManager().get("messages.undo.sessions.exit"));
         exitButton.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
-            "/stellarprotect us exit"));
+                "/stellarprotect us exit"));
         exitButton.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-            TextComponent.fromLegacyText(plugin.getLangManager().get("messages.undo.sessions.exit-tip"))));
+                TextComponent.fromLegacyText(plugin.getLangManager().get("messages.undo.sessions.exit-tip"))));
 
         TextComponent navigationMessage = new TextComponent("");
         navigationMessage.addExtra(undoAllButton);

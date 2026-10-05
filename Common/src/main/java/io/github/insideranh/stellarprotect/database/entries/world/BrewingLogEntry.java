@@ -33,9 +33,9 @@ public class BrewingLogEntry extends LogEntry {
 
     public BrewingLogEntry(Player player, ItemStack ingredient, ItemStack fuel, ItemStack result) {
         super(player != null ? PlayerUtils.getPlayerOrConsoleId(player) : -2L,
-            ActionType.BREWING.getId(),
-            player != null ? player.getLocation() : new Location(null, 0, 0, 0),
-            System.currentTimeMillis());
+                ActionType.BREWING.getId(),
+                player != null ? player.getLocation() : new Location(null, 0, 0, 0),
+                System.currentTimeMillis());
         long ingId = -1L;
         long fId = -1L;
         long rId = -1L;

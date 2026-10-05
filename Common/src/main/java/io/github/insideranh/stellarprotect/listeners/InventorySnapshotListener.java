@@ -18,9 +18,9 @@ import java.util.concurrent.ConcurrentMap;
 
 public class InventorySnapshotListener implements Listener {
 
+    private static final long SNAPSHOT_INTERVAL_MS = 5 * 60 * 1000L;
     private final StellarProtect plugin = StellarProtect.getInstance();
     private final ConcurrentMap<UUID, Long> lastSnapshot = new ConcurrentHashMap<>();
-    private static final long SNAPSHOT_INTERVAL_MS = 5 * 60 * 1000L;
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onInventoryClose(InventoryCloseEvent event) {
@@ -48,7 +48,8 @@ public class InventorySnapshotListener implements Listener {
         try {
             LoggerCache.addLog(new PlayerInventorySnapshotEntry(pp.getPlayerId(), player.getInventory().getContents(), player.getLocation(), ActionType.INVENTORY_SNAPSHOT));
             lastSnapshot.put(id, now);
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+        }
     }
 
     public void forceSnapshot(Player player) {

@@ -815,9 +815,9 @@ public class DataEntity_v1_19_R3 implements DataEntity {
     private EulerAngle stringToEuler(String str) {
         String[] parts = str.split(",");
         return new EulerAngle(
-            Double.parseDouble(parts[0]),
-            Double.parseDouble(parts[1]),
-            Double.parseDouble(parts[2])
+                Double.parseDouble(parts[0]),
+                Double.parseDouble(parts[1]),
+                Double.parseDouble(parts[2])
         );
     }
 

@@ -48,16 +48,16 @@ public class ViewArmorStandItemMenu extends AInventory {
     @Override
     protected void onUpdate(Inventory inventory) {
         ItemStack newItem = new ItemUtils(Material.ARROW)
-            .displayName(plugin.getLangManager().get("menus.view_stand.new_item.nameItem"))
-            .lore(plugin.getLangManager().get("menus.view_stand.new_item.loreItem"))
-            .build();
+                .displayName(plugin.getLangManager().get("menus.view_stand.new_item.nameItem"))
+                .lore(plugin.getLangManager().get("menus.view_stand.new_item.loreItem"))
+                .build();
         ItemStack oldItem = new ItemUtils(Material.ARROW)
-            .displayName(plugin.getLangManager().get("menus.view_stand.old_item.nameItem"))
-            .lore(plugin.getLangManager().get("menus.view_stand.old_item.loreItem"))
-            .build();
+                .displayName(plugin.getLangManager().get("menus.view_stand.old_item.nameItem"))
+                .lore(plugin.getLangManager().get("menus.view_stand.old_item.loreItem"))
+                .build();
         ItemStack noneItem = new ItemUtils(Material.BARRIER)
-            .displayName(plugin.getLangManager().get("menus.view_stand.none.nameItem"))
-            .build();
+                .displayName(plugin.getLangManager().get("menus.view_stand.none.nameItem"))
+                .build();
 
         ItemTemplate oldItemTemplate = plugin.getItemsManager().getItemTemplate(manipulateEntry.getOldItemId());
         ItemTemplate newItemTemplate = plugin.getItemsManager().getItemTemplate(manipulateEntry.getNewItemId());

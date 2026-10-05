@@ -32,7 +32,7 @@ public class PlayerRepositoryMySQL implements PlayerRepository {
     public PlayerProtect loadOrCreatePlayer(Player player) {
         try (Connection connection = getConnection()) {
             try (PreparedStatement select = connection.prepareStatement(
-                "SELECT id FROM " + configManager.getTablesPlayers() + " WHERE uuid = ?")) {
+                    "SELECT id FROM " + configManager.getTablesPlayers() + " WHERE uuid = ?")) {
 
                 select.setString(1, player.getUniqueId().toString());
 
@@ -47,7 +47,7 @@ public class PlayerRepositoryMySQL implements PlayerRepository {
             long newId = generateNextId();
 
             try (PreparedStatement insert = connection.prepareStatement(
-                "INSERT INTO " + configManager.getTablesPlayers() + " (id, uuid, name, realname) VALUES (?, ?, ?, ?)")) {
+                    "INSERT INTO " + configManager.getTablesPlayers() + " (id, uuid, name, realname) VALUES (?, ?, ?, ?)")) {
 
                 insert.setLong(1, newId);
                 insert.setString(2, player.getUniqueId().toString());
@@ -78,7 +78,7 @@ public class PlayerRepositoryMySQL implements PlayerRepository {
         HashMap<String, Long> foundPlayers = new HashMap<>();
         try (Connection connection = getConnection();
              PreparedStatement select = connection.prepareStatement(
-                 query.toString())) {
+                     query.toString())) {
 
             for (int i = 0; i < names.size(); i++) {
                 select.setString(i + 1, names.get(i));
@@ -110,7 +110,7 @@ public class PlayerRepositoryMySQL implements PlayerRepository {
     public long generateNextId() {
         try (Connection connection = getConnection();
              PreparedStatement getCurrentId = connection.prepareStatement(
-                 "SELECT current_id FROM " + configManager.getTablesIdCounter() + " WHERE table_name = '" + configManager.getTablesPlayers() + "'");
+                     "SELECT current_id FROM " + configManager.getTablesIdCounter() + " WHERE table_name = '" + configManager.getTablesPlayers() + "'");
              ResultSet result = getCurrentId.executeQuery()) {
 
             if (result.next()) {
@@ -118,7 +118,7 @@ public class PlayerRepositoryMySQL implements PlayerRepository {
                 long newId = currentId + 1;
 
                 try (PreparedStatement updateId = connection.prepareStatement(
-                    "UPDATE " + configManager.getTablesIdCounter() + " SET current_id = ? WHERE table_name = '" + configManager.getTablesPlayers() + "'")) {
+                        "UPDATE " + configManager.getTablesIdCounter() + " SET current_id = ? WHERE table_name = '" + configManager.getTablesPlayers() + "'")) {
                     updateId.setLong(1, newId);
                     updateId.executeUpdate();
                 }
@@ -126,7 +126,7 @@ public class PlayerRepositoryMySQL implements PlayerRepository {
                 return newId;
             } else {
                 try (PreparedStatement initId = connection.prepareStatement(
-                    "INSERT INTO " + configManager.getTablesIdCounter() + " (table_name, current_id) VALUES ('" + configManager.getTablesPlayers() + "', 1)")) {
+                        "INSERT INTO " + configManager.getTablesIdCounter() + " (table_name, current_id) VALUES ('" + configManager.getTablesPlayers() + "', 1)")) {
                     initId.executeUpdate();
                 }
                 return 1;

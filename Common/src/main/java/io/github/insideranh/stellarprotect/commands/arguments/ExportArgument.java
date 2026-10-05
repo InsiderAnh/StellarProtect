@@ -35,8 +35,8 @@ public class ExportArgument extends StellarArgument {
 
         String fmt = hashTagsArg.isExportCsv() ? "csv" : "json";
         List<ActionType> actionTypes = actionTypesArg.isEmpty()
-            ? Arrays.asList(ActionType.BLOCK_BREAK, ActionType.BLOCK_PLACE, ActionType.BUCKET_EMPTY, ActionType.BUCKET_FILL, ActionType.BLOCK_SPREAD, ActionType.INVENTORY_TRANSACTION)
-            : actionTypesArg;
+                ? Arrays.asList(ActionType.BLOCK_BREAK, ActionType.BLOCK_PLACE, ActionType.BUCKET_EMPTY, ActionType.BUCKET_FILL, ActionType.BLOCK_SPREAD, ActionType.INVENTORY_TRANSACTION)
+                : actionTypesArg;
 
         ItemsCache itemsCache = plugin.getItemsManager().getItemCache();
         BlocksCache blocksCache = plugin.getBlocksManager().getBlocksCache();

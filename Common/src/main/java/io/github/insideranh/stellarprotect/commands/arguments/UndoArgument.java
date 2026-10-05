@@ -57,12 +57,12 @@ public class UndoArgument extends StellarArgument {
         List<ActionType> actionTypes;
         if (actionTypesArg.isEmpty()) {
             actionTypes = new LinkedList<>(Arrays.asList(
-                ActionType.BLOCK_BREAK,
-                ActionType.BLOCK_PLACE,
-                ActionType.BUCKET_EMPTY,
-                ActionType.BUCKET_FILL,
-                ActionType.BLOCK_SPREAD,
-                ActionType.INVENTORY_TRANSACTION
+                    ActionType.BLOCK_BREAK,
+                    ActionType.BLOCK_PLACE,
+                    ActionType.BUCKET_EMPTY,
+                    ActionType.BUCKET_FILL,
+                    ActionType.BLOCK_SPREAD,
+                    ActionType.INVENTORY_TRANSACTION
             ));
 
             if (hashTagsArg.isEntities()) {
@@ -132,8 +132,8 @@ public class UndoArgument extends StellarArgument {
             }
 
             return Stream.of("t:1m", "t:2m", "t:5m", "r:10", "a:", "u:", "i:", "e:", "mi:", "me:", "#session", "#preview", "#verbose", "#silent", "#count", "#entities")
-                .filter(name -> name.contains(currentArg))
-                .collect(Collectors.toList());
+                    .filter(name -> name.contains(currentArg))
+                    .collect(Collectors.toList());
         }
 
         return Arrays.asList("t:1m", "t:5m", "r:10", "a:", "u:", "i:", "e:", "#session", "#preview", "#verbose", "#silent", "#count", "#entities");
@@ -174,48 +174,48 @@ public class UndoArgument extends StellarArgument {
         }
 
         plugin.getProtectDatabase().getRestoreActions(filters, currentSkip, batchSize)
-            .thenAccept(callbackLookup -> {
-                Map<LocationCache, Set<LogEntry>> groupedLogs = callbackLookup.getLogs();
-                int processedInBatch = groupedLogs.values().stream().mapToInt(Set::size).sum();
+                .thenAccept(callbackLookup -> {
+                    Map<LocationCache, Set<LogEntry>> groupedLogs = callbackLookup.getLogs();
+                    int processedInBatch = groupedLogs.values().stream().mapToInt(Set::size).sum();
 
-                if (processedInBatch > 0) {
-                    plugin.getStellarTaskHook(() -> {
-                        if (preview) {
-                            plugin.getUndoManager().preview(player, groupedLogs, verbose, silent);
-                        } else {
-                            plugin.getUndoManager().undo(player, groupedLogs, verbose);
-                        }
-
-                        int totalProcessed = currentSkip + processedInBatch;
-                        double progress = (totalProcessed * 100.0) / totalLogs;
-
-                        if (!silent) {
+                    if (processedInBatch > 0) {
+                        plugin.getStellarTaskHook(() -> {
                             if (preview) {
-                                if (verbose) {
-                                    player.sendMessage(plugin.getLangManager().get("messages.undo.preview-verbose").replace("<progress>", String.valueOf(Math.round(progress))).replace("<now>", String.valueOf(totalProcessed)).replace("<total>", String.valueOf(totalLogs)));
-                                } else {
-                                    player.sendMessage(plugin.getLangManager().get("messages.undo.preview").replace("<progress>", String.valueOf(Math.round(progress))).replace("<now>", String.valueOf(totalProcessed)).replace("<total>", String.valueOf(totalLogs)));
-                                }
+                                plugin.getUndoManager().preview(player, groupedLogs, verbose, silent);
                             } else {
-                                if (verbose) {
-                                    player.sendMessage(plugin.getLangManager().get("messages.undo.progress-verbose").replace("<progress>", String.valueOf(Math.round(progress))).replace("<now>", String.valueOf(totalProcessed)).replace("<total>", String.valueOf(totalLogs)));
+                                plugin.getUndoManager().undo(player, groupedLogs, verbose);
+                            }
+
+                            int totalProcessed = currentSkip + processedInBatch;
+                            double progress = (totalProcessed * 100.0) / totalLogs;
+
+                            if (!silent) {
+                                if (preview) {
+                                    if (verbose) {
+                                        player.sendMessage(plugin.getLangManager().get("messages.undo.preview-verbose").replace("<progress>", String.valueOf(Math.round(progress))).replace("<now>", String.valueOf(totalProcessed)).replace("<total>", String.valueOf(totalLogs)));
+                                    } else {
+                                        player.sendMessage(plugin.getLangManager().get("messages.undo.preview").replace("<progress>", String.valueOf(Math.round(progress))).replace("<now>", String.valueOf(totalProcessed)).replace("<total>", String.valueOf(totalLogs)));
+                                    }
                                 } else {
-                                    player.sendMessage(plugin.getLangManager().get("messages.undo.progress").replace("<progress>", String.valueOf(Math.round(progress))).replace("<now>", String.valueOf(totalProcessed)).replace("<total>", String.valueOf(totalLogs)));
+                                    if (verbose) {
+                                        player.sendMessage(plugin.getLangManager().get("messages.undo.progress-verbose").replace("<progress>", String.valueOf(Math.round(progress))).replace("<now>", String.valueOf(totalProcessed)).replace("<total>", String.valueOf(totalLogs)));
+                                    } else {
+                                        player.sendMessage(plugin.getLangManager().get("messages.undo.progress").replace("<progress>", String.valueOf(Math.round(progress))).replace("<now>", String.valueOf(totalProcessed)).replace("<total>", String.valueOf(totalLogs)));
+                                    }
                                 }
                             }
-                        }
 
-                        plugin.getStellarTaskHook(() -> processBatchUndo(player, preview, verbose, silent, filters, currentSkip + batchSize, totalLogs, batchSize, delayTicks)).runTask(delayTicks);
-                    }).runTask();
-                } else {
-                    player.sendMessage(plugin.getLangManager().get("messages.undo.success").replace("<current>", String.valueOf(currentSkip)).replace("<total>", String.valueOf(totalLogs)));
-                }
-            })
-            .exceptionally(error -> {
-                player.sendMessage(plugin.getLangManager().get("messages.undo.error").replace("<section>", String.valueOf(currentSkip / batchSize + 1)).replace("<error>", error.getMessage()));
-                error.printStackTrace();
-                return null;
-            });
+                            plugin.getStellarTaskHook(() -> processBatchUndo(player, preview, verbose, silent, filters, currentSkip + batchSize, totalLogs, batchSize, delayTicks)).runTask(delayTicks);
+                        }).runTask();
+                    } else {
+                        player.sendMessage(plugin.getLangManager().get("messages.undo.success").replace("<current>", String.valueOf(currentSkip)).replace("<total>", String.valueOf(totalLogs)));
+                    }
+                })
+                .exceptionally(error -> {
+                    player.sendMessage(plugin.getLangManager().get("messages.undo.error").replace("<section>", String.valueOf(currentSkip / batchSize + 1)).replace("<error>", error.getMessage()));
+                    error.printStackTrace();
+                    return null;
+                });
     }
 
 }

@@ -69,11 +69,11 @@ public class NextLookupArgument extends StellarArgument {
             }
 
             plugin.getProtectNMS().sendPageButtons(player,
-                plugin.getLangManager().get("messages.pagesNav"),
-                plugin.getLangManager().get("messages.clickPage"),
-                pageArg.getPage(),
-                pageArg.getPerPage(),
-                (int) total);
+                    plugin.getLangManager().get("messages.pagesNav"),
+                    plugin.getLangManager().get("messages.clickPage"),
+                    pageArg.getPage(),
+                    pageArg.getPerPage(),
+                    (int) total);
 
             playerProtect.setNextLookup(System.currentTimeMillis() + 500L);
         }).exceptionally(error -> {

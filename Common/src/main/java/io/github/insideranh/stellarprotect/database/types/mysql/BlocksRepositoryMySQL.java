@@ -24,7 +24,7 @@ public class BlocksRepositoryMySQL implements BlocksRepository {
     public void saveBlocks(List<BlockTemplate> blockTemplates) {
         stellarProtect.getExecutor().execute(() -> {
             String sql = "INSERT INTO " + stellarProtect.getConfigManager().getTablesBlockTemplates() +
-                " (id, block_data) VALUES (?, ?) ON DUPLICATE KEY UPDATE block_data = VALUES(block_data)";
+                    " (id, block_data) VALUES (?, ?) ON DUPLICATE KEY UPDATE block_data = VALUES(block_data)";
 
             try (Connection connection = dataSource.getConnection();
                  PreparedStatement statement = connection.prepareStatement(sql)) {

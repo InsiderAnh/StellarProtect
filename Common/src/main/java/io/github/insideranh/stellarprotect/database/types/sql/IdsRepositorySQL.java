@@ -23,7 +23,7 @@ public class IdsRepositorySQL implements IdsRepository {
     @Override
     public void loadWorlds() {
         try (PreparedStatement stmt = connection.prepareStatement(
-            "SELECT * FROM " + stellarProtect.getConfigManager().getTablesWorlds()
+                "SELECT * FROM " + stellarProtect.getConfigManager().getTablesWorlds()
         )) {
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
@@ -41,7 +41,7 @@ public class IdsRepositorySQL implements IdsRepository {
     @Override
     public void loadEntityIds() {
         try (PreparedStatement stmt = connection.prepareStatement(
-            "SELECT * FROM " + stellarProtect.getConfigManager().getTablesEntityIds()
+                "SELECT * FROM " + stellarProtect.getConfigManager().getTablesEntityIds()
         )) {
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
@@ -62,7 +62,7 @@ public class IdsRepositorySQL implements IdsRepository {
     public void saveWorld(String world, int id) {
         try {
             try (PreparedStatement stmt = connection.prepareStatement(
-                "INSERT INTO " + stellarProtect.getConfigManager().getTablesWorlds() + " (id, name) VALUES (?, ?)"
+                    "INSERT INTO " + stellarProtect.getConfigManager().getTablesWorlds() + " (id, name) VALUES (?, ?)"
             )) {
                 stmt.setInt(1, id);
                 stmt.setString(2, world);
@@ -79,7 +79,7 @@ public class IdsRepositorySQL implements IdsRepository {
     public void saveEntityId(String entityType, long id) {
         try {
             try (PreparedStatement stmt = connection.prepareStatement(
-                "INSERT INTO " + stellarProtect.getConfigManager().getTablesEntityIds() + " (entityType, id) VALUES (?, ?)"
+                    "INSERT INTO " + stellarProtect.getConfigManager().getTablesEntityIds() + " (entityType, id) VALUES (?, ?)"
             )) {
                 stmt.setString(1, entityType);
                 stmt.setLong(2, id);

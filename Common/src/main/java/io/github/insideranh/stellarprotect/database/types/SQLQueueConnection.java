@@ -52,17 +52,17 @@ public class SQLQueueConnection {
                 String logEntriesTable = stellarProtect.getConfigManager().getTablesLogEntries();
 
                 statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + logEntriesTable + " (" +
-                    "id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                    "player_id INTEGER," +
-                    "world_id INTEGER," +
-                    "x REAL," +
-                    "y REAL," +
-                    "z REAL," +
-                    "action_type INTEGER," +
-                    "restored INTEGER DEFAULT 0," +
-                    "extra_json TEXT," +
-                    "created_at INTEGER" +
-                    ")");
+                        "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                        "player_id INTEGER," +
+                        "world_id INTEGER," +
+                        "x REAL," +
+                        "y REAL," +
+                        "z REAL," +
+                        "action_type INTEGER," +
+                        "restored INTEGER DEFAULT 0," +
+                        "extra_json TEXT," +
+                        "created_at INTEGER" +
+                        ")");
 
             } catch (Exception exception) {
                 stellarProtect.getLogger().warning("Error creating queue table: " + exception.getMessage());
@@ -74,9 +74,9 @@ public class SQLQueueConnection {
 
             String logEntriesTable = stellarProtect.getConfigManager().getTablesLogEntries();
             insertStatement = connection.prepareStatement(
-                "INSERT INTO " + logEntriesTable +
-                    " (player_id, world_id, x, y, z, action_type, restored, extra_json, created_at) " +
-                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
+                    "INSERT INTO " + logEntriesTable +
+                            " (player_id, world_id, x, y, z, action_type, restored, extra_json, created_at) " +
+                            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
             );
 
             stellarProtect.getLogger().info("Queue database connected.");
@@ -137,8 +137,8 @@ public class SQLQueueConnection {
             long currentLastId = lastProcessedId.get();
 
             stmt = connection.prepareStatement(
-                "SELECT * FROM " + logEntriesTable +
-                    " WHERE id > ? ORDER BY id LIMIT ?"
+                    "SELECT * FROM " + logEntriesTable +
+                            " WHERE id > ? ORDER BY id LIMIT ?"
             );
             stmt.setLong(1, currentLastId);
             stmt.setInt(2, maxLogs);
@@ -151,17 +151,17 @@ public class SQLQueueConnection {
                 maxId = Math.max(maxId, id);
 
                 QueuedLog log = QueuedLog.builder()
-                    .id(id)
-                    .playerId(rs.getLong("player_id"))
-                    .worldId(rs.getInt("world_id"))
-                    .x(rs.getDouble("x"))
-                    .y(rs.getDouble("y"))
-                    .z(rs.getDouble("z"))
-                    .actionType(rs.getInt("action_type"))
-                    .restored(rs.getInt("restored") == 1)
-                    .extraJson(rs.getString("extra_json"))
-                    .createdAt(rs.getLong("created_at"))
-                    .build();
+                        .id(id)
+                        .playerId(rs.getLong("player_id"))
+                        .worldId(rs.getInt("world_id"))
+                        .x(rs.getDouble("x"))
+                        .y(rs.getDouble("y"))
+                        .z(rs.getDouble("z"))
+                        .actionType(rs.getInt("action_type"))
+                        .restored(rs.getInt("restored") == 1)
+                        .extraJson(rs.getString("extra_json"))
+                        .createdAt(rs.getLong("created_at"))
+                        .build();
 
                 logs.add(log);
             }
@@ -195,7 +195,7 @@ public class SQLQueueConnection {
                 String logEntriesTable = stellarProtect.getConfigManager().getTablesLogEntries();
 
                 stmt = connection.prepareStatement(
-                    "DELETE FROM " + logEntriesTable + " WHERE id <= ?"
+                        "DELETE FROM " + logEntriesTable + " WHERE id <= ?"
                 );
                 stmt.setLong(1, maxId);
 
@@ -207,7 +207,7 @@ public class SQLQueueConnection {
                 }
 
                 countStmt = connection.prepareStatement(
-                    "SELECT COUNT(*) as remaining FROM " + logEntriesTable
+                        "SELECT COUNT(*) as remaining FROM " + logEntriesTable
                 );
                 countRs = countStmt.executeQuery();
                 int remaining = 0;

@@ -315,9 +315,9 @@ public class ArgumentsParser {
 
                     if (radiusSegment.equals("#global")) {
                         return new RadiusArg(-1, 100000,
-                            location.getBlockX() - 100000, location.getBlockX() + 100000,
-                            location.getBlockY() - 100000, location.getBlockY() + 100000,
-                            location.getBlockZ() - 100000, location.getBlockZ() + 100000);
+                                location.getBlockX() - 100000, location.getBlockX() + 100000,
+                                location.getBlockY() - 100000, location.getBlockY() + 100000,
+                                location.getBlockZ() - 100000, location.getBlockZ() + 100000);
                     }
 
                     String[] worldParts = radiusSegment.substring(1).split(",");
@@ -329,9 +329,9 @@ public class ArgumentsParser {
                         System.arraycopy(worldParts, 1, radiusParts, 0, worldParts.length - 1);
                     } else {
                         return new RadiusArg(worldId, 10000,
-                            location.getBlockX() - 10000, location.getBlockX() + 10000,
-                            location.getBlockY() - 10000, location.getBlockY() + 10000,
-                            location.getBlockZ() - 10000, location.getBlockZ() + 10000);
+                                location.getBlockX() - 10000, location.getBlockX() + 10000,
+                                location.getBlockY() - 10000, location.getBlockY() + 10000,
+                                location.getBlockZ() - 10000, location.getBlockZ() + 10000);
                     }
                 } else {
                     worldId = WorldUtils.searchWorldId(location.getWorld().getName());
@@ -357,12 +357,12 @@ public class ArgumentsParser {
                     double maxRadius = Math.max(Math.max(radiusX, radiusY), radiusZ);
 
                     return new RadiusArg(worldId, maxRadius,
-                        location.getBlockX() - radiusX,
-                        location.getBlockX() + radiusX,
-                        location.getBlockY() - radiusY,
-                        location.getBlockY() + radiusY,
-                        location.getBlockZ() - radiusZ,
-                        location.getBlockZ() + radiusZ);
+                            location.getBlockX() - radiusX,
+                            location.getBlockX() + radiusX,
+                            location.getBlockY() - radiusY,
+                            location.getBlockY() + radiusY,
+                            location.getBlockZ() - radiusZ,
+                            location.getBlockZ() + radiusZ);
 
                 } catch (NumberFormatException ignored) {
                 }
@@ -390,19 +390,23 @@ public class ArgumentsParser {
                     String[] split = val.split("-");
                     try {
                         return Integer.parseInt(split[0]);
-                    } catch (NumberFormatException ignored) {}
+                    } catch (NumberFormatException ignored) {
+                    }
                 } else if (val.startsWith(">=")) {
                     try {
                         return Integer.parseInt(val.substring(2));
-                    } catch (NumberFormatException ignored) {}
+                    } catch (NumberFormatException ignored) {
+                    }
                 } else if (val.startsWith(">")) {
                     try {
                         return Integer.parseInt(val.substring(1)) + 1;
-                    } catch (NumberFormatException ignored) {}
+                    } catch (NumberFormatException ignored) {
+                    }
                 } else {
                     try {
                         return Integer.parseInt(val);
-                    } catch (NumberFormatException ignored) {}
+                    } catch (NumberFormatException ignored) {
+                    }
                 }
             }
         }
@@ -418,7 +422,8 @@ public class ArgumentsParser {
                     String[] split = val.split("-");
                     try {
                         return Integer.parseInt(split[1]);
-                    } catch (NumberFormatException ignored) {}
+                    } catch (NumberFormatException ignored) {
+                    }
                 }
             }
         }
@@ -446,7 +451,8 @@ public class ArgumentsParser {
                 if (split.length == 2) {
                     try {
                         return new int[]{Integer.parseInt(split[0].trim()), Integer.parseInt(split[1].trim())};
-                    } catch (NumberFormatException ignored) {}
+                    } catch (NumberFormatException ignored) {
+                    }
                 }
             }
         }

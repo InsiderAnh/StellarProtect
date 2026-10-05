@@ -11,47 +11,47 @@ import java.util.Set;
 public enum ActionCategory {
 
     BLOCK_ACTIONS(0, "block_actions", new ActionType[]{
-        ActionType.BLOCK_BREAK, ActionType.BLOCK_PLACE, ActionType.BLOCK_USE
+            ActionType.BLOCK_BREAK, ActionType.BLOCK_PLACE, ActionType.BLOCK_USE
     }),
     ITEM_ACTIONS(1, "item_actions", new ActionType[]{
-        ActionType.DROP_ITEM, ActionType.PICKUP_ITEM, ActionType.FURNACE_EXTRACT, ActionType.FURNACE_PLACE,
-        ActionType.ENCHANT, ActionType.SMITH,
-        // NOT IMPLEMENTED
-        ActionType.REPAIR, ActionType.BREWING
+            ActionType.DROP_ITEM, ActionType.PICKUP_ITEM, ActionType.FURNACE_EXTRACT, ActionType.FURNACE_PLACE,
+            ActionType.ENCHANT, ActionType.SMITH,
+            // NOT IMPLEMENTED
+            ActionType.REPAIR, ActionType.BREWING
     }),
     ENTITY_ACTIONS(2, "entity_actions", new ActionType[]{
-        ActionType.KILL_ENTITY, ActionType.DEATH, ActionType.INTERACT, ActionType.USE, ActionType.TAME, ActionType.BREED,
-        ActionType.MOUNT, ActionType.LEASH, ActionType.ARMOR_STAND_MANIPULATE,
-        // NOT IMPLEMENTED
-        ActionType.RAID
+            ActionType.KILL_ENTITY, ActionType.DEATH, ActionType.INTERACT, ActionType.USE, ActionType.TAME, ActionType.BREED,
+            ActionType.MOUNT, ActionType.LEASH, ActionType.ARMOR_STAND_MANIPULATE,
+            // NOT IMPLEMENTED
+            ActionType.RAID
     }),
     SYSTEM_ACTIONS(3, "system_actions", new ActionType[]{
-        ActionType.CROP_GROW, ActionType.CRAFT
+            ActionType.CROP_GROW, ActionType.CRAFT
     }),
     COMMUNICATION_ACTIONS(4, "communication_actions", new ActionType[]{
-        ActionType.CHAT, ActionType.COMMAND
+            ActionType.CHAT, ActionType.COMMAND
     }),
     FLUID_ACTIONS(5, "fluid_actions", new ActionType[]{
-        ActionType.BUCKET_EMPTY, ActionType.BUCKET_FILL
+            ActionType.BUCKET_EMPTY, ActionType.BUCKET_FILL
     }),
     INVENTORY_ACTIONS(6, "inventory_actions", new ActionType[]{
-        ActionType.INVENTORY_TRANSACTION, ActionType.PLACE_ITEM, ActionType.REMOVE_ITEM
+            ActionType.INVENTORY_TRANSACTION, ActionType.PLACE_ITEM, ActionType.REMOVE_ITEM
     }),
     SESSION_ACTIONS(7, "session_actions", new ActionType[]{
-        ActionType.SESSION
+            ActionType.SESSION
     }),
     SIGN_ACTIONS(8, "sign_actions", new ActionType[]{
-        ActionType.SIGN_CHANGE
+            ActionType.SIGN_CHANGE
     }),
     PLAYER_ACTIONS(9, "player_actions", new ActionType[]{
-        ActionType.SHOOT, ActionType.TOTEM, ActionType.CONSUME, ActionType.GAME_MODE,
-        ActionType.TELEPORT, ActionType.XP, ActionType.MONEY
+            ActionType.SHOOT, ActionType.TOTEM, ActionType.CONSUME, ActionType.GAME_MODE,
+            ActionType.TELEPORT, ActionType.XP, ActionType.MONEY
     }),
     HOOK_ACTIONS(10, "hook_actions", new ActionType[]{
-        ActionType.SHOP_GUI, ActionType.FURNITURE_BREAK, ActionType.FURNITURE_PLACE, ActionType.X_KIT_EVENT
+            ActionType.SHOP_GUI, ActionType.FURNITURE_BREAK, ActionType.FURNITURE_PLACE, ActionType.X_KIT_EVENT
     }),
     WORLD_ACTIONS(11, "world_actions", new ActionType[]{
-        ActionType.TREE_GROW, ActionType.BLOCK_SPREAD
+            ActionType.TREE_GROW, ActionType.BLOCK_SPREAD
     }),
     WORLD_EDIT_ACTIONS(49, "world_edit_actions", new ActionType[]{}),
     UNKNOWN_ACTIONS(50, "unknown_actions", ActionType.values());

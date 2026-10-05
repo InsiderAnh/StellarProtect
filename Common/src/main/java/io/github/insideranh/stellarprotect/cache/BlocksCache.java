@@ -138,7 +138,7 @@ public class BlocksCache {
                 BlockTemplate item = items[entry.position];
 
                 if (item != null &&
-                    (index == typeNameIndex && key.equals(item.getTypeName()))) {
+                        (index == typeNameIndex && key.equals(item.getTypeName()))) {
                     return item;
                 }
             }

@@ -458,12 +458,12 @@ public class BlockListener implements Listener {
         Location location = block.getLocation();
 
         int[][] offsets = {
-            {0, 0, -1},
-            {0, 0, 1},
-            {-1, 0, 0},
-            {1, 0, 0},
-            {0, -1, 0},
-            {0, 1, 0}
+                {0, 0, -1},
+                {0, 0, 1},
+                {-1, 0, 0},
+                {1, 0, 0},
+                {0, -1, 0},
+                {0, 1, 0}
         };
 
         for (int[] offset : offsets) {

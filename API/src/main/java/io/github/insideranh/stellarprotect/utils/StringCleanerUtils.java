@@ -81,8 +81,8 @@ public class StringCleanerUtils {
         for (String word : cleanedData.split("_")) {
             if (!word.isEmpty()) {
                 builder.append(word.substring(0, 1).toUpperCase())
-                    .append(word.substring(1).toLowerCase())
-                    .append(" ");
+                        .append(word.substring(1).toLowerCase())
+                        .append(" ");
             }
         }
 

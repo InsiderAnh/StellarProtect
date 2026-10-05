@@ -68,11 +68,11 @@ public class LocationCache {
     @Override
     public String toString() {
         return "LocationCache{" +
-            "worldId=" + worldId +
-            ", x=" + x +
-            ", y=" + y +
-            ", z=" + z +
-            '}';
+                "worldId=" + worldId +
+                ", x=" + x +
+                ", y=" + y +
+                ", z=" + z +
+                '}';
     }
 
 }

@@ -3,17 +3,15 @@ package io.github.insideranh.stellarprotect.nms.v1_21_R11;
 import io.github.insideranh.stellarprotect.entities.DataEntity;
 import io.github.insideranh.stellarprotect.entities.DataEntityType;
 import io.github.insideranh.stellarprotect.utils.InventorySerializable;
+import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
-import org.bukkit.entity.Entity;
+import org.bukkit.entity.*;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.MerchantRecipe;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.EulerAngle;
-
-import org.bukkit.entity.*;
-import org.bukkit.*;
 
 import java.util.*;
 
@@ -854,9 +852,9 @@ public class DataEntity_v1_21_R11 implements DataEntity {
     private EulerAngle stringToEuler(String str) {
         String[] parts = str.split(",");
         return new EulerAngle(
-            Double.parseDouble(parts[0]),
-            Double.parseDouble(parts[1]),
-            Double.parseDouble(parts[2])
+                Double.parseDouble(parts[0]),
+                Double.parseDouble(parts[1]),
+                Double.parseDouble(parts[2])
         );
     }
 

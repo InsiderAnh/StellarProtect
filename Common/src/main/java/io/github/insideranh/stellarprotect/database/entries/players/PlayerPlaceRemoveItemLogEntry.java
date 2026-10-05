@@ -62,13 +62,13 @@ public class PlayerPlaceRemoveItemLogEntry extends LogEntry {
     public String toSaveJson() {
         if (placed == 0) {
             return "{\"b\":\"" + blockId + "\"," +
-                "\"id\":" + itemReferenceId + "," +
-                "\"a\":" + amount + "}";
+                    "\"id\":" + itemReferenceId + "," +
+                    "\"a\":" + amount + "}";
         }
         return "{\"b\":\"" + blockId + "\"," +
-            "\"id\":" + itemReferenceId + "," +
-            "\"a\":" + amount + "," +
-            "\"p\":" + placed + "}";
+                "\"id\":" + itemReferenceId + "," +
+                "\"a\":" + amount + "," +
+                "\"p\":" + placed + "}";
     }
 
 }

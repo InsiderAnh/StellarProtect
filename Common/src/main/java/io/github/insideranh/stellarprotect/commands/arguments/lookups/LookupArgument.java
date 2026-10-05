@@ -112,11 +112,11 @@ public class LookupArgument extends StellarArgument {
                 }
 
                 plugin.getProtectNMS().sendPageButtons(player,
-                    plugin.getLangManager().get("messages.pagesNav"),
-                    plugin.getLangManager().get("messages.clickPage"),
-                    pageArg.getPage(),
-                    pageArg.getPerPage(),
-                    (int) total);
+                        plugin.getLangManager().get("messages.pagesNav"),
+                        plugin.getLangManager().get("messages.clickPage"),
+                        pageArg.getPage(),
+                        pageArg.getPerPage(),
+                        (int) total);
             }).exceptionally(error -> {
                 plugin.getLangManager().sendMessage(player, "messages.noLogs");
 

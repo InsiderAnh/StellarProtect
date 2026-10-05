@@ -86,7 +86,7 @@ public final class IntObjectMap<V> {
                 while (keys[nextIdx] != EMPTY_KEY) {
                     int rehashIdx = hash(keys[nextIdx]) & mask;
                     if ((nextIdx > idx && (rehashIdx <= idx || rehashIdx > nextIdx)) ||
-                        (nextIdx < idx && (rehashIdx <= idx && rehashIdx > nextIdx))) {
+                            (nextIdx < idx && (rehashIdx <= idx && rehashIdx > nextIdx))) {
                         keys[idx] = keys[nextIdx];
                         values[idx] = values[nextIdx];
                         idx = nextIdx;

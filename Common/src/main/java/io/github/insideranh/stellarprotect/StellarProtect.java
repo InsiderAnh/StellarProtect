@@ -241,14 +241,14 @@ public class StellarProtect extends JavaPlugin {
 
     HashSet<Listener> getListeners() {
         return new HashSet<>(Arrays.asList(
-            new BlockFormListener(), new SignListener(),
-            new ExplodeListener(), new BucketListener(),
-            new BlockListener(), new CropGrowListener(),
-            new JoinQuitListener(), new InspectListener(),
-            new CraftListener(), new ChatListener(),
-            new PickUpDropListener(), new PlayerLogListener(),
-            new EntityListener(), new InventoryRollbackListener(),
-            new AdditionalListeners(), new InventorySnapshotListener()));
+                new BlockFormListener(), new SignListener(),
+                new ExplodeListener(), new BucketListener(),
+                new BlockListener(), new CropGrowListener(),
+                new JoinQuitListener(), new InspectListener(),
+                new CraftListener(), new ChatListener(),
+                new PickUpDropListener(), new PlayerLogListener(),
+                new EntityListener(), new InventoryRollbackListener(),
+                new AdditionalListeners(), new InventorySnapshotListener()));
     }
 
     public ProtectNMS getProtectNMS() {
@@ -385,8 +385,16 @@ public class StellarProtect extends JavaPlugin {
             return new io.github.insideranh.stellarprotect.blocks.DataBlock() {
                 final org.bukkit.block.data.BlockData bd = block.getBlockData();
                 final String s = bd.getAsString();
-                @Override public String getBlockDataString() { return s; }
-                @Override public String getTypeMaterial() { return block.getType().name(); }
+
+                @Override
+                public String getBlockDataString() {
+                    return s;
+                }
+
+                @Override
+                public String getTypeMaterial() {
+                    return block.getType().name();
+                }
             };
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -417,8 +425,15 @@ public class StellarProtect extends JavaPlugin {
         final String s = blockDataString;
         final String mat = blockDataString.contains(":") ? blockDataString.substring(0, blockDataString.indexOf("[")) : blockDataString;
         return new io.github.insideranh.stellarprotect.blocks.DataBlock() {
-            @Override public String getBlockDataString() { return s; }
-            @Override public String getTypeMaterial() { return mat; }
+            @Override
+            public String getBlockDataString() {
+                return s;
+            }
+
+            @Override
+            public String getTypeMaterial() {
+                return mat;
+            }
         };
     }
 
@@ -433,6 +448,7 @@ public class StellarProtect extends JavaPlugin {
         }
         return new io.github.insideranh.stellarprotect.entities.DataEntity() {
             final java.util.HashMap<String, Object> data = new java.util.HashMap<>();
+
             {
                 data.put("ENTITY_TYPE", entity.getType().name());
                 if (entity.getCustomName() != null) data.put("CUSTOM_NAME", entity.getCustomName());
@@ -442,8 +458,14 @@ public class StellarProtect extends JavaPlugin {
                 data.put("INVULNERABLE", entity.isInvulnerable());
                 data.put("SILENT", entity.isSilent());
             }
-            @Override public java.util.HashMap<String, Object> getData() { return data; }
-            @Override public void applyToEntity(Entity e) { /* no-op fallback */ }
+
+            @Override
+            public java.util.HashMap<String, Object> getData() {
+                return data;
+            }
+
+            @Override
+            public void applyToEntity(Entity e) { /* no-op fallback */ }
         };
     }
 
@@ -458,8 +480,13 @@ public class StellarProtect extends JavaPlugin {
         }
         final java.util.HashMap<String, Object> data = new java.util.HashMap<>(map);
         return new io.github.insideranh.stellarprotect.entities.DataEntity() {
-            @Override public java.util.HashMap<String, Object> getData() { return data; }
-            @Override public void applyToEntity(Entity e) { /* no-op fallback */ }
+            @Override
+            public java.util.HashMap<String, Object> getData() {
+                return data;
+            }
+
+            @Override
+            public void applyToEntity(Entity e) { /* no-op fallback */ }
         };
     }
 

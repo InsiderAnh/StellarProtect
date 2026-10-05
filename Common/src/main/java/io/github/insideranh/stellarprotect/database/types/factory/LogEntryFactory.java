@@ -27,8 +27,8 @@ import java.util.stream.Collectors;
 public class LogEntryFactory {
 
     private static final Map<Integer, ActionLogType> ACTION_TYPE_MAP =
-        Arrays.stream(ActionLogType.values())
-            .collect(Collectors.toMap(ActionLogType::getActionId, Function.identity()));
+            Arrays.stream(ActionLogType.values())
+                    .collect(Collectors.toMap(ActionLogType::getActionId, Function.identity()));
 
     public static LogEntry fromDatabase(ResultSet resultSet) throws SQLException {
         int type = resultSet.getInt("action_type");

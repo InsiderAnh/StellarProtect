@@ -43,26 +43,26 @@ public class RestoreRepositoryMySQL implements RestoreRepository {
             List<Integer> actionTypes = filters.getActionTypesFilter();
 
             List<ActionType> actionTypeObjects = actionTypes != null ?
-                actionTypes.stream()
-                    .map(ActionType::getById)
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.toList()) :
-                new ArrayList<>();
+                    actionTypes.stream()
+                            .map(ActionType::getById)
+                            .filter(Objects::nonNull)
+                            .collect(Collectors.toList()) :
+                    new ArrayList<>();
 
             List<LogEntry> cachedLogs = new ArrayList<>();
             if (!filters.isIgnoreCache() && !actionTypeObjects.isEmpty()) {
                 cachedLogs = LoggerCache.getLogs(timeArg, radiusArg, actionTypeObjects, skip, limit)
-                    .stream()
-                    .sorted(Comparator.comparingLong(LogEntry::getCreatedAt).reversed())
-                    .collect(Collectors.toList());
+                        .stream()
+                        .sorted(Comparator.comparingLong(LogEntry::getCreatedAt).reversed())
+                        .collect(Collectors.toList());
             }
 
             Map<LocationCache, Set<LogEntry>> groupedResults = cachedLogs.stream()
-                .collect(Collectors.groupingBy(
-                    LocationCache::of,
-                    LinkedHashMap::new,
-                    Collectors.toCollection(LinkedHashSet::new)
-                ));
+                    .collect(Collectors.groupingBy(
+                            LocationCache::of,
+                            LinkedHashMap::new,
+                            Collectors.toCollection(LinkedHashSet::new)
+                    ));
 
             int remaining = limit - cachedLogs.size();
 
@@ -73,24 +73,24 @@ public class RestoreRepositoryMySQL implements RestoreRepository {
 
                 List<LogEntry> finalCachedLogs = cachedLogs;
                 List<LogEntry> dbLogs = dbLookup.getLogs().values().stream()
-                    .flatMap(Set::stream)
-                    .filter(log -> finalCachedLogs.stream().noneMatch(c -> c.equals(log)))
-                    .sorted(Comparator.comparingLong(LogEntry::getCreatedAt).reversed())
-                    .limit(remaining)
-                    .collect(Collectors.toList());
+                        .flatMap(Set::stream)
+                        .filter(log -> finalCachedLogs.stream().noneMatch(c -> c.equals(log)))
+                        .sorted(Comparator.comparingLong(LogEntry::getCreatedAt).reversed())
+                        .limit(remaining)
+                        .collect(Collectors.toList());
 
                 Map<LocationCache, Set<LogEntry>> dbGrouped = dbLogs.stream()
-                    .collect(Collectors.groupingBy(
-                        LocationCache::of,
-                        LinkedHashMap::new,
-                        Collectors.toCollection(LinkedHashSet::new)
-                    ));
+                        .collect(Collectors.groupingBy(
+                                LocationCache::of,
+                                LinkedHashMap::new,
+                                Collectors.toCollection(LinkedHashSet::new)
+                        ));
 
                 dbGrouped.forEach((location, logs) ->
-                    groupedResults.merge(location, logs, (existing, newLogs) -> {
-                        existing.addAll(newLogs);
-                        return existing;
-                    })
+                        groupedResults.merge(location, logs, (existing, newLogs) -> {
+                            existing.addAll(newLogs);
+                            return existing;
+                        })
                 );
 
                 return new CallbackLookup<>(groupedResults, dbLookup.getTotal());
@@ -107,11 +107,11 @@ public class RestoreRepositoryMySQL implements RestoreRepository {
             List<Integer> actionTypes = filters.getActionTypesFilter();
 
             List<ActionType> actionTypeObjects = actionTypes != null ?
-                actionTypes.stream()
-                    .map(ActionType::getById)
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.toList()) :
-                new ArrayList<>();
+                    actionTypes.stream()
+                            .map(ActionType::getById)
+                            .filter(Objects::nonNull)
+                            .collect(Collectors.toList()) :
+                    new ArrayList<>();
 
             long cachedCount = 0;
             if (!filters.isIgnoreCache() && !actionTypeObjects.isEmpty()) {
@@ -138,9 +138,9 @@ public class RestoreRepositoryMySQL implements RestoreRepository {
     }
 
     private CallbackLookup<Map<LocationCache, Set<LogEntry>>, Long> queryLogsFromDB(
-        @NonNull DatabaseFilters filters,
-        int skip,
-        int limit) {
+            @NonNull DatabaseFilters filters,
+            int skip,
+            int limit) {
 
         Set<LogEntry> logs = new LinkedHashSet<>();
         long totalCount = 0;
@@ -158,36 +158,36 @@ public class RestoreRepositoryMySQL implements RestoreRepository {
         }
 
         Map<LocationCache, Set<LogEntry>> groupedLogs = logs.stream()
-            .collect(Collectors.groupingBy(
-                LocationCache::of,
-                LinkedHashMap::new,
-                Collectors.toCollection(LinkedHashSet::new)
-            ));
+                .collect(Collectors.groupingBy(
+                        LocationCache::of,
+                        LinkedHashMap::new,
+                        Collectors.toCollection(LinkedHashSet::new)
+                ));
 
         return new CallbackLookup<>(groupedLogs, totalCount);
     }
 
     private QueryBuilder buildBaseQuery(DatabaseFilters databaseFilters) {
         QueryBuilder queryBuilder = new QueryBuilder(
-            stellarProtect.getConfigManager().getTablesLogEntries(),
-            stellarProtect.getConfigManager().getTablesPlayers()
+                stellarProtect.getConfigManager().getTablesLogEntries(),
+                stellarProtect.getConfigManager().getTablesPlayers()
         )
-            .addTimeFilter(databaseFilters.getTimeFilter())
-            .addRadiusFilter(databaseFilters.getRadiusFilter())
-            .addUsersFilter(databaseFilters.getUserFilters())
-            .addAmountFilter(databaseFilters.getMinAmount(), databaseFilters.getMaxAmount())
-            .addChunkFilter(databaseFilters.getChunkX(), databaseFilters.getChunkZ());
+                .addTimeFilter(databaseFilters.getTimeFilter())
+                .addRadiusFilter(databaseFilters.getRadiusFilter())
+                .addUsersFilter(databaseFilters.getUserFilters())
+                .addAmountFilter(databaseFilters.getMinAmount(), databaseFilters.getMaxAmount())
+                .addChunkFilter(databaseFilters.getChunkX(), databaseFilters.getChunkZ());
 
         queryBuilder.addCombinedIncludeFilters(
-            databaseFilters.getAllIncludeFilters(),
-            databaseFilters.getIncludeMaterialFilters(),
-            databaseFilters.getIncludeBlockFilters()
+                databaseFilters.getAllIncludeFilters(),
+                databaseFilters.getIncludeMaterialFilters(),
+                databaseFilters.getIncludeBlockFilters()
         );
 
         queryBuilder.addCombinedExcludeFilters(
-            databaseFilters.getAllExcludeFilters(),
-            databaseFilters.getExcludeMaterialFilters(),
-            databaseFilters.getExcludeBlockFilters()
+                databaseFilters.getAllExcludeFilters(),
+                databaseFilters.getExcludeMaterialFilters(),
+                databaseFilters.getExcludeBlockFilters()
         );
 
         return queryBuilder.addActionTypesFilter(databaseFilters.getActionTypesFilter());
@@ -363,8 +363,8 @@ public class RestoreRepositoryMySQL implements RestoreRepository {
         public QueryBuilder addUsersFilter(UsersArg usersArg) {
             if (usersArg != null && usersArg.getUserIds() != null && !usersArg.getUserIds().isEmpty()) {
                 String placeholders = usersArg.getUserIds().stream()
-                    .map(id -> "?")
-                    .collect(Collectors.joining(","));
+                        .map(id -> "?")
+                        .collect(Collectors.joining(","));
                 whereConditions.add("ple.player_id IN (" + placeholders + ")");
                 parameters.addAll(usersArg.getUserIds());
             }
@@ -395,8 +395,8 @@ public class RestoreRepositoryMySQL implements RestoreRepository {
         public QueryBuilder addActionTypesFilter(List<Integer> actionTypes) {
             if (actionTypes != null && !actionTypes.isEmpty()) {
                 String placeholders = actionTypes.stream()
-                    .map(type -> "?")
-                    .collect(Collectors.joining(","));
+                        .map(type -> "?")
+                        .collect(Collectors.joining(","));
                 whereConditions.add("ple.action_type IN (" + placeholders + ")");
                 parameters.addAll(actionTypes);
             }
@@ -411,7 +411,7 @@ public class RestoreRepositoryMySQL implements RestoreRepository {
         public String getDataQuery() {
             String whereClause = whereConditions.isEmpty() ? "" : " WHERE " + String.join(" AND ", whereConditions);
             return "FROM " + tablesLogEntries + " ple " +
-                "LEFT JOIN " + tablesPlayers + " p ON ple.player_id = p.id" + whereClause;
+                    "LEFT JOIN " + tablesPlayers + " p ON ple.player_id = p.id" + whereClause;
         }
 
         public List<Object> getParameters() {

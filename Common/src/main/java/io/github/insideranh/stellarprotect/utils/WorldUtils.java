@@ -65,12 +65,12 @@ public class WorldUtils {
 
     public static boolean isValidChestBlock(Material material) {
         return material.equals(Material.CHEST) ||
-            material.equals(Material.TRAPPED_CHEST) ||
-            material.equals(Material.ENDER_CHEST) ||
-            material.equals(Material.DROPPER) ||
-            material.name().endsWith("SHULKER_BOX") ||
-            material.name().contains("BARREL") ||
-            material.name().endsWith("COPPER_CHEST");
+                material.equals(Material.TRAPPED_CHEST) ||
+                material.equals(Material.ENDER_CHEST) ||
+                material.equals(Material.DROPPER) ||
+                material.name().endsWith("SHULKER_BOX") ||
+                material.name().contains("BARREL") ||
+                material.name().endsWith("COPPER_CHEST");
     }
 
 }

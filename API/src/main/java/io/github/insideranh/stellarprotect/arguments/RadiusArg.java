@@ -33,15 +33,15 @@ public class RadiusArg {
     @Override
     public String toString() {
         return "RadiusArg{" +
-            "worldId=" + worldId +
-            ", radius=" + radius +
-            ", minX=" + minX +
-            ", maxX=" + maxX +
-            ", minY=" + minY +
-            ", maxY=" + maxY +
-            ", minZ=" + minZ +
-            ", maxZ=" + maxZ +
-            '}';
+                "worldId=" + worldId +
+                ", radius=" + radius +
+                ", minX=" + minX +
+                ", maxX=" + maxX +
+                ", minY=" + minY +
+                ", maxY=" + maxY +
+                ", minZ=" + minZ +
+                ", maxZ=" + maxZ +
+                '}';
     }
 
 }

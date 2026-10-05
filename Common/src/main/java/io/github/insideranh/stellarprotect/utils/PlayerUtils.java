@@ -139,8 +139,8 @@ public class PlayerUtils {
         }
 
         String[] explosiveEntities = {
-            "=creeper", "=wither", "=ghast", "=tnt",
-            "=end_crystal", "=wither_skull", "=minecart_tnt"
+                "=creeper", "=wither", "=ghast", "=tnt",
+                "=end_crystal", "=wither_skull", "=minecart_tnt"
         };
 
         for (String entity : explosiveEntities) {
@@ -158,18 +158,18 @@ public class PlayerUtils {
         }
 
         String normalized = userName.toLowerCase().startsWith("=")
-            ? userName.toLowerCase()
-            : "=" + userName.toLowerCase();
+                ? userName.toLowerCase()
+                : "=" + userName.toLowerCase();
 
         return normalized.equals("=explosion")
-            || normalized.equals("=creeper")
-            || normalized.equals("=wither")
-            || normalized.equals("=ghast")
-            || normalized.equals("=tnt")
-            || normalized.equals("=end_crystal")
-            || normalized.equals("=wither_skull")
-            || normalized.equals("=minecart_tnt")
-            || normalized.equals("=fireball");
+                || normalized.equals("=creeper")
+                || normalized.equals("=wither")
+                || normalized.equals("=ghast")
+                || normalized.equals("=tnt")
+                || normalized.equals("=end_crystal")
+                || normalized.equals("=wither_skull")
+                || normalized.equals("=minecart_tnt")
+                || normalized.equals("=fireball");
     }
 
     public static String getNameOfEntity(long entityId) {

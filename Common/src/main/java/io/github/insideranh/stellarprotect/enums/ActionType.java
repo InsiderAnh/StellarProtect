@@ -97,9 +97,9 @@ public enum ActionType {
 
     static {
         int maxId = Arrays.stream(ActionType.values())
-            .mapToInt(ActionType::getId)
-            .max()
-            .orElse(0);
+                .mapToInt(ActionType::getId)
+                .max()
+                .orElse(0);
 
         ID_TO_ACTION_CACHE = new ActionType[maxId + 1];
 

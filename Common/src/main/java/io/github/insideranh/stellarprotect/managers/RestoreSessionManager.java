@@ -31,9 +31,9 @@ public class RestoreSessionManager {
         session.getProcessedLogHashes().clear();
 
         plugin.getProtectDatabase().getRestoreActions(
-            session.getDatabaseFilters(),
-            session.getCurrentOffset(),
-            session.getLogsPerPage()
+                session.getDatabaseFilters(),
+                session.getCurrentOffset(),
+                session.getLogsPerPage()
         ).thenAccept(callbackLookup -> {
             Map<LocationCache, Set<LogEntry>> groupedLogs = callbackLookup.getLogs();
 
@@ -106,23 +106,23 @@ public class RestoreSessionManager {
         if (isRestored) {
             actionButton = new TextComponent("§8[§cX§8] ");
             actionButton.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
-                "/stellarprotect rs undo " + logHash));
+                    "/stellarprotect rs undo " + logHash));
             actionButton.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                TextComponent.fromLegacyText(plugin.getLangManager().get("messages.sessions.undo"))));
+                    TextComponent.fromLegacyText(plugin.getLangManager().get("messages.sessions.undo"))));
         } else {
             actionButton = new TextComponent("§8[§a<<§8] ");
             actionButton.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
-                "/stellarprotect rs restore " + logHash));
+                    "/stellarprotect rs restore " + logHash));
             actionButton.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                TextComponent.fromLegacyText(plugin.getLangManager().get("messages.sessions.restore"))));
+                    TextComponent.fromLegacyText(plugin.getLangManager().get("messages.sessions.restore"))));
         }
 
         message.addExtra(actionButton);
         message.addExtra(new TextComponent(plugin.getLangManager().get("messages.sessions." + action,
-            text -> text
-                .replace("<time>", TimeUtils.formatMillisAsAgo(logEntry.getCreatedAt()))
-                .replace("<player>", PlayerUtils.getNameOfEntity(logEntry.getPlayerId()))
-                .replace("<data>", data)
+                text -> text
+                        .replace("<time>", TimeUtils.formatMillisAsAgo(logEntry.getCreatedAt()))
+                        .replace("<player>", PlayerUtils.getNameOfEntity(logEntry.getPlayerId()))
+                        .replace("<data>", data)
         )));
         player.spigot().sendMessage(message);
     }
@@ -134,21 +134,21 @@ public class RestoreSessionManager {
 
         TextComponent restoreAllButton = new TextComponent(plugin.getLangManager().get("messages.sessions.restoreall"));
         restoreAllButton.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
-            "/stellarprotect rs restoreall"));
+                "/stellarprotect rs restoreall"));
         restoreAllButton.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-            TextComponent.fromLegacyText(plugin.getLangManager().get("messages.sessions.restoreall-tip"))));
+                TextComponent.fromLegacyText(plugin.getLangManager().get("messages.sessions.restoreall-tip"))));
 
         TextComponent nextPageButton = new TextComponent(plugin.getLangManager().get("messages.sessions.next"));
         nextPageButton.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
-            "/stellarprotect rs next"));
+                "/stellarprotect rs next"));
         nextPageButton.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-            TextComponent.fromLegacyText(plugin.getLangManager().get("messages.sessions.next-tip"))));
+                TextComponent.fromLegacyText(plugin.getLangManager().get("messages.sessions.next-tip"))));
 
         TextComponent exitButton = new TextComponent(plugin.getLangManager().get("messages.sessions.exit"));
         exitButton.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
-            "/stellarprotect rs exit"));
+                "/stellarprotect rs exit"));
         exitButton.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-            TextComponent.fromLegacyText(plugin.getLangManager().get("messages.sessions.exit-tip"))));
+                TextComponent.fromLegacyText(plugin.getLangManager().get("messages.sessions.exit-tip"))));
 
         TextComponent navigationMessage = new TextComponent("");
         navigationMessage.addExtra(restoreAllButton);

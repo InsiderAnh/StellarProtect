@@ -140,13 +140,13 @@ public class ProtectDatabase {
                 List<LogEntry> logEntries = new java.util.ArrayList<>();
                 for (QueuedLog queuedLog : queuedLogs) {
                     LogEntry logEntry = new LogEntry(
-                        queuedLog.getPlayerId(),
-                        queuedLog.getActionType(),
-                        queuedLog.getWorldId(),
-                        queuedLog.getX(),
-                        queuedLog.getY(),
-                        queuedLog.getZ(),
-                        queuedLog.getCreatedAt()
+                            queuedLog.getPlayerId(),
+                            queuedLog.getActionType(),
+                            queuedLog.getWorldId(),
+                            queuedLog.getX(),
+                            queuedLog.getY(),
+                            queuedLog.getZ(),
+                            queuedLog.getCreatedAt()
                     );
 
                     if (queuedLog.getExtraJson() != null && !queuedLog.getExtraJson().isEmpty()) {

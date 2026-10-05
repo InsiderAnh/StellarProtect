@@ -32,7 +32,7 @@ public class ItemsRepositoryMySQL implements ItemsRepository {
     public void saveItems(List<ItemTemplate> itemTemplates) {
         stellarProtect.getExecutor().execute(() -> {
             String sql = "INSERT INTO " + stellarProtect.getConfigManager().getTablesItemTemplates() + " (id, base64, s) VALUES (?, ?, ?) " +
-                "ON DUPLICATE KEY UPDATE base64 = VALUES(base64)";
+                    "ON DUPLICATE KEY UPDATE base64 = VALUES(base64)";
 
             try (Connection connection = dataSource.getConnection();
                  PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -76,13 +76,13 @@ public class ItemsRepositoryMySQL implements ItemsRepository {
     @Override
     public void loadMostUsedItems() {
         ListeningExecutorService executor = MoreExecutors.listeningDecorator(
-            new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<>(1024))
+                new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<>(1024))
         );
 
         executor.execute(() -> {
             String sql = "SELECT id, base64, s, access_count, last_accessed, total_quantity_used, created_at " +
-                "FROM " + stellarProtect.getConfigManager().getTablesItemTemplates() + " " +
-                "ORDER BY access_count DESC, total_quantity_used DESC";
+                    "FROM " + stellarProtect.getConfigManager().getTablesItemTemplates() + " " +
+                    "ORDER BY access_count DESC, total_quantity_used DESC";
 
             try (Connection connection = dataSource.getConnection();
                  PreparedStatement statement = connection.prepareStatement(sql);

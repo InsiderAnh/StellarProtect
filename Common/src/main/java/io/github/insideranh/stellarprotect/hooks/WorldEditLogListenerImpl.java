@@ -19,37 +19,37 @@ public class WorldEditLogListenerImpl implements WorldEditLogListener {
     @Override
     public void onBlockPlace(String playerName, Location location, BlockState newBlockState) {
         LoggerCache.addWorldEditLog(new PlayerBlockLogEntry(
-            -1000,
-            newBlockState,
-            ActionType.BLOCK_PLACE
+                -1000,
+                newBlockState,
+                ActionType.BLOCK_PLACE
         ));
     }
 
     @Override
     public void onBlockBreak(String playerName, Location location, BlockState oldBlockState) {
         LoggerCache.addWorldEditLog(new PlayerBlockLogEntry(
-            -1000,
-            oldBlockState,
-            ActionType.BLOCK_BREAK
+                -1000,
+                oldBlockState,
+                ActionType.BLOCK_BREAK
         ));
     }
 
     @Override
     public void onBlockReplace(String playerName, Location location, BlockState oldBlockState, BlockState newBlockState) {
         LoggerCache.addWorldEditLog(new PlayerBlockStateLogEntry(
-            -1000,
-            oldBlockState,
-            newBlockState,
-            ActionType.BLOCK_PLACE
+                -1000,
+                oldBlockState,
+                newBlockState,
+                ActionType.BLOCK_PLACE
         ));
     }
 
     @Override
     public void onContainerBreak(String playerName, Location location, BlockState oldBlockState, ItemStack[] contents) {
         LoggerCache.addWorldEditLog(new PlayerBlockLogEntry(
-            -1000,
-            oldBlockState,
-            ActionType.BLOCK_BREAK
+                -1000,
+                oldBlockState,
+                ActionType.BLOCK_BREAK
         ));
     }
 

@@ -147,9 +147,9 @@ public class ItemsCache {
                 ItemTemplate item = items[entry.position];
 
                 if (item != null &&
-                    ((index == typeNameIndex && key.equals(item.getTypeName()) ||
-                        (index == loreIndex && key.equals(item.getLore())) ||
-                        (index == displayNameIndex && key.equals(item.getDisplayName()))))) {
+                        ((index == typeNameIndex && key.equals(item.getTypeName()) ||
+                                (index == loreIndex && key.equals(item.getLore())) ||
+                                (index == displayNameIndex && key.equals(item.getDisplayName()))))) {
                     return item;
                 }
             }

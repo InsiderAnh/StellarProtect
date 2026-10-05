@@ -12,9 +12,9 @@ import javax.annotation.Nullable;
 public class Handlers {
 
     private static final GenericHandler[] GENERIC_HANDLERS = {
-        new PlayerToggleHandler(),
-        new PlayerPlaceUseHandler(),
-        new PlayerGrowCropHandler()
+            new PlayerToggleHandler(),
+            new PlayerPlaceUseHandler(),
+            new PlayerGrowCropHandler()
     };
 
     public static @Nullable GenericHandler canHandle(Block block, Material blockType, ItemStack itemStack) {

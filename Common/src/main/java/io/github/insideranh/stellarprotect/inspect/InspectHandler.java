@@ -35,7 +35,7 @@ public class InspectHandler {
             }
 
             plugin.getLangManager().sendMessage(player, "messages.actions.transactions_title",
-                text -> text.replace("<location>", LocationUtils.getFormattedStringLocation(blockLocation)));
+                    text -> text.replace("<location>", LocationUtils.getFormattedStringLocation(blockLocation)));
 
             logs.forEach(transaction -> processItemTransaction(player, transaction));
             sendPaginationInfo(player, page, limit, maxPage);
@@ -52,7 +52,7 @@ public class InspectHandler {
             }
 
             plugin.getLangManager().sendMessage(player, "messages.actions.location",
-                text -> text.replace("<location>", LocationUtils.getFormattedStringLocation(blockLocation)));
+                    text -> text.replace("<location>", LocationUtils.getFormattedStringLocation(blockLocation)));
 
             logs.forEach(logEntry -> processLogEntry(player, logEntry));
             sendPaginationInfo(player, page, limit, maxPage);
@@ -69,11 +69,11 @@ public class InspectHandler {
         MinecraftItem minecraftItem = StringCleanerUtils.parseMinecraftData(materialOrNexoId);
 
         plugin.getLangManager().sendMessage(player, messageKey,
-            text -> text
-                .replace("<time>", TimeUtils.formatMillisAsAgo(transaction.getCreatedAt()))
-                .replace("<player>", PlayerUtils.getNameOfEntity(transaction.getPlayerId()))
-                .replace("<data>", minecraftItem.getCleanName())
-                .replace("<amount>", String.valueOf(transaction.getAmount()))
+                text -> text
+                        .replace("<time>", TimeUtils.formatMillisAsAgo(transaction.getCreatedAt()))
+                        .replace("<player>", PlayerUtils.getNameOfEntity(transaction.getPlayerId()))
+                        .replace("<data>", minecraftItem.getCleanName())
+                        .replace("<amount>", String.valueOf(transaction.getAmount()))
         );
     }
 
@@ -101,25 +101,25 @@ public class InspectHandler {
         }
 
         plugin.getLangManager().sendMessage(player, "messages.actions." + actionType.name().toLowerCase(),
-            text -> text
-                .replace("<time>", TimeUtils.formatMillisAsAgo(logEntry.getCreatedAt()))
-                .replace("<player>", PlayerUtils.getNameOfEntity(logEntry.getPlayerId()))
-                .replace("<data>", data)
+                text -> text
+                        .replace("<time>", TimeUtils.formatMillisAsAgo(logEntry.getCreatedAt()))
+                        .replace("<player>", PlayerUtils.getNameOfEntity(logEntry.getPlayerId()))
+                        .replace("<data>", data)
         );
     }
 
     public void sendNoLogsMessage(Player player, Location blockLocation) {
         plugin.getLangManager().sendMessage(player, "messages.noInspectLogs",
-            text -> text.replace("<location>", LocationUtils.getFormattedStringLocation(blockLocation)));
+                text -> text.replace("<location>", LocationUtils.getFormattedStringLocation(blockLocation)));
     }
 
     public void sendPaginationInfo(Player player, int currentPage, int itemsPerPage, long total) {
         plugin.getProtectNMS().sendPageButtons(player,
-            plugin.getLangManager().get("messages.pagesNav"),
-            plugin.getLangManager().get("messages.clickPage"),
-            currentPage,
-            itemsPerPage,
-            (int) total
+                plugin.getLangManager().get("messages.pagesNav"),
+                plugin.getLangManager().get("messages.clickPage"),
+                currentPage,
+                itemsPerPage,
+                (int) total
         );
     }
 
@@ -185,10 +185,10 @@ public class InspectHandler {
 
             String messageKey = "messages.actions." + (furnitureEntry.getActionType() == ActionType.FURNITURE_BREAK.getId() ? "furniture_break" : "furniture_place");
             plugin.getLangManager().sendMessage(player, messageKey,
-                text -> text
-                    .replace("<time>", TimeUtils.formatMillisAsAgo(logEntry.getCreatedAt()))
-                    .replace("<player>", PlayerUtils.getNameOfEntity(logEntry.getPlayerId()))
-                    .replace("<data>", furnitureEntry.getNexoBlockId())
+                    text -> text
+                            .replace("<time>", TimeUtils.formatMillisAsAgo(logEntry.getCreatedAt()))
+                            .replace("<player>", PlayerUtils.getNameOfEntity(logEntry.getPlayerId()))
+                            .replace("<data>", furnitureEntry.getNexoBlockId())
             );
         }
 
@@ -211,13 +211,13 @@ public class InspectHandler {
             String cleanName = StringCleanerUtils.parseMinecraftData(item.getType().name()).getCleanName();
 
             plugin.getProtectNMS().sendActionTitle(player,
-                plugin.getLangManager().get(messageKey),
-                plugin.getLangManager().get("messages.tooltips.armor_stand_manipulate"),
-                "/spt view stand " + armorStandEntry.hashCode(),
-                text -> text
-                    .replace("<time>", TimeUtils.formatMillisAsAgo(logEntry.getCreatedAt()))
-                    .replace("<player>", PlayerUtils.getNameOfEntity(logEntry.getPlayerId()))
-                    .replace("<data>", cleanName)
+                    plugin.getLangManager().get(messageKey),
+                    plugin.getLangManager().get("messages.tooltips.armor_stand_manipulate"),
+                    "/spt view stand " + armorStandEntry.hashCode(),
+                    text -> text
+                            .replace("<time>", TimeUtils.formatMillisAsAgo(logEntry.getCreatedAt()))
+                            .replace("<player>", PlayerUtils.getNameOfEntity(logEntry.getPlayerId()))
+                            .replace("<data>", cleanName)
             );
         }
 
@@ -231,10 +231,10 @@ public class InspectHandler {
 
             String messageKey = "messages.actions." + (eventEntry.getEventType() == (byte) 0 ? "x_kit_claim" : "x_kit_give");
             plugin.getLangManager().sendMessage(player, messageKey,
-                text -> text
-                    .replace("<time>", TimeUtils.formatMillisAsAgo(logEntry.getCreatedAt()))
-                    .replace("<player>", PlayerUtils.getNameOfEntity(logEntry.getPlayerId()))
-                    .replace("<data>", eventEntry.getKitId())
+                    text -> text
+                            .replace("<time>", TimeUtils.formatMillisAsAgo(logEntry.getCreatedAt()))
+                            .replace("<player>", PlayerUtils.getNameOfEntity(logEntry.getPlayerId()))
+                            .replace("<data>", eventEntry.getKitId())
             );
         }
 
@@ -246,10 +246,10 @@ public class InspectHandler {
         public void handle(Player player, LogEntry logEntry, StellarProtect plugin) {
             CropGrowLogEntry growAgeEntry = (CropGrowLogEntry) logEntry;
             plugin.getLangManager().sendMessage(player, "messages.actions.crop_grow",
-                text -> text
-                    .replace("<time>", TimeUtils.formatMillisAsAgo(logEntry.getCreatedAt()))
-                    .replace("<player>", PlayerUtils.getNameOfEntity(logEntry.getPlayerId()))
-                    .replace("<data>", plugin.getLangManager().get("messages.actions.growAge", replace -> replace.replace("<age>", String.valueOf(growAgeEntry.getAge()))))
+                    text -> text
+                            .replace("<time>", TimeUtils.formatMillisAsAgo(logEntry.getCreatedAt()))
+                            .replace("<player>", PlayerUtils.getNameOfEntity(logEntry.getPlayerId()))
+                            .replace("<data>", plugin.getLangManager().get("messages.actions.growAge", replace -> replace.replace("<age>", String.valueOf(growAgeEntry.getAge()))))
             );
         }
 
@@ -261,10 +261,10 @@ public class InspectHandler {
         public void handle(Player player, LogEntry logEntry, StellarProtect plugin) {
             PlayerXPEntry xpEntry = (PlayerXPEntry) logEntry;
             plugin.getLangManager().sendMessage(player, "messages.actions." + (xpEntry.getDifference() > 0 ? "add_xp" : "remove_xp"),
-                text -> text
-                    .replace("<time>", TimeUtils.formatMillisAsAgo(logEntry.getCreatedAt()))
-                    .replace("<player>", PlayerUtils.getNameOfEntity(logEntry.getPlayerId()))
-                    .replace("<amount>", String.valueOf(xpEntry.getDifference()))
+                    text -> text
+                            .replace("<time>", TimeUtils.formatMillisAsAgo(logEntry.getCreatedAt()))
+                            .replace("<player>", PlayerUtils.getNameOfEntity(logEntry.getPlayerId()))
+                            .replace("<amount>", String.valueOf(xpEntry.getDifference()))
             );
         }
 
@@ -277,10 +277,10 @@ public class InspectHandler {
             PlayerEconomyEntry economyEntry = (PlayerEconomyEntry) logEntry;
             String messageKey = economyEntry.getVariationType().name().toLowerCase() + "_" + (economyEntry.getDifference() > 0 ? "income" : "outcome");
             plugin.getLangManager().sendMessage(player, "messages.actions." + messageKey,
-                text -> text
-                    .replace("<time>", TimeUtils.formatMillisAsAgo(logEntry.getCreatedAt()))
-                    .replace("<player>", PlayerUtils.getNameOfEntity(logEntry.getPlayerId()))
-                    .replace("<amount>", StringCleanerUtils.formatEconomy(economyEntry.getDifference()))
+                    text -> text
+                            .replace("<time>", TimeUtils.formatMillisAsAgo(logEntry.getCreatedAt()))
+                            .replace("<player>", PlayerUtils.getNameOfEntity(logEntry.getPlayerId()))
+                            .replace("<amount>", StringCleanerUtils.formatEconomy(economyEntry.getDifference()))
             );
         }
 
@@ -316,14 +316,14 @@ public class InspectHandler {
             playerProtect.getPosibleLogs().put(inventoryTransactionEntry.hashCode(), inventoryTransactionEntry);
 
             plugin.getProtectNMS().sendActionTitle(player,
-                plugin.getLangManager().get("messages.actions.inventory_transaction"),
-                String.join("\n", tooltipBody),
-                "/spt view inventory " + logEntry.hashCode(),
-                text -> text
-                    .replace("<time>", TimeUtils.formatMillisAsAgo(logEntry.getCreatedAt()))
-                    .replace("<player>", PlayerUtils.getNameOfEntity(logEntry.getPlayerId()))
-                    .replace("<added>", String.valueOf(inventoryTransactionEntry.getAdded().size()))
-                    .replace("<removed>", String.valueOf(inventoryTransactionEntry.getRemoved().size()))
+                    plugin.getLangManager().get("messages.actions.inventory_transaction"),
+                    String.join("\n", tooltipBody),
+                    "/spt view inventory " + logEntry.hashCode(),
+                    text -> text
+                            .replace("<time>", TimeUtils.formatMillisAsAgo(logEntry.getCreatedAt()))
+                            .replace("<player>", PlayerUtils.getNameOfEntity(logEntry.getPlayerId()))
+                            .replace("<added>", String.valueOf(inventoryTransactionEntry.getAdded().size()))
+                            .replace("<removed>", String.valueOf(inventoryTransactionEntry.getRemoved().size()))
             );
         }
     }
@@ -335,19 +335,19 @@ public class InspectHandler {
             PlayerSessionEntry sessionEntry = (PlayerSessionEntry) logEntry;
             if (sessionEntry.getLogin() == 1) {
                 plugin.getLangManager().sendMessage(player, "messages.actions.login_session",
-                    text -> text
-                        .replace("<time>", TimeUtils.formatMillisAsAgo(logEntry.getCreatedAt()))
-                        .replace("<player>", PlayerUtils.getNameOfEntity(logEntry.getPlayerId()))
+                        text -> text
+                                .replace("<time>", TimeUtils.formatMillisAsAgo(logEntry.getCreatedAt()))
+                                .replace("<player>", PlayerUtils.getNameOfEntity(logEntry.getPlayerId()))
                 );
             } else {
                 plugin.getProtectNMS().sendActionTitle(player,
-                    plugin.getLangManager().get("messages.actions.logout_session"),
-                    plugin.getLangManager().get("messages.tooltips.logout_session")
-                        .replace("<time>", TimeUtils.formatMillisAsCompactDHMS(sessionEntry.getSessionTime() * 1000L)),
-                    "",
-                    text -> text
-                        .replace("<time>", TimeUtils.formatMillisAsAgo(logEntry.getCreatedAt()))
-                        .replace("<player>", PlayerUtils.getNameOfEntity(logEntry.getPlayerId()))
+                        plugin.getLangManager().get("messages.actions.logout_session"),
+                        plugin.getLangManager().get("messages.tooltips.logout_session")
+                                .replace("<time>", TimeUtils.formatMillisAsCompactDHMS(sessionEntry.getSessionTime() * 1000L)),
+                        "",
+                        text -> text
+                                .replace("<time>", TimeUtils.formatMillisAsAgo(logEntry.getCreatedAt()))
+                                .replace("<player>", PlayerUtils.getNameOfEntity(logEntry.getPlayerId()))
                 );
             }
         }
@@ -366,15 +366,15 @@ public class InspectHandler {
             String tooltipKey = "messages.tooltips." + (itemEntry.isPlaced() ? "place_item" : "remove_item");
 
             plugin.getProtectNMS().sendActionTitle(player,
-                plugin.getLangManager().get(actionKey),
-                plugin.getLangManager().get(tooltipKey, text -> text
-                    .replace("<data>", explainedItem.getCleanName())
-                    .replace("<amount>", String.valueOf(itemEntry.getAmount()))),
-                "",
-                text -> text
-                    .replace("<time>", TimeUtils.formatMillisAsAgo(logEntry.getCreatedAt()))
-                    .replace("<player>", PlayerUtils.getNameOfEntity(logEntry.getPlayerId()))
-                    .replace("<data>", minecraftItem.getCleanName())
+                    plugin.getLangManager().get(actionKey),
+                    plugin.getLangManager().get(tooltipKey, text -> text
+                            .replace("<data>", explainedItem.getCleanName())
+                            .replace("<amount>", String.valueOf(itemEntry.getAmount()))),
+                    "",
+                    text -> text
+                            .replace("<time>", TimeUtils.formatMillisAsAgo(logEntry.getCreatedAt()))
+                            .replace("<player>", PlayerUtils.getNameOfEntity(logEntry.getPlayerId()))
+                            .replace("<data>", minecraftItem.getCleanName())
             );
         }
     }
@@ -388,11 +388,11 @@ public class InspectHandler {
             PlayerShootEntry sessionEntry = (PlayerShootEntry) logEntry;
             String login = sessionEntry.getSuccess() == 1 ? "success_shoot" : "shoot";
             plugin.getLangManager().sendMessage(player, "messages.actions." + login,
-                text -> text
-                    .replace("<time>", TimeUtils.formatMillisAsAgo(logEntry.getCreatedAt()))
-                    .replace("<player>", PlayerUtils.getNameOfEntity(logEntry.getPlayerId()))
-                    .replace("<shoot>", sessionEntry.getShootEntityType())
-                    .replace("<data>", minecraftItem.getCleanName())
+                    text -> text
+                            .replace("<time>", TimeUtils.formatMillisAsAgo(logEntry.getCreatedAt()))
+                            .replace("<player>", PlayerUtils.getNameOfEntity(logEntry.getPlayerId()))
+                            .replace("<shoot>", sessionEntry.getShootEntityType())
+                            .replace("<data>", minecraftItem.getCleanName())
             );
         }
 
@@ -407,10 +407,10 @@ public class InspectHandler {
             PlayerMountEntry sessionEntry = (PlayerMountEntry) logEntry;
             String login = sessionEntry.getMount() == 1 ? "dismount" : "mount";
             plugin.getLangManager().sendMessage(player, "messages.actions." + login,
-                text -> text
-                    .replace("<time>", TimeUtils.formatMillisAsAgo(logEntry.getCreatedAt()))
-                    .replace("<player>", PlayerUtils.getNameOfEntity(logEntry.getPlayerId()))
-                    .replace("<data>", minecraftItem.getCleanName())
+                    text -> text
+                            .replace("<time>", TimeUtils.formatMillisAsAgo(logEntry.getCreatedAt()))
+                            .replace("<player>", PlayerUtils.getNameOfEntity(logEntry.getPlayerId()))
+                            .replace("<data>", minecraftItem.getCleanName())
             );
         }
 
@@ -425,10 +425,10 @@ public class InspectHandler {
             PlayerLeashEntry sessionEntry = (PlayerLeashEntry) logEntry;
             String login = sessionEntry.getLeash() == 1 ? "unleash" : "leash";
             plugin.getLangManager().sendMessage(player, "messages.actions." + login,
-                text -> text
-                    .replace("<time>", TimeUtils.formatMillisAsAgo(logEntry.getCreatedAt()))
-                    .replace("<player>", PlayerUtils.getNameOfEntity(logEntry.getPlayerId()))
-                    .replace("<data>", minecraftItem.getCleanName())
+                    text -> text
+                            .replace("<time>", TimeUtils.formatMillisAsAgo(logEntry.getCreatedAt()))
+                            .replace("<player>", PlayerUtils.getNameOfEntity(logEntry.getPlayerId()))
+                            .replace("<data>", minecraftItem.getCleanName())
             );
         }
 
@@ -444,14 +444,14 @@ public class InspectHandler {
             String lastGameMode = plugin.getLangManager().get("game_modes." + gameModeEntry.getLastGameMode());
 
             plugin.getProtectNMS().sendActionTitle(player,
-                plugin.getLangManager().get("messages.actions.game_mode"),
-                plugin.getLangManager().get("messages.tooltips.game_mode"),
-                "",
-                text -> text
-                    .replace("<time>", TimeUtils.formatMillisAsAgo(logEntry.getCreatedAt()))
-                    .replace("<player>", PlayerUtils.getNameOfEntity(logEntry.getPlayerId()))
-                    .replace("<lastGameMode>", lastGameMode)
-                    .replace("<newGameMode>", newGameMode)
+                    plugin.getLangManager().get("messages.actions.game_mode"),
+                    plugin.getLangManager().get("messages.tooltips.game_mode"),
+                    "",
+                    text -> text
+                            .replace("<time>", TimeUtils.formatMillisAsAgo(logEntry.getCreatedAt()))
+                            .replace("<player>", PlayerUtils.getNameOfEntity(logEntry.getPlayerId()))
+                            .replace("<lastGameMode>", lastGameMode)
+                            .replace("<newGameMode>", newGameMode)
             );
         }
 
@@ -463,16 +463,16 @@ public class InspectHandler {
         public void handle(Player player, LogEntry logEntry, StellarProtect plugin) {
             PlayerSignChangeEntry signEntry = (PlayerSignChangeEntry) logEntry;
             plugin.getProtectNMS().sendActionTitle(player,
-                plugin.getLangManager().get("messages.actions.sign_change"),
-                plugin.getLangManager().get("messages.tooltips.sign_change"),
-                "",
-                text -> text
-                    .replace("<time>", TimeUtils.formatMillisAsAgo(logEntry.getCreatedAt()))
-                    .replace("<player>", PlayerUtils.getNameOfEntity(logEntry.getPlayerId()))
-                    .replace("<line1>", signEntry.getLine(0))
-                    .replace("<line2>", signEntry.getLine(1))
-                    .replace("<line3>", signEntry.getLine(2))
-                    .replace("<line4>", signEntry.getLine(3))
+                    plugin.getLangManager().get("messages.actions.sign_change"),
+                    plugin.getLangManager().get("messages.tooltips.sign_change"),
+                    "",
+                    text -> text
+                            .replace("<time>", TimeUtils.formatMillisAsAgo(logEntry.getCreatedAt()))
+                            .replace("<player>", PlayerUtils.getNameOfEntity(logEntry.getPlayerId()))
+                            .replace("<line1>", signEntry.getLine(0))
+                            .replace("<line2>", signEntry.getLine(1))
+                            .replace("<line3>", signEntry.getLine(2))
+                            .replace("<line4>", signEntry.getLine(3))
             );
         }
 

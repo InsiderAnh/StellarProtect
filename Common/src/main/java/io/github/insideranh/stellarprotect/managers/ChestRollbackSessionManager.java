@@ -41,9 +41,9 @@ public class ChestRollbackSessionManager {
         Inventory inventory = holder.getInventory();
 
         plugin.getProtectDatabase().getRestoreActions(
-            session.getDatabaseFilters(),
-            0,
-            10000
+                session.getDatabaseFilters(),
+                0,
+                10000
         ).thenAccept(callbackLookup -> {
             Map<LocationCache, Set<LogEntry>> groupedLogs = callbackLookup.getLogs();
 
@@ -67,7 +67,7 @@ public class ChestRollbackSessionManager {
             List<PlayerTransactionEntry> transactions = new ArrayList<>();
             for (LogEntry log : locationLogs) {
                 if (log instanceof PlayerTransactionEntry &&
-                    log.getActionType() == ActionType.INVENTORY_TRANSACTION.getId()) {
+                        log.getActionType() == ActionType.INVENTORY_TRANSACTION.getId()) {
                     transactions.add((PlayerTransactionEntry) log);
                 }
             }
@@ -82,8 +82,8 @@ public class ChestRollbackSessionManager {
             transactions.sort(Comparator.comparingLong(LogEntry::getCreatedAt));
 
             Map<Long, Integer> inventoryState = calculateInventoryState(
-                transactions,
-                session.getDatabaseFilters().getTimeFilter().getStart()
+                    transactions,
+                    session.getDatabaseFilters().getTimeFilter().getStart()
             );
 
             applyInventoryRollback(inventory, inventoryState, session.isVerbose(), session.isSilent(), player);

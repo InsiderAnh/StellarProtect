@@ -110,21 +110,21 @@ public class ItemLogActionHandler implements InspectHandler.ActionHandler {
         String placeholder = "<" + templateType + ">";
 
         return plugin.getLangManager().getList(langKey).stream()
-            .map(template -> template.replace(placeholder, value))
-            .collect(Collectors.toList());
+                .map(template -> template.replace(placeholder, value))
+                .collect(Collectors.toList());
     }
 
     private void sendActionTitle(Player player, ItemDetails itemDetails, String tooltipBody, LogEntry logEntry, ActionType actionType, StellarProtect plugin) {
         String actionKey = actionType.name().toLowerCase();
 
         plugin.getProtectNMS().sendActionTitle(player,
-            plugin.getLangManager().get("messages.actions." + actionKey),
-            tooltipBody,
-            "/spt view item " + logEntry.hashCode(),
-            text -> text
-                .replace("<time>", TimeUtils.formatMillisAsAgo(logEntry.getCreatedAt()))
-                .replace("<player>", PlayerUtils.getNameOfEntity(logEntry.getPlayerId()))
-                .replace("<data>", itemDetails.getCleanName())
+                plugin.getLangManager().get("messages.actions." + actionKey),
+                tooltipBody,
+                "/spt view item " + logEntry.hashCode(),
+                text -> text
+                        .replace("<time>", TimeUtils.formatMillisAsAgo(logEntry.getCreatedAt()))
+                        .replace("<player>", PlayerUtils.getNameOfEntity(logEntry.getPlayerId()))
+                        .replace("<data>", itemDetails.getCleanName())
         );
     }
 

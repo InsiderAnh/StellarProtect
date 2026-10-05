@@ -19,10 +19,10 @@ public class LocationUtils {
     public static String getFormattedStringLocation(@NonNull Location location) {
         if (location.getWorld() == null) return "";
         return FORMAT_LOCATION
-            .replace("<x>", String.valueOf(location.getBlockX()))
-            .replace("<y>", String.valueOf(location.getBlockY()))
-            .replace("<z>", String.valueOf(location.getBlockZ()))
-            .replace("<world>", location.getWorld().getName());
+                .replace("<x>", String.valueOf(location.getBlockX()))
+                .replace("<y>", String.valueOf(location.getBlockY()))
+                .replace("<z>", String.valueOf(location.getBlockZ()))
+                .replace("<world>", location.getWorld().getName());
     }
 
     public static Location getLocationString(@NonNull String location) {

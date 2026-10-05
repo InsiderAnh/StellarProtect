@@ -41,16 +41,16 @@ public class PlayerCache {
         if (!config.getCheckCommands().contains(command)) return;
 
         patterns
-            .computeIfAbsent(entry.getPlayerId(), k -> new EnumMap<>(ActionType.class))
-            .put(ActionType.COMMAND, new PatternValue(entry, System.currentTimeMillis()));
+                .computeIfAbsent(entry.getPlayerId(), k -> new EnumMap<>(ActionType.class))
+                .put(ActionType.COMMAND, new PatternValue(entry, System.currentTimeMillis()));
     }
 
     private static void handleKill(PlayerDeathEntry entry) {
         if (entry.getActionType() != ActionType.DEATH.getId()) return;
 
         patterns
-            .computeIfAbsent(entry.getPlayerId(), k -> new EnumMap<>(ActionType.class))
-            .put(ActionType.DEATH, new PatternValue(entry, System.currentTimeMillis()));
+                .computeIfAbsent(entry.getPlayerId(), k -> new EnumMap<>(ActionType.class))
+                .put(ActionType.DEATH, new PatternValue(entry, System.currentTimeMillis()));
 
         checkTPAKill(entry.getPlayerId());
     }
@@ -76,27 +76,27 @@ public class PlayerCache {
         String playerName = getName(playerId);
 
         Function<String, String> replacer = text -> text
-            .replace("<player>", playerName)
-            .replace("<command>", commandEntry.getCommand())
-            .replace("<death>", playerName);
+                .replace("<player>", playerName)
+                .replace("<command>", commandEntry.getCommand())
+                .replace("<death>", playerName);
 
         for (Player player : plugin.getServer().getOnlinePlayers()) {
             if (!player.hasPermission(config.getPermission())) continue;
 
             plugin.getProtectNMS().sendActionTitle(
-                player,
-                config.getMessage(),
-                config.getTooltip(),
-                "/tp " + playerName,
-                replacer
+                    player,
+                    config.getMessage(),
+                    config.getTooltip(),
+                    "/tp " + playerName,
+                    replacer
             );
         }
     }
 
     private static TpaSuspiciousConfig getTPAConfig() {
         return (TpaSuspiciousConfig) StellarProtect.getInstance()
-            .getConfigManager()
-            .getPatternConfig(SuspiciousType.TPA_KILL);
+                .getConfigManager()
+                .getPatternConfig(SuspiciousType.TPA_KILL);
     }
 
     public static void cacheName(long playerId, String name) {

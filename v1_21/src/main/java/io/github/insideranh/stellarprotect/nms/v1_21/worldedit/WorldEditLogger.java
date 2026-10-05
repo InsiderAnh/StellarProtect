@@ -34,14 +34,14 @@ public class WorldEditLogger {
     private static boolean isContainer(Material type) {
         String typeName = type.name();
         return typeName.contains("CHEST") ||
-            typeName.contains("BARREL") ||
-            typeName.contains("SHULKER_BOX") ||
-            type == Material.HOPPER ||
-            type == Material.DROPPER ||
-            type == Material.DISPENSER ||
-            type == Material.FURNACE ||
-            type == Material.BLAST_FURNACE ||
-            type == Material.SMOKER;
+                typeName.contains("BARREL") ||
+                typeName.contains("SHULKER_BOX") ||
+                type == Material.HOPPER ||
+                type == Material.DROPPER ||
+                type == Material.DISPENSER ||
+                type == Material.FURNACE ||
+                type == Material.BLAST_FURNACE ||
+                type == Material.SMOKER;
     }
 
     protected static void postProcess(Extent extent, Actor actor, BlockVector3 position, Location location, BlockStateHolder<?> blockStateHolder, BaseBlock baseBlock, Material oldType, com.sk89q.worldedit.world.block.BlockState oldBlockState, ItemStack[] containerContents) {
@@ -58,10 +58,10 @@ public class WorldEditLogger {
         if (!oldType.equals(newType) || !oldBlockDataString.equals(newBlockDataString)) {
             if (containerContents != null) {
                 WorldEditLogManager.notifyContainerBreak(
-                    actor.getName(),
-                    location,
-                    oldBlock,
-                    containerContents
+                        actor.getName(),
+                        location,
+                        oldBlock,
+                        containerContents
                 );
             }
 
@@ -75,22 +75,22 @@ public class WorldEditLogger {
 
         if (oldIsAir && !newIsAir) {
             WorldEditLogManager.notifyBlockPlace(
-                playerName,
-                location,
-                newBlock
+                    playerName,
+                    location,
+                    newBlock
             );
         } else if (!oldIsAir && !newIsAir) {
             WorldEditLogManager.notifyBlockReplace(
-                playerName,
-                location,
-                oldBlock,
-                newBlock
+                    playerName,
+                    location,
+                    oldBlock,
+                    newBlock
             );
         } else if (!oldIsAir) {
             WorldEditLogManager.notifyBlockBreak(
-                playerName,
-                location,
-                oldBlock
+                    playerName,
+                    location,
+                    oldBlock
             );
         }
     }

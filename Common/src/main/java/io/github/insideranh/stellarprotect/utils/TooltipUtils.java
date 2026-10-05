@@ -19,10 +19,10 @@ public class TooltipUtils {
             int level = entry.getValue();
 
             builder.append("\n")
-                .append(plugin.getLangManager().get("messages.tooltips.item_details.enchant_format")
-                    .replace("<name>", enchantment.getName())
-                    .replace("<level>", String.valueOf(level))
-                );
+                    .append(plugin.getLangManager().get("messages.tooltips.item_details.enchant_format")
+                            .replace("<name>", enchantment.getName())
+                            .replace("<level>", String.valueOf(level))
+                    );
         }
         return builder.toString().replaceFirst("\n", "");
     }
@@ -41,10 +41,10 @@ public class TooltipUtils {
                     MinecraftItem minecraftItem = StringCleanerUtils.parseMinecraftData(materialOrNexoId);
 
                     builder.append("\n")
-                        .append(plugin.getLangManager().get("messages.tooltips.added_item")
-                            .replace("<data>", minecraftItem.getCleanName())
-                            .replace("<amount>", String.valueOf(value))
-                        );
+                            .append(plugin.getLangManager().get("messages.tooltips.added_item")
+                                    .replace("<data>", minecraftItem.getCleanName())
+                                    .replace("<amount>", String.valueOf(value))
+                            );
                 }
             }
         } else {
@@ -68,10 +68,10 @@ public class TooltipUtils {
                     MinecraftItem minecraftItem = StringCleanerUtils.parseMinecraftData(materialOrNexoId);
 
                     builder.append("\n")
-                        .append(plugin.getLangManager().get("messages.tooltips.removed_item")
-                            .replace("<data>", minecraftItem.getCleanName())
-                            .replace("<amount>", String.valueOf(value))
-                        );
+                            .append(plugin.getLangManager().get("messages.tooltips.removed_item")
+                                    .replace("<data>", minecraftItem.getCleanName())
+                                    .replace("<amount>", String.valueOf(value))
+                            );
                 }
             }
         } else {

@@ -121,15 +121,15 @@ public class StellarLogger extends AbstractDelegateExtent {
     private boolean isContainer(Material material) {
         String name = material.name();
         return name.contains("CHEST") ||
-            name.contains("BARREL") ||
-            name.contains("SHULKER_BOX") ||
-            name.contains("COPPER_CHEST") ||
-            material == Material.HOPPER ||
-            material == Material.DROPPER ||
-            material == Material.DISPENSER ||
-            material == Material.FURNACE ||
-            material == Material.BLAST_FURNACE ||
-            material == Material.SMOKER;
+                name.contains("BARREL") ||
+                name.contains("SHULKER_BOX") ||
+                name.contains("COPPER_CHEST") ||
+                material == Material.HOPPER ||
+                material == Material.DROPPER ||
+                material == Material.DISPENSER ||
+                material == Material.FURNACE ||
+                material == Material.BLAST_FURNACE ||
+                material == Material.SMOKER;
     }
 
 }

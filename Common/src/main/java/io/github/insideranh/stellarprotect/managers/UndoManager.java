@@ -37,17 +37,17 @@ public class UndoManager {
                     if (verbose) {
                         String actionName = blockLogEntry.getActionType() == ActionType.BLOCK_PLACE.getId() ? "PLACE" : "BREAK";
                         sender.sendMessage("§7[VERBOSE UNDO] §e" + actionName + " §7at §f" +
-                            (int) location.getX() + ", " + (int) location.getY() + ", " + (int) location.getZ() +
-                            " §7in §f" + (location.getWorld() == null ? "?" : location.getWorld().getName()) +
-                            " §7material: §f" + blockLogEntry.getDataString() +
-                            " §7by §f" + PlayerUtils.getNameOfEntity(blockLogEntry.getPlayerId()) +
-                            " §7(ID: " + blockLogEntry.getPlayerId() + ") §7at §f" +
-                            new java.text.SimpleDateFormat("HH:mm:ss dd/MM/yyyy").format(new java.util.Date(blockLogEntry.getCreatedAt())));
+                                (int) location.getX() + ", " + (int) location.getY() + ", " + (int) location.getZ() +
+                                " §7in §f" + (location.getWorld() == null ? "?" : location.getWorld().getName()) +
+                                " §7material: §f" + blockLogEntry.getDataString() +
+                                " §7by §f" + PlayerUtils.getNameOfEntity(blockLogEntry.getPlayerId()) +
+                                " §7(ID: " + blockLogEntry.getPlayerId() + ") §7at §f" +
+                                new java.text.SimpleDateFormat("HH:mm:ss dd/MM/yyyy").format(new java.util.Date(blockLogEntry.getCreatedAt())));
                     }
 
                     BlockRestore blockRestore = plugin.getBlockRestore(blockLogEntry.getDataString(), blockLogEntry.getExtraType(), blockLogEntry.getExtraData(),
-                        blockLogEntry.getActionType() == ActionType.BLOCK_PLACE.getId() || blockLogEntry.getActionType() == ActionType.BUCKET_EMPTY.getId(),
-                        blockLogEntry.getOldDataString(), null, null);
+                            blockLogEntry.getActionType() == ActionType.BLOCK_PLACE.getId() || blockLogEntry.getActionType() == ActionType.BUCKET_EMPTY.getId(),
+                            blockLogEntry.getOldDataString(), null, null);
 
                     if (blockLogEntry.getActionType() == ActionType.BLOCK_PLACE.getId() || blockLogEntry.getActionType() == ActionType.BUCKET_EMPTY.getId()) {
                         plugin.getStellarTaskHook(() -> blockRestore.preview(sender, gson, location)).runTask(location);
@@ -61,12 +61,12 @@ public class UndoManager {
 
                     if (verbose) {
                         sender.sendMessage("§7[VERBOSE UNDO] §eSTATE_CHANGE §7at §f" +
-                            (int) location.getX() + ", " + (int) location.getY() + ", " + (int) location.getZ() +
-                            " §7in §f" + (location.getWorld() == null ? "?" : location.getWorld().getName()) +
-                            " §7material: §f" + blockStateLogEntry.getDataString() +
-                            " §7by §f" + PlayerUtils.getNameOfEntity(logEntry.getPlayerId()) +
-                            " §7(ID: " + blockStateLogEntry.getPlayerId() + ") §7at §f" +
-                            new java.text.SimpleDateFormat("HH:mm:ss dd/MM/yyyy").format(new java.util.Date(blockStateLogEntry.getCreatedAt())));
+                                (int) location.getX() + ", " + (int) location.getY() + ", " + (int) location.getZ() +
+                                " §7in §f" + (location.getWorld() == null ? "?" : location.getWorld().getName()) +
+                                " §7material: §f" + blockStateLogEntry.getDataString() +
+                                " §7by §f" + PlayerUtils.getNameOfEntity(logEntry.getPlayerId()) +
+                                " §7(ID: " + blockStateLogEntry.getPlayerId() + ") §7at §f" +
+                                new java.text.SimpleDateFormat("HH:mm:ss dd/MM/yyyy").format(new java.util.Date(blockStateLogEntry.getCreatedAt())));
                     }
 
                     if (!silent) {
@@ -119,16 +119,16 @@ public class UndoManager {
             if (verbose) {
                 String actionName = blockLogEntry.getActionType() == ActionType.BLOCK_PLACE.getId() ? "RE-PLACING" : "RE-REMOVING";
                 sender.sendMessage("§7[VERBOSE UNDO] §a" + actionName + " §7block at §f" +
-                    (int) location.getX() + ", " + (int) location.getY() + ", " + (int) location.getZ() +
-                    " §7in §f" + (location.getWorld() == null ? "?" : location.getWorld().getName()) +
-                    " §7(originally by §f" + PlayerUtils.getNameOfEntity(logEntry.getPlayerId()) +
-                    " §7ID: " + blockLogEntry.getPlayerId() + "§7) §7data: §f" + blockLogEntry.getDataString());
+                        (int) location.getX() + ", " + (int) location.getY() + ", " + (int) location.getZ() +
+                        " §7in §f" + (location.getWorld() == null ? "?" : location.getWorld().getName()) +
+                        " §7(originally by §f" + PlayerUtils.getNameOfEntity(logEntry.getPlayerId()) +
+                        " §7ID: " + blockLogEntry.getPlayerId() + "§7) §7data: §f" + blockLogEntry.getDataString());
             }
 
             try {
                 boolean isPlace = blockLogEntry.getActionType() == ActionType.BLOCK_PLACE.getId() || blockLogEntry.getActionType() == ActionType.BUCKET_EMPTY.getId();
                 BlockRestore blockRestore = plugin.getBlockRestore(blockLogEntry.getDataString(), blockLogEntry.getExtraType(), blockLogEntry.getExtraData(),
-                    isPlace, blockLogEntry.getOldDataString(), null, null);
+                        isPlace, blockLogEntry.getOldDataString(), null, null);
 
                 if (isPlace) {
                     plugin.getStellarTaskHook(() -> blockRestore.reset(gson, location)).runTask(location);
@@ -145,10 +145,10 @@ public class UndoManager {
 
             if (verbose) {
                 sender.sendMessage("§7[VERBOSE UNDO] §aRESTORING §7state at §f" +
-                    (int) location.getX() + ", " + (int) location.getY() + ", " + (int) location.getZ() +
-                    " §7in §f" + (location.getWorld() == null ? "?" : location.getWorld().getName()) +
-                    " §7(originally by §f" + PlayerUtils.getNameOfEntity(logEntry.getPlayerId()) +
-                    " §7ID: " + blockStateLogEntry.getPlayerId() + "§7) §7data: §f" + blockStateLogEntry.getDataString());
+                        (int) location.getX() + ", " + (int) location.getY() + ", " + (int) location.getZ() +
+                        " §7in §f" + (location.getWorld() == null ? "?" : location.getWorld().getName()) +
+                        " §7(originally by §f" + PlayerUtils.getNameOfEntity(logEntry.getPlayerId()) +
+                        " §7ID: " + blockStateLogEntry.getPlayerId() + "§7) §7data: §f" + blockStateLogEntry.getDataString());
             }
 
             plugin.getStellarTaskHook(() -> blockRestore.reset(gson, location)).runTask(location);
@@ -160,14 +160,14 @@ public class UndoManager {
 
             if (verbose) {
                 sender.sendMessage("§7[VERBOSE UNDO] §aREMOVING §7restored entity at §f" +
-                    (int) location.getX() + ", " + (int) location.getY() + ", " + (int) location.getZ() +
-                    " §7in §f" + (location.getWorld() == null ? "?" : location.getWorld().getName()) +
-                    " §7type: §f" + playerKillLogEntry.getEntityType());
+                        (int) location.getX() + ", " + (int) location.getY() + ", " + (int) location.getZ() +
+                        " §7in §f" + (location.getWorld() == null ? "?" : location.getWorld().getName()) +
+                        " §7type: §f" + playerKillLogEntry.getEntityType());
             }
 
             location.getWorld().getNearbyEntities(location, 1, 1, 1).stream()
-                .filter(entity -> entity.getType().name().equals(playerKillLogEntry.getEntityType()))
-                .forEach(Entity::remove);
+                    .filter(entity -> entity.getType().name().equals(playerKillLogEntry.getEntityType()))
+                    .forEach(Entity::remove);
         }
     }
 

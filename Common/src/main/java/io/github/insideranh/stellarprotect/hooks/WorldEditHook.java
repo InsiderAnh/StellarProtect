@@ -60,7 +60,7 @@ public class WorldEditHook {
             int zMax = zMin + (length - 1);
 
             return new RadiusArg(WorldUtils.searchWorldId(world.getName()), radius,
-                xMin, xMax, yMin, yMax, zMin, zMax);
+                    xMin, xMax, yMin, yMax, zMin, zMax);
 
         } catch (Exception e) {
             e.printStackTrace();

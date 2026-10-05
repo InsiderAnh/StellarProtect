@@ -46,13 +46,13 @@ public class LoggerCache {
 
     @Getter
     private static final Cache<String, CachedQuery> queryCache = CacheBuilder.newBuilder()
-        .expireAfterWrite(5, TimeUnit.MINUTES)
-        .maximumSize(1000)
-        .build();
+            .expireAfterWrite(5, TimeUnit.MINUTES)
+            .maximumSize(1000)
+            .build();
     private static final Cache<String, Long> countCache = CacheBuilder.newBuilder()
-        .expireAfterWrite(5, TimeUnit.MINUTES)
-        .maximumSize(500)
-        .build();
+            .expireAfterWrite(5, TimeUnit.MINUTES)
+            .maximumSize(500)
+            .build();
 
     private static final ActionCategory[] ACTION_TO_CATEGORY_CACHE;
     private static final CategoryCounter[] categoryCounters = new CategoryCounter[ActionCategory.values().length];
@@ -69,9 +69,9 @@ public class LoggerCache {
 
     static {
         int maxActionId = Arrays.stream(ActionType.values())
-            .mapToInt(ActionType::getId)
-            .max()
-            .orElse(0);
+                .mapToInt(ActionType::getId)
+                .max()
+                .orElse(0);
 
         ACTION_TO_CATEGORY_CACHE = new ActionCategory[maxActionId + 1];
 
@@ -348,10 +348,10 @@ public class LoggerCache {
 
             categoryCache.forEach((locationCache, ringBuffer) -> {
                 if (radiusArg != null && !locationCache.isInside(
-                    radiusArg.getWorldId(),
-                    radiusArg.getMinX(), radiusArg.getMaxX(),
-                    radiusArg.getMinY(), radiusArg.getMaxY(),
-                    radiusArg.getMinZ(), radiusArg.getMaxZ())) {
+                        radiusArg.getWorldId(),
+                        radiusArg.getMinX(), radiusArg.getMaxX(),
+                        radiusArg.getMinY(), radiusArg.getMaxY(),
+                        radiusArg.getMinZ(), radiusArg.getMaxZ())) {
                     return;
                 }
 
@@ -438,7 +438,7 @@ public class LoggerCache {
         keyBuilder.setLength(0);
 
         keyBuilder.append(timeArg.getStart()).append('_').append(timeArg.getEnd())
-            .append('_').append(radiusArg.toString()).append('_');
+                .append('_').append(radiusArg.toString()).append('_');
 
         if (!actionTypes.isEmpty()) {
             for (int i = 0; i < actionTypes.size(); i++) {
@@ -491,8 +491,8 @@ public class LoggerCache {
 
             categoryCache.forEach((locationCache, ringBuffer) -> {
                 if (!locationCache.isInside(radiusArg.getMinX(), radiusArg.getMaxX(),
-                    radiusArg.getMinY(), radiusArg.getMaxY(),
-                    radiusArg.getMinZ(), radiusArg.getMaxZ())) {
+                        radiusArg.getMinY(), radiusArg.getMaxY(),
+                        radiusArg.getMinZ(), radiusArg.getMaxZ())) {
                     return;
                 }
 
@@ -527,7 +527,7 @@ public class LoggerCache {
         keyBuilder.setLength(0);
 
         keyBuilder.append("COUNT_").append(timeArg.getStart()).append('_').append(timeArg.getEnd())
-            .append('_').append(radiusArg.toString()).append('_');
+                .append('_').append(radiusArg.toString()).append('_');
 
         if (!actionTypes.isEmpty()) {
             for (int i = 0; i < actionTypes.size(); i++) {
@@ -579,8 +579,8 @@ public class LoggerCache {
                 LocationCache cache = entry.getKey();
 
                 if (!cache.isInside(radiusArg.getMinX(), radiusArg.getMaxX(),
-                    radiusArg.getMinY(), radiusArg.getMaxY(),
-                    radiusArg.getMinZ(), radiusArg.getMaxZ())) {
+                        radiusArg.getMinY(), radiusArg.getMaxY(),
+                        radiusArg.getMinZ(), radiusArg.getMaxZ())) {
                     continue;
                 }
 

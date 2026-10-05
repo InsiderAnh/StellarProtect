@@ -8,7 +8,8 @@ import java.util.function.Consumer;
 
 public final class NbtUtils {
 
-    private NbtUtils() {}
+    private NbtUtils() {
+    }
 
     public static void writeBlockEntity(TileState ts, Consumer<String> sink) {
         try {

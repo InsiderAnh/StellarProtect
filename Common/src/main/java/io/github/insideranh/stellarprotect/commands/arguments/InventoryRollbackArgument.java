@@ -64,10 +64,10 @@ public class InventoryRollbackArgument extends StellarArgument {
             databaseFilters.setExcludeMaterialFilters(itemsCache.findIdsContains(excludesMap));
 
             InventoryRollbackSession session = new InventoryRollbackSession(
-                player,
-                databaseFilters,
-                hashTagsArg.isVerbose(),
-                hashTagsArg.isSilent()
+                    player,
+                    databaseFilters,
+                    hashTagsArg.isVerbose(),
+                    hashTagsArg.isSilent()
             );
 
             playerProtect.setInventoryRollbackSession(session);
@@ -106,8 +106,8 @@ public class InventoryRollbackArgument extends StellarArgument {
             }
 
             return Stream.of("t:3h", "t:6h", "t:12h", "t:1d", "r:10", "u:", "i:", "e:", "#verbose", "#silent")
-                .filter(name -> name.contains(currentArg))
-                .collect(Collectors.toList());
+                    .filter(name -> name.contains(currentArg))
+                    .collect(Collectors.toList());
         }
 
         return Arrays.asList("t:3h", "t:6h", "t:12h", "t:1d", "r:10", "u:", "i:", "e:", "#verbose", "#silent");

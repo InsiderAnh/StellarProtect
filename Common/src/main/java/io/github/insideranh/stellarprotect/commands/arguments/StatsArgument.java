@@ -1,9 +1,10 @@
 package io.github.insideranh.stellarprotect.commands.arguments;
 
 import io.github.insideranh.stellarprotect.StellarProtect;
-import io.github.insideranh.stellarprotect.arguments.*;
-import io.github.insideranh.stellarprotect.cache.BlocksCache;
-import io.github.insideranh.stellarprotect.cache.ItemsCache;
+import io.github.insideranh.stellarprotect.arguments.ArgumentsParser;
+import io.github.insideranh.stellarprotect.arguments.DatabaseFilters;
+import io.github.insideranh.stellarprotect.arguments.RadiusArg;
+import io.github.insideranh.stellarprotect.arguments.TimeArg;
 import io.github.insideranh.stellarprotect.commands.StellarArgument;
 import io.github.insideranh.stellarprotect.database.entries.LogEntry;
 import io.github.insideranh.stellarprotect.enums.ActionType;
@@ -50,24 +51,24 @@ public class StatsArgument extends StellarArgument {
 
             sender.sendMessage("§eTop 5 jugadores:");
             playerCount.entrySet().stream()
-                .sorted(Map.Entry.<Long, Integer>comparingByValue().reversed())
-                .limit(5)
-                .forEach(e -> sender.sendMessage("  §7- §f" + io.github.insideranh.stellarprotect.utils.PlayerUtils.getNameOfEntity(e.getKey()) + " §7: " + e.getValue()));
+                    .sorted(Map.Entry.<Long, Integer>comparingByValue().reversed())
+                    .limit(5)
+                    .forEach(e -> sender.sendMessage("  §7- §f" + io.github.insideranh.stellarprotect.utils.PlayerUtils.getNameOfEntity(e.getKey()) + " §7: " + e.getValue()));
 
             sender.sendMessage("§eTop 5 acciones:");
             actionCount.entrySet().stream()
-                .sorted(Map.Entry.<Integer, Integer>comparingByValue().reversed())
-                .limit(5)
-                .forEach(e -> {
-                    ActionType at = ActionType.getById(e.getKey());
-                    sender.sendMessage("  §7- §f" + (at == null ? "?" : at.name()) + " §7: " + e.getValue());
-                });
+                    .sorted(Map.Entry.<Integer, Integer>comparingByValue().reversed())
+                    .limit(5)
+                    .forEach(e -> {
+                        ActionType at = ActionType.getById(e.getKey());
+                        sender.sendMessage("  §7- §f" + (at == null ? "?" : at.name()) + " §7: " + e.getValue());
+                    });
 
             sender.sendMessage("§eTop 5 bloques:");
             blockCount.entrySet().stream()
-                .sorted(Map.Entry.<Long, Integer>comparingByValue().reversed())
-                .limit(5)
-                .forEach(e -> sender.sendMessage("  §7- §f#" + e.getKey() + " §7: " + e.getValue()));
+                    .sorted(Map.Entry.<Long, Integer>comparingByValue().reversed())
+                    .limit(5)
+                    .forEach(e -> sender.sendMessage("  §7- §f#" + e.getKey() + " §7: " + e.getValue()));
         });
     }
 

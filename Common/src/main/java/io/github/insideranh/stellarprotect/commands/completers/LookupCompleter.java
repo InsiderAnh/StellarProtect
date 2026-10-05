@@ -84,10 +84,10 @@ public class LookupCompleter extends StellarCompleter {
                     return Collections.emptyList();
                 }
                 return Arrays.asList(
-                    usedPrefix + ":1h",
-                    usedPrefix + ":1d",
-                    usedPrefix + ":1w",
-                    usedPrefix + ":1mo"
+                        usedPrefix + ":1h",
+                        usedPrefix + ":1d",
+                        usedPrefix + ":1w",
+                        usedPrefix + ":1mo"
                 );
 
             case RADIUS:
@@ -95,11 +95,11 @@ public class LookupCompleter extends StellarCompleter {
                     return Collections.emptyList();
                 }
                 return Arrays.asList(
-                    usedPrefix + ":10",
-                    usedPrefix + ":20",
-                    usedPrefix + ":30",
-                    usedPrefix + ":40",
-                    usedPrefix + ":50"
+                        usedPrefix + ":10",
+                        usedPrefix + ":20",
+                        usedPrefix + ":30",
+                        usedPrefix + ":40",
+                        usedPrefix + ":50"
                 );
 
             case PAGE:
@@ -107,9 +107,9 @@ public class LookupCompleter extends StellarCompleter {
                     return Collections.emptyList();
                 }
                 return Arrays.asList(
-                    usedPrefix + ":1-10",
-                    usedPrefix + ":2-10",
-                    usedPrefix + ":1-20"
+                        usedPrefix + ":1-10",
+                        usedPrefix + ":2-10",
+                        usedPrefix + ":1-20"
                 );
             case USERS:
                 return handleUserSuggestions(usedPrefix, value);

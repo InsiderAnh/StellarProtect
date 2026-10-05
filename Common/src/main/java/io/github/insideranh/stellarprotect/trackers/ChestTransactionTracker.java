@@ -215,10 +215,10 @@ public class ChestTransactionTracker implements Listener {
 
     private String getInventoryId(String playerName, Location location) {
         return playerName.toLowerCase() + ":" +
-            location.getWorld().getName() + ":" +
-            location.getBlockX() + ":" +
-            location.getBlockY() + ":" +
-            location.getBlockZ();
+                location.getWorld().getName() + ":" +
+                location.getBlockX() + ":" +
+                location.getBlockY() + ":" +
+                location.getBlockZ();
     }
 
     private ItemCount[] captureInventorySnapshot(ItemStack[] contents) {
@@ -503,9 +503,9 @@ public class ChestTransactionTracker implements Listener {
             int modelB = protectNMS.modelDataHashCode(metaB);
 
             return modelA == modelB &&
-                Objects.equals(metaA.getDisplayName(), metaB.getDisplayName()) &&
-                Objects.equals(metaA.getLore(), metaB.getLore()) &&
-                Objects.equals(metaA.getEnchants(), metaB.getEnchants());
+                    Objects.equals(metaA.getDisplayName(), metaB.getDisplayName()) &&
+                    Objects.equals(metaA.getLore(), metaB.getLore()) &&
+                    Objects.equals(metaA.getEnchants(), metaB.getEnchants());
         }
 
     }

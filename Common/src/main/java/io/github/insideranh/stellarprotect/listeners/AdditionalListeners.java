@@ -3,11 +3,8 @@ package io.github.insideranh.stellarprotect.listeners;
 import io.github.insideranh.stellarprotect.StellarProtect;
 import io.github.insideranh.stellarprotect.cache.BlockSourceCache;
 import io.github.insideranh.stellarprotect.cache.LoggerCache;
-import io.github.insideranh.stellarprotect.data.PlayerProtect;
 import io.github.insideranh.stellarprotect.database.entries.players.PlayerBlockLogEntry;
 import io.github.insideranh.stellarprotect.enums.ActionType;
-import io.github.insideranh.stellarprotect.utils.PlayerUtils;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -23,11 +20,10 @@ import java.util.List;
 
 public class AdditionalListeners implements Listener {
 
-    private final StellarProtect plugin = StellarProtect.getInstance();
-
     private static final List<String> SCULK_BLOCKS = Arrays.asList(
-        "SCULK", "SCULK_VEIN", "SCULK_CATALYST", "SCULK_SENSOR", "SCULK_SHRIEKER"
+            "SCULK", "SCULK_VEIN", "SCULK_CATALYST", "SCULK_SENSOR", "SCULK_SHRIEKER"
     );
+    private final StellarProtect plugin = StellarProtect.getInstance();
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onBlockDispense(BlockDispenseEvent event) {
@@ -45,13 +41,13 @@ public class AdditionalListeners implements Listener {
         if (player == null || result == null) return;
 
         plugin.getProtectNMS().sendActionTitle(player,
-            plugin.getLangManager().get("messages.smith.upgrade"),
-            plugin.getLangManager().get("messages.tooltips.smith"),
-            "/sp view smith " + player.getLocation().getBlockX() + "," + player.getLocation().getBlockY() + "," + player.getLocation().getBlockZ(),
-            text -> text
-                .replace("<time>", "now")
-                .replace("<player>", player.getName())
-                .replace("<data>", result.getType().name())
+                plugin.getLangManager().get("messages.smith.upgrade"),
+                plugin.getLangManager().get("messages.tooltips.smith"),
+                "/sp view smith " + player.getLocation().getBlockX() + "," + player.getLocation().getBlockY() + "," + player.getLocation().getBlockZ(),
+                text -> text
+                        .replace("<time>", "now")
+                        .replace("<player>", player.getName())
+                        .replace("<data>", result.getType().name())
         );
     }
 
