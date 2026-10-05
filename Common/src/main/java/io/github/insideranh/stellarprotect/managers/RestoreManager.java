@@ -142,7 +142,7 @@ public class RestoreManager {
                     isPlace, blockLogEntry.getOldDataString(), null, null);
                 plugin.getStellarTaskHook(() -> blockRestore.reset(gson, location)).runTask(location);
             } catch (Exception e) {
-                sender.sendMessage("§c[ERROR] Failed to restore block at " + (int) location.getX() + ", " + (int) location.getY() + ", " + (int) location.getZ() + " " + blockLogEntry.getBlockId());
+                sender.sendMessage("§c[ERROR] Failed to restore block at " + (int) location.getX() + ", " + (int) location.getY() + ", " + (int) location.getZ() + " " + blockLogEntry.getBlockId() + " " + e.getMessage());
             }
         } else if (logEntry instanceof PlayerBlockStateLogEntry) {
             PlayerBlockStateLogEntry blockStateLogEntry = (PlayerBlockStateLogEntry) logEntry;
@@ -160,7 +160,7 @@ public class RestoreManager {
 
                 plugin.getStellarTaskHook(() -> blockRestore.reset(gson, location)).runTask(location);
             } catch (Exception e) {
-                sender.sendMessage("§c[ERROR] Failed to restore block state at " + (int) location.getX() + ", " + (int) location.getY() + ", " + (int) location.getZ());
+                sender.sendMessage("§c[ERROR] Failed to restore block state at " + (int) location.getX() + ", " + (int) location.getY() + ", " + (int) location.getZ() + " " + e.getMessage());
             }
         } else if (logEntry instanceof PlayerKillLogEntry) {
             PlayerKillLogEntry playerKillLogEntry = (PlayerKillLogEntry) logEntry;

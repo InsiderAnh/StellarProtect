@@ -5,7 +5,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.io.BukkitObjectInputStream;
 import org.bukkit.util.io.BukkitObjectOutputStream;
-import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -20,7 +19,7 @@ public class InventorySerializable {
         try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
              BukkitObjectOutputStream dataOutput = new BukkitObjectOutputStream(outputStream)) {
             dataOutput.writeObject(item);
-            return Base64Coder.encodeLines(outputStream.toByteArray());
+            return Base64.getEncoder().encodeToString(outputStream.toByteArray());
         } catch (Exception e) {
             return itemStackToBase64Fallback(item);
         }
@@ -29,7 +28,7 @@ public class InventorySerializable {
     @SneakyThrows
     public static ItemStack itemStackFromBase64(String data) {
         if (data == null || data.trim().isEmpty() || data.equals("null")) return null;
-        try (ByteArrayInputStream inputStream = new ByteArrayInputStream(Base64Coder.decodeLines(data));
+        try (ByteArrayInputStream inputStream = new ByteArrayInputStream(Base64.getDecoder().decode(data));
              BukkitObjectInputStream dataInput = new BukkitObjectInputStream(inputStream)) {
             return (ItemStack) dataInput.readObject();
         } catch (ClassNotFoundException e) {
@@ -84,7 +83,7 @@ public class InventorySerializable {
             for (ItemStack item : items) {
                 dataOutput.writeObject(item);
             }
-            return Base64Coder.encodeLines(outputStream.toByteArray());
+            return Base64.getEncoder().encodeToString(outputStream.toByteArray());
         } catch (Exception e) {
             return "";
         }
@@ -93,7 +92,7 @@ public class InventorySerializable {
     @SneakyThrows
     public static ItemStack[] itemStackArrayFromBase64(String data) {
         if (data == null || data.trim().isEmpty()) return new ItemStack[0];
-        try (ByteArrayInputStream inputStream = new ByteArrayInputStream(Base64Coder.decodeLines(data));
+        try (ByteArrayInputStream inputStream = new ByteArrayInputStream(Base64.getDecoder().decode(data));
              BukkitObjectInputStream dataInput = new BukkitObjectInputStream(inputStream)) {
             int len = dataInput.readInt();
             ItemStack[] result = new ItemStack[len];
