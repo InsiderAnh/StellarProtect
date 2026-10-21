@@ -154,7 +154,7 @@ public class PlayerBlockLogEntry extends LogEntry {
 
     public String getOldDataString() {
         if (oldBlockData != null) return oldBlockData;
-        if (oldBlockId == 0) return null;
+        if (oldBlockId == null || oldBlockId == 0) return null;
         BlockTemplate blockTemplate = blocksManager.getBlockTemplate(oldBlockId);
         return blockTemplate.getDataBlock().getBlockDataString();
     }
