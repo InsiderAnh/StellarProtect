@@ -181,9 +181,9 @@ public class UndoArgument extends StellarArgument {
                     if (processedInBatch > 0) {
                         plugin.getStellarTaskHook(() -> {
                             if (preview) {
-                                plugin.getUndoManager().preview(player, groupedLogs, verbose, silent);
+                                plugin.getUndoManager().undoRestoreBlocksPreview(player, groupedLogs, verbose);
                             } else {
-                                plugin.getUndoManager().undo(player, groupedLogs, verbose);
+                                plugin.getUndoManager().undoRestoreBlocks(player, groupedLogs, verbose, silent);
                             }
 
                             int totalProcessed = currentSkip + processedInBatch;

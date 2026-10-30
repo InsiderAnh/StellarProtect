@@ -190,7 +190,7 @@ public class StellarProtect extends JavaPlugin {
         this.itemsManager.load();
         this.blocksManager.load();
         this.cacheManager.load();
-        this.vaultHook.load();
+        if (this.vaultHook != null) this.vaultHook.load();
         this.trackManager.load();
     }
 
@@ -288,30 +288,37 @@ public class StellarProtect extends JavaPlugin {
             getLogger().warning("Version " + version + " not test build, using " + resolved);
         }
 
-        if (resolved.equals("v1_8_R3")) {
-            this.completer = "v1_8_R3";
-            this.protectNMS = new ProtectNMS_v1_8_R3();
-            this.colorUtils = new ColorUtils_v1_8_R3();
-        } else if (resolved.equals("v1_9_R4")) {
-            this.completer = "v1_9_R4";
-            this.protectNMS = new ProtectNMS_v1_9_R4();
-            this.colorUtils = new ColorUtils_v1_9_R4();
-        } else if (resolved.equals("v1_12_R2")) {
-            this.completer = "v1_12_R2";
-            this.protectNMS = new ProtectNMS_v1_12_R2();
-            this.colorUtils = new ColorUtils_v1_12_R2();
-        } else if (resolved.equals("v1_13_R2")) {
-            this.completer = "v1_13_R2";
-            this.protectNMS = new ProtectNMS_v1_13_R2();
-            this.colorUtils = new ColorUtils_v1_13_R2();
-        } else if (resolved.equals("v1_16_R5")) {
-            this.completer = "v1_16_R5";
-            this.protectNMS = new ProtectNMS_v1_16_R5();
-            this.colorUtils = new ColorUtils_v1_16_R5();
-        } else {
-            this.completer = resolved;
-            this.protectNMS = new ProtectNMS_v1_17_R1();
-            this.colorUtils = new ColorUtils_v1_16_R5();
+        switch (resolved) {
+            case "v1_8_R3":
+                this.completer = "v1_8_R3";
+                this.protectNMS = new ProtectNMS_v1_8_R3();
+                this.colorUtils = new ColorUtils_v1_8_R3();
+                break;
+            case "v1_9_R4":
+                this.completer = "v1_9_R4";
+                this.protectNMS = new ProtectNMS_v1_9_R4();
+                this.colorUtils = new ColorUtils_v1_9_R4();
+                break;
+            case "v1_12_R2":
+                this.completer = "v1_12_R2";
+                this.protectNMS = new ProtectNMS_v1_12_R2();
+                this.colorUtils = new ColorUtils_v1_12_R2();
+                break;
+            case "v1_13_R2":
+                this.completer = "v1_13_R2";
+                this.protectNMS = new ProtectNMS_v1_13_R2();
+                this.colorUtils = new ColorUtils_v1_13_R2();
+                break;
+            case "v1_16_R5":
+                this.completer = "v1_16_R5";
+                this.protectNMS = new ProtectNMS_v1_16_R5();
+                this.colorUtils = new ColorUtils_v1_16_R5();
+                break;
+            default:
+                this.completer = resolved;
+                this.protectNMS = new ProtectNMS_v1_17_R1();
+                this.colorUtils = new ColorUtils_v1_16_R5();
+                break;
         }
 
         getLogger().info("Loaded " + completer + " NMS.");

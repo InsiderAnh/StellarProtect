@@ -49,6 +49,9 @@ public class BlockRestore {
     }
 
     private static org.bukkit.block.data.BlockData createBlockDataSafe(String s) {
+        if (s == null || s.trim().isEmpty()) {
+            return Material.AIR.createBlockData();
+        }
         try {
             return Bukkit.createBlockData(s);
         } catch (Exception e) {
@@ -80,16 +83,27 @@ public class BlockRestore {
             } else {
                 applyNewBlockData(block);
             }
-            applyContainerFromJson(block);
+            applyContainerForReset(block);
             applyBlockNbt(block);
         } catch (Exception e) {
             Bukkit.getLogger().warning("[StellarProtect] Failed to restore block at " + location + ": " + e.getMessage());
         }
     }
 
+    public void undoPlace(Gson gson, Location location) {
+        Block block = location.getBlock();
+        try {
+            applyNewBlockData(block);
+            applyContainerFromJson(block);
+            applyNewBlockNbt(block);
+        } catch (Exception e) {
+            Bukkit.getLogger().warning("[StellarProtect] Failed to undo place at " + location + ": " + e.getMessage());
+        }
+    }
+
     public void preview(Player player, Gson gson, Location location) {
         try {
-            BlockData blockData = Bukkit.createBlockData(data);
+            BlockData blockData = createBlockDataSafe(data);
             player.sendBlockChange(location, blockData);
         } catch (Exception ignored) {
         }
@@ -140,12 +154,12 @@ public class BlockRestore {
     }
 
     protected void applyNewBlockData(Block block) {
-        if (data == null) {
+        if (data == null || data.trim().isEmpty()) {
             block.setType(Material.AIR);
             return;
         }
         try {
-            BlockData blockData = Bukkit.createBlockData(data);
+            BlockData blockData = createBlockDataSafe(data);
             block.setBlockData(blockData, false);
         } catch (Exception e) {
             block.setType(Material.AIR);
@@ -153,20 +167,10 @@ public class BlockRestore {
     }
 
     protected void applyOldBlockData(Block block) {
-        if (oldData != null) {
+        if (oldData != null && !oldData.isEmpty()) {
             try {
-                BlockData blockData = Bukkit.createBlockData(oldData);
+                BlockData blockData = createBlockDataSafe(oldData);
                 block.setBlockData(blockData, false);
-                return;
-            } catch (Exception ignored) {
-            }
-        }
-        if (data != null) {
-            try {
-                BlockData blockData = Bukkit.createBlockData(data);
-                BlockState state = block.getState();
-                state.setBlockData(blockData);
-                state.update(true, false);
                 return;
             } catch (Exception ignored) {
             }
@@ -186,9 +190,26 @@ public class BlockRestore {
         }
     }
 
+    private void applyContainerForReset(Block block) {
+        if (!isPlace) {
+            applyContainerFromJson(block);
+        }
+    }
+
     protected void applyBlockNbt(Block block) {
-        if (blockEntityNbt != null && block.getState() instanceof TileState) {
-            NbtUtils.applyBlockEntity((TileState) block.getState(), blockEntityNbt);
+        String nbt = isPlace ? oldBlockEntityNbt : blockEntityNbt;
+        if (nbt == null || nbt.isEmpty()) return;
+        BlockState state = block.getState();
+        if (state instanceof TileState) {
+            NbtUtils.applyBlockEntity((TileState) state, nbt);
+        }
+    }
+
+    private void applyNewBlockNbt(Block block) {
+        if (blockEntityNbt == null || blockEntityNbt.isEmpty()) return;
+        BlockState state = block.getState();
+        if (state instanceof TileState) {
+            NbtUtils.applyBlockEntity((TileState) state, blockEntityNbt);
         }
     }
 

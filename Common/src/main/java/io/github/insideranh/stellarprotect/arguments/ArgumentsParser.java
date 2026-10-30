@@ -384,8 +384,8 @@ public class ArgumentsParser {
     public static Integer parseMinAmount(String[] arguments) {
         String joined = String.join(" ", arguments).toLowerCase(java.util.Locale.ROOT);
         for (String part : joined.split("\\s+")) {
-            if (part.startsWith("b:") || part.startsWith("amount:")) {
-                String val = part.replaceFirst("^(b:|amount:)", "");
+            if (part.startsWith("amount:") || part.startsWith("count:")) {
+                String val = part.replaceFirst("^(amount:|count:)", "");
                 if (val.contains("-")) {
                     String[] split = val.split("-");
                     try {
@@ -416,8 +416,8 @@ public class ArgumentsParser {
     public static Integer parseMaxAmount(String[] arguments) {
         String joined = String.join(" ", arguments).toLowerCase(java.util.Locale.ROOT);
         for (String part : joined.split("\\s+")) {
-            if (part.startsWith("b:") || part.startsWith("amount:")) {
-                String val = part.replaceFirst("^(b:|amount:)", "");
+            if (part.startsWith("amount:") || part.startsWith("count:")) {
+                String val = part.replaceFirst("^(amount:|count:)", "");
                 if (val.contains("-")) {
                     String[] split = val.split("-");
                     try {

@@ -60,12 +60,16 @@ public class PlayerBlockStateLogEntry extends LogEntry {
 
     @Override
     public String getDataString() {
+        if (newBlockId == null || newBlockId <= 0) return "minecraft:air";
         BlockTemplate itemTemplate = blocksManager.getBlockTemplate(newBlockId);
+        if (itemTemplate == null || itemTemplate.getDataBlock() == null) return "minecraft:air";
         return itemTemplate.getDataBlock().getBlockDataString();
     }
 
     public String lastDataString() {
+        if (lastBlockId == null || lastBlockId <= 0) return "minecraft:air";
         BlockTemplate itemTemplate = blocksManager.getBlockTemplate(lastBlockId);
+        if (itemTemplate == null || itemTemplate.getDataBlock() == null) return "minecraft:air";
         return itemTemplate.getDataBlock().getBlockDataString();
     }
 

@@ -49,7 +49,7 @@ public class LoggerCache {
             .expireAfterWrite(5, TimeUnit.MINUTES)
             .maximumSize(1000)
             .build();
-    private static final Cache<String, Long> countCache = CacheBuilder.newBuilder()
+    private static final Cache<String, CachedCount> countCache = CacheBuilder.newBuilder()
             .expireAfterWrite(5, TimeUnit.MINUTES)
             .maximumSize(500)
             .build();
@@ -132,6 +132,7 @@ public class LoggerCache {
         LocationCache location = logEntry.asLocation();
 
         unSavedLogsByCategory[categoryOrdinal].add(logEntry);
+        totalLogsProcessed.incrementAndGet();
 
         ConcurrentHashMap<LocationCache, LogRingBuffer> categoryCache = cachedLogsByCategory[categoryOrdinal];
         LogRingBuffer buffer = categoryCache.get(location);
@@ -163,6 +164,7 @@ public class LoggerCache {
         int categoryOrdinal = category.ordinal();
 
         unSavedLogsByCategory[categoryOrdinal].add(logEntry);
+        totalLogsProcessed.incrementAndGet();
 
         CategoryCounter counter = categoryCounters[categoryOrdinal];
         if (counter.incrementAndCheckThreshold()) {
@@ -318,9 +320,10 @@ public class LoggerCache {
         keyBuilder.append('_').append(skip).append('_').append(limit);
 
         String cacheKey = keyBuilder.toString();
+        long revision = totalLogsProcessed.get();
 
         CachedQuery cached = queryCache.getIfPresent(cacheKey);
-        if (cached != null && !cached.isExpired()) {
+        if (cached != null && !cached.isExpired() && cached.getRevision() == revision) {
             cacheHits.incrementAndGet();
             return cached.getLogs();
         }
@@ -375,7 +378,7 @@ public class LoggerCache {
         }
 
         if (skip == 0 && limit <= 100) {
-            queryCache.put(cacheKey, new CachedQuery(paginatedLogs, System.currentTimeMillis() + 5 * 60 * 1000L));
+            if (totalLogsProcessed.get() == revision) queryCache.put(cacheKey, new CachedQuery(paginatedLogs, System.currentTimeMillis() + 5 * 60 * 1000L, revision));
         }
 
         return paginatedLogs;
@@ -451,9 +454,10 @@ public class LoggerCache {
 
         keyBuilder.append('_').append(skip).append('_').append(limit);
         String cacheKey = keyBuilder.toString();
+        long revision = totalLogsProcessed.get();
 
         CachedQuery cached = queryCache.getIfPresent(cacheKey);
-        if (cached != null && !cached.isExpired()) {
+        if (cached != null && !cached.isExpired() && cached.getRevision() == revision) {
             cacheHits.incrementAndGet();
             return cached.getLogs();
         }
@@ -516,7 +520,7 @@ public class LoggerCache {
         }
 
         if (skip == 0 && limit <= 100) {
-            queryCache.put(cacheKey, new CachedQuery(paginatedLogs, System.currentTimeMillis() + 5 * 60 * 1000L));
+            if (totalLogsProcessed.get() == revision) queryCache.put(cacheKey, new CachedQuery(paginatedLogs, System.currentTimeMillis() + 5 * 60 * 1000L, revision));
         }
 
         return paginatedLogs;
@@ -540,10 +544,15 @@ public class LoggerCache {
 
         String countCacheKey = keyBuilder.toString();
 
-        Long cached = countCache.getIfPresent(countCacheKey);
-        if (cached != null) {
+        long countRevision = totalLogsProcessed.get();
+        CachedCount cached = countCache.getIfPresent(countCacheKey);
+        if (cached != null && cached.getRevision() == countRevision) {
             cacheHits.incrementAndGet();
-            return cached;
+            return cached.getCount();
+        }
+        if (false) {
+            cacheHits.incrementAndGet();
+            return cached.getCount();
         }
 
         cacheMisses.incrementAndGet();
@@ -589,7 +598,9 @@ public class LoggerCache {
             }
         }
 
-        countCache.put(countCacheKey, count);
+        if (totalLogsProcessed.get() == countRevision) {
+            countCache.put(countCacheKey, new CachedCount(count, countRevision));
+        }
         return count;
     }
 
@@ -830,12 +841,29 @@ public class LoggerCache {
     }
 
     @Getter
+    private static class CachedCount {
+        private final long count;
+        private final long revision;
+        private CachedCount(long count, long revision) {
+            this.count = count;
+            this.revision = revision;
+        }
+        public long getCount() { return count; }
+        public long getRevision() { return revision; }
+    }
+
+    @Getter
     private static class CachedQuery {
+        public List<LogEntry> getLogs() { return logs; }
+        public long getRevision() { return revision; }
 
         private final List<LogEntry> logs;
         private final long expireTime;
 
-        public CachedQuery(List<LogEntry> logs, long expireTime) {
+        private final long revision;
+
+        public CachedQuery(List<LogEntry> logs, long expireTime, long revision) {
+            this.revision = revision;
             this.logs = logs;
             this.expireTime = expireTime;
         }

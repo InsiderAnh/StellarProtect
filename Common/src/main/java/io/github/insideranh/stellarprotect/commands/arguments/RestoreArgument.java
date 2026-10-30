@@ -70,7 +70,8 @@ public class RestoreArgument extends StellarArgument {
             databaseFilters.setIncludeEnchantFilters(ArgumentsParser.parseEnchantFilters(arguments));
             databaseFilters.setIncludeLoreFilters(ArgumentsParser.parseLoreFilters(arguments));
             databaseFilters.setIncludeDisplayFilters(ArgumentsParser.parseDisplayFilters(arguments));
-            databaseFilters.setToolFilter(ArgumentsParser.parseBiome(arguments));
+            List<String> tools = ArgumentsParser.parseToolFilters(arguments);
+            databaseFilters.setToolFilter(tools.isEmpty() ? null : tools.get(0));
             databaseFilters.setBiomeFilter(ArgumentsParser.parseBiome(arguments));
             int[] chunk = ArgumentsParser.parseChunk(arguments);
             if (chunk != null) {
@@ -156,8 +157,8 @@ public class RestoreArgument extends StellarArgument {
                 return Arrays.asList("e:air", "e:stone", "e:dirt");
             }
 
-            if (currentArg.startsWith("b:") || currentArg.startsWith("amount:")) {
-                return Arrays.asList("b:64", "b:1-64", "b:>=32");
+            if (currentArg.startsWith("amount:") || currentArg.startsWith("count:")) {
+                return Arrays.asList("amount:64", "amount:1-64", "amount:>=32");
             }
 
             if (currentArg.startsWith("ench:")) {
@@ -238,9 +239,9 @@ public class RestoreArgument extends StellarArgument {
                     if (processedInBatch > 0) {
                         plugin.getStellarTaskHook(() -> {
                             if (preview) {
-                                plugin.getRestoreManager().preview(player, groupedLogs, verbose, silent);
+                                plugin.getRestoreManager().restoreBlocksPreview(player, groupedLogs, verbose);
                             } else {
-                                plugin.getRestoreManager().rollback(player, groupedLogs, verbose, silent);
+                                plugin.getRestoreManager().restoreBlocks(player, groupedLogs, verbose, silent);
                             }
 
                             int totalProcessed = currentSkip + processedInBatch;

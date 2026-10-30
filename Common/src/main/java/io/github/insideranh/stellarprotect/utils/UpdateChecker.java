@@ -22,7 +22,7 @@ public class UpdateChecker {
         String currentVersion = StellarProtect.getInstance().getDescription().getVersion();
         StellarProtect.getInstance().getStellarTaskHook(() -> {
             try (InputStream is = new URL("https://api.spigotmc.org/legacy/update.php?resource=127280/~").openStream();
-                 Scanner scanner = new Scanner(is)) {
+                    Scanner scanner = new Scanner(is)) {
                 if (scanner.hasNext()) {
                     version = scanner.next();
                     isNewVersion = isNewerVersion(currentVersion, version);
@@ -30,7 +30,7 @@ public class UpdateChecker {
             } catch (IOException e) {
                 StellarProtect.getInstance().getLogger().info("Unable to check for updates: " + e.getMessage());
             }
-        }).runTask();
+        }).runTaskLaterAsynchronously(0);
     }
 
     private boolean isNewerVersion(String currentVersion, String remoteVersion) {
@@ -65,7 +65,7 @@ public class UpdateChecker {
     private String[] splitVersionAndSuffix(String version) {
         String numeric = version.replaceAll("[^0-9.]", "");
         String suffix = version.replaceAll("[0-9.]", "");
-        return new String[]{numeric, suffix};
+        return new String[] { numeric, suffix };
     }
 
     private int compareNumericVersion(String v1, String v2) {
@@ -95,25 +95,34 @@ public class UpdateChecker {
     }
 
     private int compareSuffix(String s1, String s2) {
-        if (s1.isEmpty() && !s2.isEmpty()) return 1;
-        if (!s1.isEmpty() && s2.isEmpty()) return -1;
-        if (s1.isEmpty() && s2.isEmpty()) return 0;
+        if (s1.isEmpty() && !s2.isEmpty())
+            return 1;
+        if (!s1.isEmpty() && s2.isEmpty())
+            return -1;
+        if (s1.isEmpty() && s2.isEmpty())
+            return 0;
 
         return s1.compareTo(s2);
     }
 
     public void sendUpdateMessage(Player player) {
-        if (version.equals("none") || !isNewVersion) return;
+        if (version.equals("none") || !isNewVersion)
+            return;
 
         String currentVersion = StellarProtect.getInstance().getDescription().getVersion();
 
-        TextComponent textComponent = new TextComponent("§6§lStellarProtect §8| §fNew version available: §a" + version + " §fYour: §c" + currentVersion + " ");
+        TextComponent textComponent = new TextComponent(
+                "§6§lStellarProtect §8| §fNew version available: §a" + version + " §fYour: §c" + currentVersion + " ");
         TextComponent download = new TextComponent("§6[Download]");
-        download.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText("§fClick to download")));
-        download.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://modrinth.com/plugin/stellarprotect"));
+        download.setHoverEvent(
+                new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText("§fClick to download")));
+        download.setClickEvent(
+                new ClickEvent(ClickEvent.Action.OPEN_URL, "https://modrinth.com/plugin/stellarprotect"));
         TextComponent changelog = new TextComponent(" §6[Changelog]");
-        changelog.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText("§fClick to see changelog")));
-        changelog.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://modrinth.com/plugin/stellarprotect/changelog"));
+        changelog.setHoverEvent(
+                new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText("§fClick to see changelog")));
+        changelog.setClickEvent(
+                new ClickEvent(ClickEvent.Action.OPEN_URL, "https://modrinth.com/plugin/stellarprotect/changelog"));
         textComponent.addExtra(download);
         textComponent.addExtra(changelog);
 

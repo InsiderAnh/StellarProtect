@@ -64,6 +64,7 @@ public class PlayerBlockLogEntry extends LogEntry {
         setBlockId(this.blockId);
         setOldBlockId(this.oldBlockId);
         captureNbt(oldBlockState, newBlockState);
+        this.oldBlockData = StellarProtect.getInstance().getProtectNMS().getBlockData(oldBlockState);
     }
 
     public PlayerBlockLogEntry(long playerId, BlockState blockState, ActionType actionType) {
@@ -115,12 +116,12 @@ public class PlayerBlockLogEntry extends LogEntry {
 
     private void captureNbt(BlockState oldState, BlockState newState) {
         try {
-            if (newState != null && newState.getBlock().getState() instanceof org.bukkit.block.TileState) {
-                org.bukkit.block.TileState ts = (org.bukkit.block.TileState) newState.getBlock().getState();
+            if (newState instanceof org.bukkit.block.TileState) {
+                org.bukkit.block.TileState ts = (org.bukkit.block.TileState) newState;
                 io.github.insideranh.stellarprotect.utils.NbtUtils.writeBlockEntity(ts, json -> this.blockEntityNbt = json);
             }
-            if (oldState != null && oldState.getBlock().getState() instanceof org.bukkit.block.TileState) {
-                org.bukkit.block.TileState ts = (org.bukkit.block.TileState) oldState.getBlock().getState();
+            if (oldState instanceof org.bukkit.block.TileState) {
+                org.bukkit.block.TileState ts = (org.bukkit.block.TileState) oldState;
                 io.github.insideranh.stellarprotect.utils.NbtUtils.writeBlockEntity(ts, json -> this.oldBlockEntityNbt = json);
             }
         } catch (Throwable ignored) {
@@ -129,18 +130,18 @@ public class PlayerBlockLogEntry extends LogEntry {
 
     public Integer getBlockId(JsonObject jsonObject) {
         if (jsonObject.has("b")) return jsonObject.get("b").getAsInt();
-        if (!jsonObject.has("d")) return -1;
+        if (!jsonObject.has("d")) return null;
         String d = jsonObject.get("d").getAsString();
         BlockTemplate blockTemplate = blocksManager.getBlockTemplate(d);
-        return blockTemplate.getId();
+        return blockTemplate != null ? blockTemplate.getId() : null;
     }
 
     public Integer getOldBlockId(JsonObject jsonObject) {
         if (jsonObject.has("ob")) return jsonObject.get("ob").getAsInt();
-        if (!jsonObject.has("od")) return -1;
+        if (!jsonObject.has("od")) return null;
         String d = jsonObject.get("od").getAsString();
         BlockTemplate blockTemplate = blocksManager.getBlockTemplate(d);
-        return blockTemplate.getId();
+        return blockTemplate != null ? blockTemplate.getId() : null;
     }
 
     @Override
@@ -148,22 +149,27 @@ public class PlayerBlockLogEntry extends LogEntry {
         if (nexoBlockId != null) {
             return nexoBlockId;
         }
+        if (blockId == null || blockId <= 0) return "minecraft:air";
         BlockTemplate blockTemplate = blocksManager.getBlockTemplate(blockId);
+        if (blockTemplate == null || blockTemplate.getDataBlock() == null) return "minecraft:air";
         return blockTemplate.getDataBlock().getBlockDataString();
     }
 
     public String getOldDataString() {
-        if (oldBlockData != null) return oldBlockData;
-        if (oldBlockId == null || oldBlockId == 0) return null;
+        if (oldBlockData != null && !oldBlockData.isEmpty()) return oldBlockData;
+        if (oldBlockId == null || oldBlockId <= 0) return null;
         BlockTemplate blockTemplate = blocksManager.getBlockTemplate(oldBlockId);
+        if (blockTemplate == null || blockTemplate.getDataBlock() == null) return null;
         return blockTemplate.getDataBlock().getBlockDataString();
     }
 
     @Override
     public String toSaveJson() {
         JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("b", blockId);
-        if (oldBlockId != 0) {
+        if (blockId != null) {
+            jsonObject.addProperty("b", blockId);
+        }
+        if (oldBlockId != null && oldBlockId > 0) {
             jsonObject.addProperty("ob", oldBlockId);
         }
         if (oldBlockData != null) {
@@ -185,6 +191,13 @@ public class PlayerBlockLogEntry extends LogEntry {
             jsonObject.addProperty("onbt", oldBlockEntityNbt);
         }
         return jsonObject.toString();
+    }
+
+    public boolean usesOldState() {
+        if (getActionType() == ActionType.BLOCK_PLACE.getId()) return true;
+        if (getActionType() == ActionType.BUCKET_EMPTY.getId()) return true;
+        return getActionType() == ActionType.BUCKET_FILL.getId()
+            && (oldBlockData != null || (oldBlockId != null && oldBlockId > 0));
     }
 
 }
