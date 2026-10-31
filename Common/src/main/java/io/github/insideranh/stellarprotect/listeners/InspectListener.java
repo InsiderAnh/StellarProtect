@@ -33,7 +33,9 @@ public class InspectListener implements Listener {
         if (cantInspect(playerProtect, event)) return;
 
         Block block = event.getClickedBlock();
-        Location blockLocation = block.getLocation();
+        Location blockLocation = WorldUtils.isValidChestBlock(block.getType()) ?
+                io.github.insideranh.stellarprotect.trackers.ChestTransactionTracker.getCanonicalChestLocation(block) :
+                block.getLocation();
         playerProtect.setInspectSession(new InspectSession(blockLocation, 0, 10, WorldUtils.isValidChestBlock(block.getType())));
 
         if (WorldUtils.isValidChestBlock(block.getType()) && action.equals(Action.RIGHT_CLICK_BLOCK)) {

@@ -28,7 +28,7 @@ public class BlocksManager {
     // BlockId -> BlockTemplate
     private final Map<Integer, BlockTemplate> idToBlockTemplate = new ConcurrentHashMap<>(100);
     private final Set<Integer> unsavedBlocks = Sets.newConcurrentHashSet();
-    private final AtomicInteger currentId = new AtomicInteger(0);
+    private final AtomicInteger currentId = new AtomicInteger(1);
 
     public void load() {
 

@@ -355,9 +355,11 @@ public class LoggerRepositorySQL implements LoggerRepository {
 
                             if (addedFromDB >= remaining) break;
 
+                            if (addedEntry.getKey() == null || addedEntry.getKey() <= 0) continue;
                             ItemTemplate itemTemplate = stellarProtect.getItemsManager().getItemTemplate(addedEntry.getKey());
+                            if (itemTemplate == null) continue;
                             ItemStack item = itemTemplate.getBukkitItem();
-                            if (item == null) continue;
+                            if (item == null || item.getType() == org.bukkit.Material.AIR) continue;
 
                             String itemKey = createItemKey(item);
                             if (cachedItemKeys.contains(itemKey)) continue;
@@ -375,9 +377,11 @@ public class LoggerRepositorySQL implements LoggerRepository {
 
                             if (addedFromDB >= remaining) break;
 
+                            if (removedEntry.getKey() == null || removedEntry.getKey() <= 0) continue;
                             ItemTemplate itemTemplate = stellarProtect.getItemsManager().getItemTemplate(removedEntry.getKey());
+                            if (itemTemplate == null) continue;
                             ItemStack item = itemTemplate.getBukkitItem();
-                            if (item == null) continue;
+                            if (item == null || item.getType() == org.bukkit.Material.AIR) continue;
 
                             String itemKey = createItemKey(item);
                             if (cachedItemKeys.contains(itemKey)) continue;
@@ -571,12 +575,12 @@ public class LoggerRepositorySQL implements LoggerRepository {
         try (PreparedStatement dataStmt = connection.prepareStatement(dataQuery)) {
             dataStmt.setLong(1, startTime);
             dataStmt.setLong(2, endTime);
-            dataStmt.setDouble(3, blockX - 0.5);
-            dataStmt.setDouble(4, blockX + 0.5);
+            dataStmt.setDouble(3, blockX - 1.5);
+            dataStmt.setDouble(4, blockX + 2.5);
             dataStmt.setDouble(5, blockY - 0.5);
-            dataStmt.setDouble(6, blockY + 0.5);
-            dataStmt.setDouble(7, blockZ - 0.5);
-            dataStmt.setDouble(8, blockZ + 0.5);
+            dataStmt.setDouble(6, blockY + 1.5);
+            dataStmt.setDouble(7, blockZ - 1.5);
+            dataStmt.setDouble(8, blockZ + 2.5);
 
             if (actionType != null) {
                 dataStmt.setInt(9, actionType.getId());

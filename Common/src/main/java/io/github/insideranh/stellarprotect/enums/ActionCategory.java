@@ -54,7 +54,7 @@ public enum ActionCategory {
             ActionType.TREE_GROW, ActionType.BLOCK_SPREAD
     }),
     WORLD_EDIT_ACTIONS(49, "world_edit_actions", new ActionType[]{}),
-    UNKNOWN_ACTIONS(50, "unknown_actions", ActionType.values());
+    UNKNOWN_ACTIONS(50, "unknown_actions", new ActionType[]{});
 
     private final int id;
     private final String tableName;

@@ -39,6 +39,9 @@ public class InspectHandler {
 
             logs.forEach(transaction -> processItemTransaction(player, transaction));
             sendPaginationInfo(player, page, limit, maxPage);
+        }).exceptionally(ex -> {
+            sendNoLogsMessage(player, blockLocation);
+            return null;
         });
     }
 
@@ -61,7 +64,7 @@ public class InspectHandler {
 
     public void processItemTransaction(Player player, ItemLogEntry transaction) {
         ItemStack item = transaction.getItemStack();
-        if (item == null) return;
+        if (item == null || item.getType() == org.bukkit.Material.AIR) return;
 
         String messageKey = transaction.isAdded() ? "messages.actions.added_item" : "messages.actions.removed_item";
 

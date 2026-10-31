@@ -35,8 +35,9 @@ public class TooltipUtils {
                 Long key = entry.getKey();
                 int value = entry.getValue();
 
+                if (key == null || key <= 0) continue;
                 ItemTemplate itemTemplate = plugin.getItemsManager().getItemTemplate(key);
-                if (itemTemplate != null) {
+                if (itemTemplate != null && itemTemplate.getBukkitItem() != null && itemTemplate.getBukkitItem().getType() != org.bukkit.Material.AIR) {
                     String materialOrNexoId = getMaterialOrNexoId(itemTemplate.getBukkitItem());
                     MinecraftItem minecraftItem = StringCleanerUtils.parseMinecraftData(materialOrNexoId);
 
@@ -62,8 +63,9 @@ public class TooltipUtils {
                 Long key = entry.getKey();
                 int value = entry.getValue();
 
+                if (key == null || key <= 0) continue;
                 ItemTemplate itemTemplate = plugin.getItemsManager().getItemTemplate(key);
-                if (itemTemplate != null) {
+                if (itemTemplate != null && itemTemplate.getBukkitItem() != null && itemTemplate.getBukkitItem().getType() != org.bukkit.Material.AIR) {
                     String materialOrNexoId = getMaterialOrNexoId(itemTemplate.getBukkitItem());
                     MinecraftItem minecraftItem = StringCleanerUtils.parseMinecraftData(materialOrNexoId);
 

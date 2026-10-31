@@ -16,6 +16,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
+import org.bukkit.block.Chest;
 import org.bukkit.block.DoubleChest;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -40,23 +41,50 @@ public class ChestTransactionTracker implements Listener {
 
     private static final ProtectNMS protectNMS = StellarProtect.getInstance().getProtectNMS();
     private static final ConcurrentHashMap<String, Location> playerChestLocations = new ConcurrentHashMap<>();
-    private static final ConcurrentHashMap<String, ItemCount[]> initialInventoryStates = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<String, List<ItemCount>> initialInventoryStates = new ConcurrentHashMap<>();
     private static final ConcurrentHashMap<String, Long> lastActivity = new ConcurrentHashMap<>();
     private static final StringBooleanMap activeEditing = new StringBooleanMap();
     private static final long CLEANUP_THRESHOLD = 30 * 60 * 1000L;
 
-    private static final ArrayDeque<ItemCount[]> ARRAY_POOL = new ArrayDeque<>();
-    private static final ArrayDeque<ItemCounter> COUNTER_POOL = new ArrayDeque<>();
-    private static final int POOL_SIZE = 32;
+    private final StellarProtect plugin = StellarProtect.getInstance();
 
-    static {
-        for (int i = 0; i < POOL_SIZE; i++) {
-            ARRAY_POOL.offer(new ItemCount[54]);
-            COUNTER_POOL.offer(new ItemCounter());
+    public static Location getCanonicalChestLocation(Block block) {
+        if (block == null) return null;
+        BlockState state = block.getState();
+        if (state instanceof Chest) {
+            Chest chest = (Chest) state;
+            InventoryHolder holder = chest.getInventory().getHolder();
+            if (holder instanceof DoubleChest) {
+                DoubleChest dc = (DoubleChest) holder;
+                InventoryHolder left = dc.getLeftSide();
+                if (left instanceof Chest) {
+                    return ((Chest) left).getLocation();
+                }
+            }
         }
+        return block.getLocation();
     }
 
-    private final StellarProtect plugin = StellarProtect.getInstance();
+    public static List<Location> getChestLocations(Block block) {
+        if (block == null) return Collections.emptyList();
+        BlockState state = block.getState();
+        if (state instanceof Chest) {
+            Chest chest = (Chest) state;
+            InventoryHolder holder = chest.getInventory().getHolder();
+            if (holder instanceof DoubleChest) {
+                DoubleChest dc = (DoubleChest) holder;
+                List<Location> locs = new ArrayList<>(2);
+                if (dc.getLeftSide() instanceof Chest) {
+                    locs.add(((Chest) dc.getLeftSide()).getLocation());
+                }
+                if (dc.getRightSide() instanceof Chest) {
+                    locs.add(((Chest) dc.getRightSide()).getLocation());
+                }
+                if (!locs.isEmpty()) return locs;
+            }
+        }
+        return Collections.singletonList(block.getLocation());
+    }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerInteract(PlayerInteractEvent event) {
@@ -66,7 +94,7 @@ public class ChestTransactionTracker implements Listener {
         if (block == null || !WorldUtils.isValidChestBlock(block.getType())) return;
 
         Player player = event.getPlayer();
-        Location chestLocation = block.getLocation();
+        Location chestLocation = getCanonicalChestLocation(block);
         String playerName = player.getName();
 
         if (activeEditing.get(playerName)) {
@@ -76,11 +104,7 @@ public class ChestTransactionTracker implements Listener {
         playerChestLocations.put(playerName, chestLocation);
         activeEditing.put(playerName, true);
 
-        plugin.getStellarTaskHook(() -> {
-            if (activeEditing.get(playerName)) {
-                captureInitialState(player, chestLocation);
-            }
-        }).runTask(chestLocation, 1L);
+        captureInitialState(player, chestLocation);
 
         String inventoryId = getInventoryId(playerName, chestLocation);
         lastActivity.put(inventoryId, System.currentTimeMillis());
@@ -139,7 +163,7 @@ public class ChestTransactionTracker implements Listener {
         Block block = event.getBlock();
         if (!WorldUtils.isValidChestBlock(block.getType())) return;
 
-        Location chestLocation = block.getLocation();
+        Location chestLocation = getCanonicalChestLocation(block);
         for (Map.Entry<String, Location> entry : playerChestLocations.entrySet()) {
             if (entry.getValue().equals(chestLocation)) {
                 Player player = Bukkit.getPlayer(entry.getKey());
@@ -162,7 +186,7 @@ public class ChestTransactionTracker implements Listener {
         Inventory inventory = holder.getInventory();
 
         String inventoryId = getInventoryId(player.getName(), chestLocation);
-        ItemCount[] snapshot = captureInventorySnapshot(inventory.getContents());
+        List<ItemCount> snapshot = captureInventorySnapshot(inventory.getContents());
         initialInventoryStates.put(inventoryId, snapshot);
     }
 
@@ -172,7 +196,7 @@ public class ChestTransactionTracker implements Listener {
         if (chestLocation == null) return;
 
         String inventoryId = getInventoryId(playerName, chestLocation);
-        ItemCount[] initialSnapshot = initialInventoryStates.get(inventoryId);
+        List<ItemCount> initialSnapshot = initialInventoryStates.get(inventoryId);
 
         if (initialSnapshot != null) {
             Block block = chestLocation.getBlock();
@@ -181,18 +205,14 @@ public class ChestTransactionTracker implements Listener {
                 if (state instanceof InventoryHolder) {
                     InventoryHolder holder = (InventoryHolder) state;
                     Inventory inventory = holder.getInventory();
-                    ItemStack[] inventoryContents = inventory.getContents();
-                    plugin.getExecutor().execute(() -> {
-                        ItemCount[] currentSnapshot = captureInventorySnapshot(inventoryContents);
+                    List<ItemCount> currentSnapshot = captureInventorySnapshot(inventory.getContents());
 
+                    plugin.getExecutor().execute(() -> {
                         TransactionResult result = compareSnapshots(playerName, chestLocation, initialSnapshot, currentSnapshot);
 
                         if (!result.itemsAdded.isEmpty() || !result.itemsRemoved.isEmpty()) {
                             handleTransaction(player, result);
                         }
-
-                        returnToPool(initialSnapshot);
-                        returnToPool(currentSnapshot);
                     });
                 }
             }
@@ -221,106 +241,77 @@ public class ChestTransactionTracker implements Listener {
                 location.getBlockZ();
     }
 
-    private ItemCount[] captureInventorySnapshot(ItemStack[] contents) {
-        ItemCount[] array = getFromPool();
-        if (array == null) array = new ItemCount[54];
+    private List<ItemCount> captureInventorySnapshot(ItemStack[] contents) {
+        if (contents == null || contents.length == 0) return Collections.emptyList();
 
-        ItemCounter counter = getCounterFromPool();
-        if (counter == null) counter = new ItemCounter();
-
-        counter.reset();
-
+        List<ItemCount> snapshot = new ArrayList<>();
         for (ItemStack item : contents) {
-            if (item != null && item.getType() != Material.AIR) {
-                counter.addItem(item);
+            if (item == null || item.getType() == Material.AIR) continue;
+
+            boolean merged = false;
+            for (ItemCount ic : snapshot) {
+                if (itemsEqual(ic.item, item)) {
+                    ic.count += item.getAmount();
+                    merged = true;
+                    break;
+                }
+            }
+
+            if (!merged) {
+                ItemStack single = item.clone();
+                single.setAmount(1);
+                snapshot.add(new ItemCount(single, item.getAmount()));
             }
         }
 
-        int index = 0;
-        for (int i = 0; i < counter.capacity && index < array.length; i++) {
-            if (counter.items[i] != null) {
-                if (array[index] == null) array[index] = new ItemCount();
-                array[index].item = counter.items[i];
-                array[index].count = counter.counts[i];
-                index++;
-            }
-        }
-
-        if (index < array.length && array[index] != null) {
-            array[index].item = null;
-            array[index].count = 0;
-        }
-
-        returnCounterToPool(counter);
-        return array;
+        return snapshot;
     }
 
-    private TransactionResult compareSnapshots(String playerName, Location location, ItemCount[] initial, ItemCount[] current) {
+    private TransactionResult compareSnapshots(String playerName, Location location, List<ItemCount> initial, List<ItemCount> current) {
         Map<ItemStack, Integer> added = new HashMap<>();
         Map<ItemStack, Integer> removed = new HashMap<>();
 
-        Map<Integer, Integer> initialCounts = new HashMap<>();
-        Map<Integer, ItemStack> itemMap = new HashMap<>();
+        if (initial == null) initial = Collections.emptyList();
+        if (current == null) current = Collections.emptyList();
 
+        List<ItemCount> remainingInitial = new ArrayList<>(initial.size());
         for (ItemCount ic : initial) {
-            if (ic == null || ic.item == null) break;
-            int hash = generateItemHash(ic.item);
-            initialCounts.put(hash, initialCounts.getOrDefault(hash, 0) + ic.count);
-            itemMap.put(hash, ic.item);
+            remainingInitial.add(new ItemCount(ic.item.clone(), ic.count));
         }
 
-        Map<Integer, Integer> currentCounts = new HashMap<>();
-        for (ItemCount ic : current) {
-            if (ic == null || ic.item == null) break;
-            int hash = generateItemHash(ic.item);
-            currentCounts.put(hash, currentCounts.getOrDefault(hash, 0) + ic.count);
-            itemMap.put(hash, ic.item);
-        }
+        for (ItemCount cur : current) {
+            ItemCount matchedInit = null;
+            for (ItemCount init : remainingInitial) {
+                if (itemsEqual(cur.item, init.item)) {
+                    matchedInit = init;
+                    break;
+                }
+            }
 
-        for (Map.Entry<Integer, Integer> entry : currentCounts.entrySet()) {
-            int hash = entry.getKey();
-            int currentCount = entry.getValue();
-            int initialCount = initialCounts.getOrDefault(hash, 0);
-
-            if (currentCount > initialCount) {
-                added.put(itemMap.get(hash), currentCount - initialCount);
+            if (matchedInit != null) {
+                if (cur.count > matchedInit.count) {
+                    added.put(cur.item.clone(), cur.count - matchedInit.count);
+                }
+                remainingInitial.remove(matchedInit);
+            } else {
+                added.put(cur.item.clone(), cur.count);
             }
         }
 
-        for (Map.Entry<Integer, Integer> entry : initialCounts.entrySet()) {
-            int hash = entry.getKey();
-            int initialCount = entry.getValue();
-            int currentCount = currentCounts.getOrDefault(hash, 0);
-
-            if (initialCount > currentCount) {
-                removed.put(itemMap.get(hash), initialCount - currentCount);
+        for (ItemCount rem : remainingInitial) {
+            int currentCount = 0;
+            for (ItemCount cur : current) {
+                if (itemsEqual(rem.item, cur.item)) {
+                    currentCount = cur.count;
+                    break;
+                }
+            }
+            if (rem.count > currentCount) {
+                removed.put(rem.item.clone(), rem.count - currentCount);
             }
         }
 
         return new TransactionResult(playerName, location, added, removed);
-    }
-
-    private int generateItemHash(ItemStack item) {
-        int hash = item.getType().ordinal();
-
-        if (item.hasItemMeta()) {
-            ItemMeta meta = item.getItemMeta();
-            int customModelData = protectNMS.modelDataHashCode(meta);
-            if (meta.hasDisplayName()) {
-                hash = hash * 31 + meta.getDisplayName().hashCode();
-            }
-            if (meta.hasLore()) {
-                hash = hash * 31 + Objects.hashCode(meta.getLore());
-            }
-            if (meta.hasEnchants()) {
-                hash = hash * 31 + meta.getEnchants().hashCode();
-            }
-            if (customModelData != 0) {
-                hash = hash * 31 + customModelData;
-            }
-        }
-
-        return hash;
     }
 
     private void handleTransaction(Player player, TransactionResult result) {
@@ -331,14 +322,23 @@ public class ChestTransactionTracker implements Listener {
         Map<Long, Integer> itemsRemoved = new HashMap<>();
 
         for (Map.Entry<ItemStack, Integer> entry : result.itemsAdded.entrySet()) {
+            if (entry.getKey() == null || entry.getKey().getType() == Material.AIR) continue;
             ItemReference itemReference = plugin.getItemsManager().getItemReference(entry.getKey(), entry.getValue());
-            itemsAdded.put(itemReference.getTemplateId(), entry.getValue());
+            if (itemReference != null && itemReference.getTemplateId() > 0) {
+                itemsAdded.put(itemReference.getTemplateId(), entry.getValue());
+            }
         }
         for (Map.Entry<ItemStack, Integer> entry : result.itemsRemoved.entrySet()) {
+            if (entry.getKey() == null || entry.getKey().getType() == Material.AIR) continue;
             ItemReference itemReference = plugin.getItemsManager().getItemReference(entry.getKey(), entry.getValue());
-            itemsRemoved.put(itemReference.getTemplateId(), entry.getValue());
+            if (itemReference != null && itemReference.getTemplateId() > 0) {
+                itemsRemoved.put(itemReference.getTemplateId(), entry.getValue());
+            }
         }
-        LoggerCache.addLog(new PlayerTransactionEntry(playerProtect.getPlayerId(), itemsAdded, itemsRemoved, result.chestLocation, ActionType.INVENTORY_TRANSACTION));
+
+        if (!itemsAdded.isEmpty() || !itemsRemoved.isEmpty()) {
+            LoggerCache.addLog(new PlayerTransactionEntry(playerProtect.getPlayerId(), itemsAdded, itemsRemoved, result.chestLocation, ActionType.INVENTORY_TRANSACTION));
+        }
     }
 
     public JsonObject getInventoryContent(Inventory inventory) {
@@ -349,10 +349,12 @@ public class ChestTransactionTracker implements Listener {
             ItemStack item = contents[slot];
             if (item != null && item.getType() != Material.AIR) {
                 ItemReference itemReference = plugin.getItemsManager().getItemReference(item, item.getAmount());
-                JsonObject slotData = new JsonObject();
-                slotData.addProperty("t", itemReference.getTemplateId());
-                slotData.addProperty("a", item.getAmount());
-                jsonObject.add(String.valueOf(slot), slotData);
+                if (itemReference != null && itemReference.getTemplateId() > 0) {
+                    JsonObject slotData = new JsonObject();
+                    slotData.addProperty("t", itemReference.getTemplateId());
+                    slotData.addProperty("a", item.getAmount());
+                    jsonObject.add(String.valueOf(slot), slotData);
+                }
             }
         }
 
@@ -370,8 +372,7 @@ public class ChestTransactionTracker implements Listener {
         }
 
         for (String key : keysToRemove) {
-            ItemCount[] snapshot = initialInventoryStates.remove(key);
-            if (snapshot != null) returnToPool(snapshot);
+            initialInventoryStates.remove(key);
             lastActivity.remove(key);
         }
 
@@ -390,128 +391,40 @@ public class ChestTransactionTracker implements Listener {
         Debugger.debugExtras("Limpieza completada. Eliminados " + keysToRemove.size() + " estados antiguos y " + playersToRemove.size() + " jugadores desconectados.");
     }
 
-    private ItemCount[] getFromPool() {
-        return ARRAY_POOL.poll();
+    public static boolean itemsEqual(ItemStack a, ItemStack b) {
+        if (a == b) return true;
+        if (a == null || b == null) return false;
+        if (a.getType() != b.getType()) return false;
+
+        boolean aMeta = a.hasItemMeta();
+        boolean bMeta = b.hasItemMeta();
+
+        if (aMeta != bMeta) return false;
+        if (!aMeta) return true;
+
+        ItemMeta metaA = a.getItemMeta();
+        ItemMeta metaB = b.getItemMeta();
+
+        int modelA = protectNMS.modelDataHashCode(metaA);
+        int modelB = protectNMS.modelDataHashCode(metaB);
+
+        return modelA == modelB &&
+                Objects.equals(metaA.getDisplayName(), metaB.getDisplayName()) &&
+                Objects.equals(metaA.getLore(), metaB.getLore()) &&
+                Objects.equals(metaA.getEnchants(), metaB.getEnchants());
     }
 
-    private void returnToPool(ItemCount[] array) {
-        if (array != null && ARRAY_POOL.size() < POOL_SIZE) {
-            for (ItemCount ic : array) {
-                if (ic != null) {
-                    ic.item = null;
-                    ic.count = 0;
-                }
-            }
-            ARRAY_POOL.offer(array);
+    public static class ItemCount {
+        public final ItemStack item;
+        public int count;
+
+        public ItemCount(ItemStack item, int count) {
+            this.item = item;
+            this.count = count;
         }
-    }
-
-    private ItemCounter getCounterFromPool() {
-        return COUNTER_POOL.poll();
-    }
-
-    private void returnCounterToPool(ItemCounter counter) {
-        if (counter != null && COUNTER_POOL.size() < POOL_SIZE) {
-            COUNTER_POOL.offer(counter);
-        }
-    }
-
-    private static class ItemCount {
-
-        ItemStack item;
-        int count;
-
-    }
-
-    private static class ItemCounter {
-
-        private static final int DEFAULT_CAPACITY = 64;
-
-        ItemStack[] items;
-        int[] counts;
-        int[] hashes;
-        int capacity;
-        int size;
-
-        ItemCounter() {
-            this.capacity = DEFAULT_CAPACITY;
-            this.items = new ItemStack[capacity];
-            this.counts = new int[capacity];
-            this.hashes = new int[capacity];
-        }
-
-        void reset() {
-            Arrays.fill(items, 0, size, null);
-            Arrays.fill(counts, 0, size, 0);
-            Arrays.fill(hashes, 0, size, 0);
-            size = 0;
-        }
-
-        void addItem(ItemStack item) {
-            int hash = hashItem(item);
-
-            for (int i = 0; i < size; i++) {
-                if (hashes[i] == hash && itemsEqual(items[i], item)) {
-                    counts[i] += item.getAmount();
-                    return;
-                }
-            }
-
-            if (size < capacity) {
-                items[size] = item.clone();
-                items[size].setAmount(1);
-                counts[size] = item.getAmount();
-                hashes[size] = hash;
-                size++;
-            }
-        }
-
-        private int hashItem(ItemStack item) {
-            int hash = item.getType().ordinal();
-            ItemMeta meta = item.getItemMeta();
-            if (meta != null) {
-                int customModelData = protectNMS.modelDataHashCode(meta);
-                if (meta.hasDisplayName()) {
-                    hash = hash * 31 + meta.getDisplayName().hashCode();
-                }
-                if (meta.hasLore()) {
-                    hash = hash * 31 + Objects.hashCode(meta.getLore());
-                }
-                if (meta.hasEnchants()) {
-                    hash = hash * 31 + meta.getEnchants().hashCode();
-                }
-                if (customModelData != 0) {
-                    hash = hash * 31 + customModelData;
-                }
-            }
-            return hash;
-        }
-
-        private boolean itemsEqual(ItemStack a, ItemStack b) {
-            if (a.getType() != b.getType()) return false;
-
-            boolean aMeta = a.hasItemMeta();
-            boolean bMeta = b.hasItemMeta();
-
-            if (aMeta != bMeta) return false;
-            if (!aMeta) return true;
-
-            ItemMeta metaA = a.getItemMeta();
-            ItemMeta metaB = b.getItemMeta();
-
-            int modelA = protectNMS.modelDataHashCode(metaA);
-            int modelB = protectNMS.modelDataHashCode(metaB);
-
-            return modelA == modelB &&
-                    Objects.equals(metaA.getDisplayName(), metaB.getDisplayName()) &&
-                    Objects.equals(metaA.getLore(), metaB.getLore()) &&
-                    Objects.equals(metaA.getEnchants(), metaB.getEnchants());
-        }
-
     }
 
     public static class TransactionResult {
-
         public final String playerName;
         public final Location chestLocation;
         public final Map<ItemStack, Integer> itemsAdded;
@@ -525,7 +438,6 @@ public class ChestTransactionTracker implements Listener {
             this.itemsRemoved = itemsRemoved;
             this.timestamp = System.currentTimeMillis();
         }
-
     }
 
 }

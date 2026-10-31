@@ -65,6 +65,12 @@ public class PlayerBlockLogEntry extends LogEntry {
         setOldBlockId(this.oldBlockId);
         captureNbt(oldBlockState, newBlockState);
         this.oldBlockData = StellarProtect.getInstance().getProtectNMS().getBlockData(oldBlockState);
+        if (newBlockState instanceof InventoryHolder) {
+            Inventory inventory = ((InventoryHolder) newBlockState).getInventory();
+            JsonObject jsonObject = StellarProtect.getInstance().getChestTransactionTracker().getInventoryContent(inventory);
+            this.extraType = ExtraDataType.INVENTORY_CONTENT.getId();
+            this.extraData = jsonObject.toString();
+        }
     }
 
     public PlayerBlockLogEntry(long playerId, BlockState blockState, ActionType actionType) {
@@ -129,6 +135,7 @@ public class PlayerBlockLogEntry extends LogEntry {
     }
 
     public Integer getBlockId(JsonObject jsonObject) {
+        if (super.getBlockId() != null && super.getBlockId() > 0) return super.getBlockId();
         if (jsonObject.has("b")) return jsonObject.get("b").getAsInt();
         if (!jsonObject.has("d")) return null;
         String d = jsonObject.get("d").getAsString();
@@ -137,6 +144,7 @@ public class PlayerBlockLogEntry extends LogEntry {
     }
 
     public Integer getOldBlockId(JsonObject jsonObject) {
+        if (super.getOldBlockId() != null && super.getOldBlockId() > 0) return super.getOldBlockId();
         if (jsonObject.has("ob")) return jsonObject.get("ob").getAsInt();
         if (!jsonObject.has("od")) return null;
         String d = jsonObject.get("od").getAsString();
