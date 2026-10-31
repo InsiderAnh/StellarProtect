@@ -197,43 +197,51 @@ public class LoggerRepositoryMySQL implements LoggerRepository {
                         if (playerLog.getItemId() != null) playerStmt.setLong(12, playerLog.getItemId());
                         else playerStmt.setNull(12, java.sql.Types.BIGINT);
                         playerStmt.setInt(13, playerLog.getAmount());
-                        playerStmt.setString(14, playerLog.getEntityType());
+                        String et = playerLog.getEntityType();
+                        if (et != null && et.length() > 48) et = et.substring(0, 48);
+                        playerStmt.setString(14, et);
                         if (playerLog.getChunkKey() != null) playerStmt.setLong(15, playerLog.getChunkKey());
                         else playerStmt.setNull(15, java.sql.Types.BIGINT);
                         playerStmt.addBatch();
                     }
 
                     playerStmt.executeBatch();
-
-                    java.sql.ResultSet generatedKeys = playerStmt.getGeneratedKeys();
-                    Map<PlayerTransactionEntry, Long> txnEntries = new HashMap<>();
-                    int idx = 0;
-                    while (generatedKeys.next()) {
-                        long logId = generatedKeys.getLong(1);
-                        if (idx < logEntries.size()) {
-                            LogEntry le = logEntries.get(idx);
-                            if (le instanceof PlayerTransactionEntry) {
-                                txnEntries.put((PlayerTransactionEntry) le, logId);
-                            }
-                        }
-                        idx++;
-                    }
-
                     connection.commit();
 
-                    saveInventoryTxns(connection, txnEntries);
+                    try {
+                        java.sql.ResultSet generatedKeys = playerStmt.getGeneratedKeys();
+                        Map<PlayerTransactionEntry, Long> txnEntries = new HashMap<>();
+                        int idx = 0;
+                        while (generatedKeys != null && generatedKeys.next()) {
+                            long logId = generatedKeys.getLong(1);
+                            if (idx < logEntries.size()) {
+                                LogEntry le = logEntries.get(idx);
+                                if (le instanceof PlayerTransactionEntry) {
+                                    txnEntries.put((PlayerTransactionEntry) le, logId);
+                                }
+                            }
+                            idx++;
+                        }
+                        if (!txnEntries.isEmpty()) {
+                            saveInventoryTxns(connection, txnEntries);
+                            connection.commit();
+                        }
+                    } catch (Throwable t) {
+                        // ignore generated keys failure - main logs are already committed
+                    }
 
+                    Debugger.debugSave("Saved " + logEntries.size() + " log entries in " + (System.currentTimeMillis() - start) + "ms");
                 } catch (Exception e) {
                     connection.rollback();
-                    Debugger.debugSave("Failed to save log entries. Trying again...");
+                    stellarProtect.getLogger().log(Level.SEVERE, "Failed to save log entries to MySQL: " + e.getMessage(), e);
                 } finally {
-                    connection.setAutoCommit(true);
+                    try {
+                        connection.setAutoCommit(true);
+                    } catch (SQLException ignored) {}
                 }
             } catch (Exception e) {
-                Debugger.debugSave("Failed to save log entries. Trying again...");
+                stellarProtect.getLogger().log(Level.SEVERE, "Database connection error saving log entries: " + e.getMessage(), e);
             }
-
-            Debugger.debugSave("Saved " + logEntries.size() + " log entries in " + (System.currentTimeMillis() - start) + "ms");
         });
     }
 
@@ -372,10 +380,8 @@ public class LoggerRepositoryMySQL implements LoggerRepository {
                 int effectiveSkipForDB = Math.max(0, skip - cachedLogs.size());
                 int processedItemFromDB = 0;
 
-                Set<String> cachedItemKeys = cachedLogs.stream()
-                        .map(ItemLogEntry::getItemStack)
-                        .filter(Objects::nonNull)
-                        .map(this::createItemKey)
+                Set<Long> cachedTimestamps = cachedLogs.stream()
+                        .map(ItemLogEntry::getCreatedAt)
                         .collect(Collectors.toSet());
 
                 int addedFromDB = 0;
@@ -421,8 +427,7 @@ public class LoggerRepositoryMySQL implements LoggerRepository {
                             ItemStack item = itemTemplate.getBukkitItem();
                             if (item == null || item.getType() == org.bukkit.Material.AIR) continue;
 
-                            String itemKey = createItemKey(item);
-                            if (cachedItemKeys.contains(itemKey)) continue;
+                            if (cachedTimestamps.contains(log.getCreatedAt())) continue;
 
                             result.add(new ItemLogEntry(item, log.getPlayerId(), addedEntry.getValue(), true, log.getCreatedAt()));
                             addedFromDB++;
@@ -443,8 +448,7 @@ public class LoggerRepositoryMySQL implements LoggerRepository {
                             ItemStack item = itemTemplate.getBukkitItem();
                             if (item == null || item.getType() == org.bukkit.Material.AIR) continue;
 
-                            String itemKey = createItemKey(item);
-                            if (cachedItemKeys.contains(itemKey)) continue;
+                            if (cachedTimestamps.contains(log.getCreatedAt())) continue;
 
                             result.add(new ItemLogEntry(item, log.getPlayerId(), removedEntry.getValue(), false, log.getCreatedAt()));
                             addedFromDB++;

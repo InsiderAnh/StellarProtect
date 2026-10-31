@@ -150,7 +150,17 @@ public class ProtectDatabase {
                     );
 
                     if (queuedLog.getExtraJson() != null && !queuedLog.getExtraJson().isEmpty()) {
-                        logEntry.setForcedJson(queuedLog.getExtraJson());
+                        String extra = queuedLog.getExtraJson();
+                        logEntry.setForcedJson(extra);
+                        try {
+                            com.google.gson.JsonObject json = new com.google.gson.JsonParser().parse(extra).getAsJsonObject();
+                            if (json.has("b")) logEntry.setBlockId(json.get("b").getAsInt());
+                            if (json.has("ob")) logEntry.setOldBlockId(json.get("ob").getAsInt());
+                            if (json.has("id")) logEntry.setItemId(json.get("id").getAsLong());
+                            if (json.has("it64")) logEntry.setItemId(json.get("it64").getAsLong());
+                            if (json.has("a")) logEntry.setAmount(json.get("a").getAsInt());
+                            if (json.has("et")) logEntry.setEntityType(json.get("et").getAsString());
+                        } catch (Exception ignored) {}
                     }
 
                     logEntries.add(logEntry);

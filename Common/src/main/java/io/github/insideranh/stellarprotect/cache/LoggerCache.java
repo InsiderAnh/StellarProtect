@@ -20,6 +20,7 @@ import io.github.insideranh.stellarprotect.utils.Debugger;
 import lombok.Getter;
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
+import io.github.insideranh.stellarprotect.trackers.ChestTransactionTracker;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -38,11 +39,14 @@ public class LoggerCache {
     @Getter
     private static final CacheConfig[] CATEGORY_CONFIGS_ARRAY = createCategoryConfigsArray();
     @Getter
-    private static final FixedSizeCircularBuffer[] unSavedLogsByCategory = new FixedSizeCircularBuffer[ActionCategory.values().length];
+    private static final FixedSizeCircularBuffer[] unSavedLogsByCategory = new FixedSizeCircularBuffer[ActionCategory
+            .values().length];
     @Getter
-    private static final ConcurrentHashMap<LocationCache, LogRingBuffer>[] cachedLogsByCategory = new ConcurrentHashMap[ActionCategory.values().length];
+    private static final ConcurrentHashMap<LocationCache, LogRingBuffer>[] cachedLogsByCategory = new ConcurrentHashMap[ActionCategory
+            .values().length];
     @Getter
-    private static final TimestampedHashMap<LocationCache, PlayerBlockLogEntry> placedBlockLogs = new TimestampedHashMap<>(1024, 30_000L);
+    private static final TimestampedHashMap<LocationCache, PlayerBlockLogEntry> placedBlockLogs = new TimestampedHashMap<>(
+            1024, 30_000L);
 
     @Getter
     private static final Cache<String, CachedQuery> queryCache = CacheBuilder.newBuilder()
@@ -61,11 +65,14 @@ public class LoggerCache {
     private static final AtomicInteger cacheHits = new AtomicInteger(0);
     private static final AtomicInteger cacheMisses = new AtomicInteger(0);
 
-    private static final ThreadLocal<StringBuilder> STRING_BUILDER_POOL = ThreadLocal.withInitial(() -> new StringBuilder(256));
+    private static final ThreadLocal<StringBuilder> STRING_BUILDER_POOL = ThreadLocal
+            .withInitial(() -> new StringBuilder(256));
 
-    private static final ThreadLocal<ArrayList<LogEntry>> LOG_LIST_POOL = ThreadLocal.withInitial(() -> new ArrayList<>(1000));
+    private static final ThreadLocal<ArrayList<LogEntry>> LOG_LIST_POOL = ThreadLocal
+            .withInitial(() -> new ArrayList<>(1000));
 
-    private static final ThreadLocal<HashSet<Integer>> ACTION_ID_SET_POOL = ThreadLocal.withInitial(() -> new HashSet<>(64));
+    private static final ThreadLocal<HashSet<Integer>> ACTION_ID_SET_POOL = ThreadLocal
+            .withInitial(() -> new HashSet<>(64));
 
     static {
         int maxActionId = Arrays.stream(ActionType.values())
@@ -204,20 +211,24 @@ public class LoggerCache {
     }
 
     public static List<ItemLogEntry> getChestTransactions(Location location, int skip, int limit) {
-        List<Location> targetLocations = io.github.insideranh.stellarprotect.trackers.ChestTransactionTracker.getChestLocations(location.getBlock());
-        ArrayList<ItemLogEntry> allItems = new ArrayList<>(limit * 2);
+        List<Location> targetLocations = ChestTransactionTracker.getChestLocations(location.getBlock());
+        int initialCap = (limit > 0 && limit <= 5000) ? Math.min(limit * 2, 10000) : 64;
+        ArrayList<ItemLogEntry> allItems = new ArrayList<>(initialCap);
 
         for (Location loc : targetLocations) {
             LocationCache locationCache = LocationCache.of(loc);
             LogRingBuffer logs = cachedLogsByCategory[ActionCategory.INVENTORY_ACTIONS.ordinal()].get(locationCache);
-            if (logs == null || logs.isEmpty()) continue;
+            if (logs == null || logs.isEmpty())
+                continue;
 
             logs.forEachReverse(log -> {
-                if (!(log instanceof PlayerTransactionEntry)) return;
+                if (!(log instanceof PlayerTransactionEntry))
+                    return;
                 PlayerTransactionEntry transaction = (PlayerTransactionEntry) log;
 
                 transaction.getAdded().forEach((templateId, amount) -> {
-                    if (templateId == null || templateId <= 0) return;
+                    if (templateId == null || templateId <= 0)
+                        return;
                     ItemTemplate itemTemplate = plugin.getItemsManager().getItemTemplate(templateId);
                     if (itemTemplate != null) {
                         ItemStack item = itemTemplate.getBukkitItem();
@@ -228,7 +239,8 @@ public class LoggerCache {
                 });
 
                 transaction.getRemoved().forEach((templateId, amount) -> {
-                    if (templateId == null || templateId <= 0) return;
+                    if (templateId == null || templateId <= 0)
+                        return;
                     ItemTemplate itemTemplate = plugin.getItemsManager().getItemTemplate(templateId);
                     if (itemTemplate != null) {
                         ItemStack item = itemTemplate.getBukkitItem();
@@ -242,13 +254,15 @@ public class LoggerCache {
 
         allItems.sort((a, b) -> Long.compare(b.getCreatedAt(), a.getCreatedAt()));
 
-        if (skip >= allItems.size()) return Collections.emptyList();
-        int toIndex = Math.min(skip + limit, allItems.size());
+        if (skip >= allItems.size())
+            return Collections.emptyList();
+        int toIndex = (int) Math.min((long) skip + limit, (long) allItems.size());
         return allItems.subList(skip, toIndex);
     }
 
     public static List<LogEntry> getLogs(LocationCache location, int skip, int limit) {
-        ArrayList<LogEntry> allLogs = new ArrayList<>(limit * 2);
+        int initialCap = (limit > 0 && limit <= 5000) ? Math.min(limit * 2, 10000) : 64;
+        ArrayList<LogEntry> allLogs = new ArrayList<>(initialCap);
 
         ActionCategory[] categories = ActionCategory.values();
         for (int i = 0; i < categories.length; i++) {
@@ -260,7 +274,8 @@ public class LoggerCache {
 
         allLogs.sort((a, b) -> Long.compare(b.getCreatedAt(), a.getCreatedAt()));
 
-        if (skip >= allLogs.size()) return Collections.emptyList();
+        if (skip >= allLogs.size())
+            return Collections.emptyList();
         int toIndex = Math.min(skip + limit, allLogs.size());
         return allLogs.subList(skip, toIndex);
     }
@@ -294,7 +309,8 @@ public class LoggerCache {
 
         if (!actionTypeIds.isEmpty()) {
             for (int i = 0; i < actionTypeIds.size(); i++) {
-                if (i > 0) keyBuilder.append(',');
+                if (i > 0)
+                    keyBuilder.append(',');
                 keyBuilder.append(actionTypeIds.get(i));
             }
         } else {
@@ -368,8 +384,10 @@ public class LoggerCache {
 
                 ringBuffer.forEachIf(log -> {
                     long createdAt = log.getCreatedAt();
-                    if (createdAt < timeStart || createdAt > timeEnd) return false;
-                    if (hasActionFilter && !actionIds.contains(log.getActionType())) return false;
+                    if (createdAt < timeStart || createdAt > timeEnd)
+                        return false;
+                    if (hasActionFilter && !actionIds.contains(log.getActionType()))
+                        return false;
                     return !hasUserFilter || userIds.contains(log.getPlayerId());
                 }, logs);
             });
@@ -386,7 +404,9 @@ public class LoggerCache {
         }
 
         if (skip == 0 && limit <= 100) {
-            if (totalLogsProcessed.get() == revision) queryCache.put(cacheKey, new CachedQuery(paginatedLogs, System.currentTimeMillis() + 5 * 60 * 1000L, revision));
+            if (totalLogsProcessed.get() == revision)
+                queryCache.put(cacheKey,
+                        new CachedQuery(paginatedLogs, System.currentTimeMillis() + 5 * 60 * 1000L, revision));
         }
 
         return paginatedLogs;
@@ -439,12 +459,15 @@ public class LoggerCache {
     }
 
     @Deprecated
-    public static List<LogEntry> getLogs(TimeArg timeArg, RadiusArg radiusArg, ActionType actionType, int skip, int limit) {
-        return getLogs(timeArg, radiusArg, actionType != null ? Collections.singletonList(actionType) : Collections.emptyList(), skip, limit);
+    public static List<LogEntry> getLogs(TimeArg timeArg, RadiusArg radiusArg, ActionType actionType, int skip,
+            int limit) {
+        return getLogs(timeArg, radiusArg,
+                actionType != null ? Collections.singletonList(actionType) : Collections.emptyList(), skip, limit);
     }
 
     @Deprecated
-    public static List<LogEntry> getLogs(TimeArg timeArg, RadiusArg radiusArg, List<ActionType> actionTypes, int skip, int limit) {
+    public static List<LogEntry> getLogs(TimeArg timeArg, RadiusArg radiusArg, List<ActionType> actionTypes, int skip,
+            int limit) {
         StringBuilder keyBuilder = STRING_BUILDER_POOL.get();
         keyBuilder.setLength(0);
 
@@ -453,7 +476,8 @@ public class LoggerCache {
 
         if (!actionTypes.isEmpty()) {
             for (int i = 0; i < actionTypes.size(); i++) {
-                if (i > 0) keyBuilder.append(',');
+                if (i > 0)
+                    keyBuilder.append(',');
                 keyBuilder.append(actionTypes.get(i).name());
             }
         } else {
@@ -528,7 +552,9 @@ public class LoggerCache {
         }
 
         if (skip == 0 && limit <= 100) {
-            if (totalLogsProcessed.get() == revision) queryCache.put(cacheKey, new CachedQuery(paginatedLogs, System.currentTimeMillis() + 5 * 60 * 1000L, revision));
+            if (totalLogsProcessed.get() == revision)
+                queryCache.put(cacheKey,
+                        new CachedQuery(paginatedLogs, System.currentTimeMillis() + 5 * 60 * 1000L, revision));
         }
 
         return paginatedLogs;
@@ -543,7 +569,8 @@ public class LoggerCache {
 
         if (!actionTypes.isEmpty()) {
             for (int i = 0; i < actionTypes.size(); i++) {
-                if (i > 0) keyBuilder.append(',');
+                if (i > 0)
+                    keyBuilder.append(',');
                 keyBuilder.append(actionTypes.get(i).name());
             }
         } else {
@@ -852,18 +879,30 @@ public class LoggerCache {
     private static class CachedCount {
         private final long count;
         private final long revision;
+
         private CachedCount(long count, long revision) {
             this.count = count;
             this.revision = revision;
         }
-        public long getCount() { return count; }
-        public long getRevision() { return revision; }
+
+        public long getCount() {
+            return count;
+        }
+
+        public long getRevision() {
+            return revision;
+        }
     }
 
     @Getter
     private static class CachedQuery {
-        public List<LogEntry> getLogs() { return logs; }
-        public long getRevision() { return revision; }
+        public List<LogEntry> getLogs() {
+            return logs;
+        }
+
+        public long getRevision() {
+            return revision;
+        }
 
         private final List<LogEntry> logs;
         private final long expireTime;

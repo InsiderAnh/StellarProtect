@@ -26,6 +26,14 @@ public class InspectListener implements Listener {
 
         Action action = event.getAction();
 
+        try {
+            if (event.getHand() == org.bukkit.inventory.EquipmentSlot.OFF_HAND) {
+                return;
+            }
+        } catch (Throwable ignored) {
+            // 1.8 compatibility
+        }
+
         if (!action.equals(Action.LEFT_CLICK_BLOCK) && !action.equals(Action.RIGHT_CLICK_BLOCK))
             return;
 

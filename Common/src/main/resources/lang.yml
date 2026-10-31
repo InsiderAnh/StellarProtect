@@ -307,6 +307,34 @@ messages:
       &7<time> &8| &d<player>&f spread &8| &d(<data>)
     armor_stand_manipulate: |-
       &7<time> &8| &d<player>&f armorstand &8| &d(<data>) &7| &a[View]
+    block_burn: |-
+      &7<time> &8| &d<player>&f burned &8| &d(<data>)
+    block_form: |-
+      &7<time> &8| &d<player>&f formed &8| &d(<data>)
+    block_dispense: |-
+      &7<time> &8| &d<player>&f dispense &8| &d(<data>)
+    brewing: |-
+      &7<time> &8| &d<player>&f brewed &8| &d(<data>)
+    raid: |-
+      &7<time> &8| &d<player>&f raid &8| &d(<data>)
+    raid_spawn: |-
+      &7<time> &8| &d<player>&f raid spawn &8| &d(<data>)
+    raid_finish: |-
+      &7<time> &8| &d<player>&f raid finish &8| &d(<data>)
+    inventory_snapshot: |-
+      &7<time> &8| &d<player>&f snapshot &8| &d(<data>)
+    item_restore: |-
+      &7<time> &8| &d<player>&f item restore &8| &d(<data>)
+    decorated_pot: |-
+      &7<time> &8| &d<player>&f decorated pot &8| &d(<data>)
+    chiseled_bookshelf: |-
+      &7<time> &8| &d<player>&f bookshelf &8| &d(<data>)
+    crafter: |-
+      &7<time> &8| &d<player>&f crafter &8| &d(<data>)
+    armor_trim: |-
+      &7<time> &8| &d<player>&f armor trim &8| &d(<data>)
+    sculk_sensor: |-
+      &7<time> &8| &d<player>&f sculk sensor &8| &d(<data>)
   tooltips:
     armor_stand_manipulate: "&fClick to see changes!"
     item_details:

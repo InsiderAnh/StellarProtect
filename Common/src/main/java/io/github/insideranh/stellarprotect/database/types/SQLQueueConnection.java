@@ -106,7 +106,7 @@ public class SQLQueueConnection {
                     insertStatement.setInt(6, logEntry.getActionType());
                     insertStatement.setInt(7, 0);
                     insertStatement.setString(8, extraJson);
-                    insertStatement.setLong(9, System.currentTimeMillis());
+                    insertStatement.setLong(9, logEntry.getCreatedAt());
                     insertStatement.addBatch();
                 }
 

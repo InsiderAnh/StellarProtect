@@ -39,12 +39,11 @@ public class ItemsRepositorySQL implements ItemsRepository {
                 int batchSize = 0;
                 int maxBatchSize = 1000;
 
-                statement.setByte(3, (byte) 0);
-
                 for (ItemTemplate template : itemTemplates) {
-                    if (template == null) continue;
+                    if (template == null || template.getBase64() == null) continue;
                     statement.setLong(1, template.getId());
                     statement.setString(2, template.getBase64());
+                    statement.setByte(3, (byte) 0);
                     statement.addBatch();
 
                     batchSize++;
