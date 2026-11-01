@@ -23,7 +23,7 @@ public class LocationCache {
     }
 
     public static LocationCache of(LogEntry logEntry) {
-        return of(logEntry.getWorldId(), (int) logEntry.getX(), (int) logEntry.getY(), (int) logEntry.getZ());
+        return of(logEntry.getWorldId(), (int) Math.floor(logEntry.getX()), (int) Math.floor(logEntry.getY()), (int) Math.floor(logEntry.getZ()));
     }
 
     public static LocationCache of(Location location) {

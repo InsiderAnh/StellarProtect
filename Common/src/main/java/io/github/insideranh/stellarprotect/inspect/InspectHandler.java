@@ -26,12 +26,15 @@ public class InspectHandler {
 
     public void handleChestInspection(Player player, Location blockLocation, int page, int skip, int limit) {
         plugin.getProtectDatabase().getChestTransactions(blockLocation, skip, limit).thenAccept(callbackLookup -> {
-            int maxPage = (int) Math.ceil((double) callbackLookup.getTotal() / limit);
-
             List<ItemLogEntry> logs = callbackLookup.getLogs();
             if (logs.isEmpty()) {
                 sendNoLogsMessage(player, blockLocation);
                 return;
+            }
+
+            int maxPage = (int) Math.ceil((double) callbackLookup.getTotal() / limit);
+            if (maxPage < 1) {
+                maxPage = 1;
             }
 
             plugin.getLangManager().sendMessage(player, "messages.actions.transactions_title",
@@ -47,11 +50,15 @@ public class InspectHandler {
 
     public void handleBlockInspection(Player player, Location blockLocation, int page, int skip, int limit) {
         plugin.getProtectDatabase().getLogs(blockLocation, skip, limit).thenAccept(callbackLookup -> {
-            int maxPage = (int) Math.ceil((double) callbackLookup.getTotal() / limit);
             Set<LogEntry> logs = callbackLookup.getLogs();
             if (logs.isEmpty()) {
                 sendNoLogsMessage(player, blockLocation);
                 return;
+            }
+
+            int maxPage = (int) Math.ceil((double) callbackLookup.getTotal() / limit);
+            if (maxPage < 1) {
+                maxPage = 1;
             }
 
             plugin.getLangManager().sendMessage(player, "messages.actions.location",
@@ -117,6 +124,7 @@ public class InspectHandler {
     }
 
     public void sendPaginationInfo(Player player, int currentPage, int itemsPerPage, long total) {
+        Debugger.debugExtras("sendPageButtons (inspect): player=" + player.getName() + ", page=" + currentPage + ", perPage=" + itemsPerPage + ", maxPages=" + total);
         plugin.getProtectNMS().sendPageButtons(player,
                 plugin.getLangManager().get("messages.pagesNav"),
                 plugin.getLangManager().get("messages.clickPage"),

@@ -14,6 +14,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import io.github.insideranh.stellarprotect.trackers.ChestTransactionTracker;
 
 public class InspectListener implements Listener {
 
@@ -22,7 +23,8 @@ public class InspectListener implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void onInspect(PlayerInteractEvent event) {
         Player player = event.getPlayer();
-        if (event.getClickedBlock() == null) return;
+        if (event.getClickedBlock() == null)
+            return;
 
         Action action = event.getAction();
 
@@ -38,13 +40,15 @@ public class InspectListener implements Listener {
             return;
 
         PlayerProtect playerProtect = PlayerProtect.getPlayer(player);
-        if (cantInspect(playerProtect, event)) return;
+        if (cantInspect(playerProtect, event))
+            return;
 
         Block block = event.getClickedBlock();
-        Location blockLocation = WorldUtils.isValidChestBlock(block.getType()) ?
-                io.github.insideranh.stellarprotect.trackers.ChestTransactionTracker.getCanonicalChestLocation(block) :
-                block.getLocation();
-        playerProtect.setInspectSession(new InspectSession(blockLocation, 0, 10, WorldUtils.isValidChestBlock(block.getType())));
+        Location blockLocation = WorldUtils.isValidChestBlock(block.getType())
+                ? ChestTransactionTracker.getCanonicalChestLocation(block)
+                : block.getLocation();
+        playerProtect.setInspectSession(
+                new InspectSession(blockLocation, 0, 10, WorldUtils.isValidChestBlock(block.getType())));
 
         if (WorldUtils.isValidChestBlock(block.getType()) && action.equals(Action.RIGHT_CLICK_BLOCK)) {
             plugin.getInspectHandler().handleChestInspection(player, blockLocation, 1, 0, 10);

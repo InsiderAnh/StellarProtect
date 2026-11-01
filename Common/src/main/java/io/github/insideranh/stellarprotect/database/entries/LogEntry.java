@@ -26,7 +26,7 @@ public class LogEntry {
     protected Integer blockId;
     protected Integer oldBlockId;
     protected Long itemId;
-    protected Integer amount;
+    protected Integer amount = 0;
     protected String entityType;
     protected Long chunkKey;
     private byte restored;
@@ -105,13 +105,11 @@ public class LogEntry {
     public static Long chunkKeyOf(int worldId, double x, double z) {
         int cx = ((int) Math.floor(x)) >> 4;
         int cz = ((int) Math.floor(z)) >> 4;
-        long hi = worldId & 0xFFFFFFFFL;
-        long lo = ((long) (cx & 0xFFFF) << 16) | (cz & 0xFFFF);
-        return (hi << 32) | (lo & 0xFFFFFFFFL);
+        return ((long) cx << 32) | (cz & 0xFFFFFFFFL);
     }
 
     public LocationCache asLocation() {
-        return LocationCache.of(worldId, (int) x, (int) y, (int) z);
+        return LocationCache.of(worldId, (int) Math.floor(x), (int) Math.floor(y), (int) Math.floor(z));
     }
 
     public Location asBukkitLocation() {

@@ -386,8 +386,8 @@ public class RestoreRepositoryMySQL implements RestoreRepository {
         public QueryBuilder addChunkFilter(Integer chunkX, Integer chunkZ) {
             if (chunkX != null && chunkZ != null) {
                 whereConditions.add("ple.chunk_key = ?");
-                long hi = ((long) chunkX & 0xFFFF) << 16 | (chunkZ & 0xFFFF);
-                parameters.add(hi);
+                long chunkKey = ((long) chunkX << 32) | (chunkZ & 0xFFFFFFFFL);
+                parameters.add(chunkKey);
             }
             return this;
         }

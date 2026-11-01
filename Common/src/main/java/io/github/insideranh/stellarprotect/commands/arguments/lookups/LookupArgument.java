@@ -93,7 +93,11 @@ public class LookupArgument extends StellarArgument {
 
             plugin.getProtectDatabase().getLogs(databaseFilters, databaseFilters.isIgnoreCache(), pageArg.getSkip(), pageArg.getLimit()).thenAccept(callbackLookup -> {
                 Map<LocationCache, Set<LogEntry>> groupedLogs = callbackLookup.getLogs();
-                long total = (long) Math.ceil((double) callbackLookup.getTotal() / pageArg.getPerPage());
+                long rawTotal = callbackLookup.getTotal();
+                long total = (long) Math.ceil((double) rawTotal / pageArg.getPerPage());
+                if (total < 1 && !groupedLogs.isEmpty()) {
+                    total = 1;
+                }
 
                 playerProtect.setNextLookup(System.currentTimeMillis() + 500L);
 
@@ -111,6 +115,7 @@ public class LookupArgument extends StellarArgument {
                     plugin.getProtectNMS().sendActionTitle(player, plugin.getLangManager().get("messages.actions.location"), "§fClick to teleport!", "/stellarprotect t " + WorldUtils.getWorld(location.getWorldId()) + " " + location.getX() + " " + location.getY() + " " + location.getZ(), text -> text.replace("<location>", WorldUtils.getFormatedLocation(location)));
                 }
 
+                Debugger.debugExtras("sendPageButtons: player=" + player.getName() + ", page=" + pageArg.getPage() + ", perPage=" + pageArg.getPerPage() + ", total=" + total + ", rawTotal=" + rawTotal);
                 plugin.getProtectNMS().sendPageButtons(player,
                         plugin.getLangManager().get("messages.pagesNav"),
                         plugin.getLangManager().get("messages.clickPage"),

@@ -187,7 +187,7 @@ public class LoggerRepositorySQL implements LoggerRepository {
                         else playerStmt.setNull(11, java.sql.Types.INTEGER);
                         if (playerLog.getItemId() != null) playerStmt.setLong(12, playerLog.getItemId());
                         else playerStmt.setNull(12, java.sql.Types.BIGINT);
-                        playerStmt.setInt(13, playerLog.getAmount());
+                        playerStmt.setInt(13, playerLog.getAmount() != null ? playerLog.getAmount() : 0);
                         String et = playerLog.getEntityType();
                         if (et != null && et.length() > 48) et = et.substring(0, 48);
                         playerStmt.setString(14, et);
@@ -396,22 +396,14 @@ public class LoggerRepositorySQL implements LoggerRepository {
                         }
                     }
 
-                    if (itemsAddedInThisBlock == 0 && addedFromDB < remaining) {
-                        blockStart += blockSize;
-                        if (blockStart + blockSize >= totalDBLogs) {
-                            hasMoreBlocks = false;
-                        }
-                    } else if (addedFromDB < remaining && dbLogs.size() == blockSize) {
-                        blockStart += blockSize;
-                        if (blockStart >= totalDBLogs) {
-                            hasMoreBlocks = false;
-                        }
-                    } else {
+                    if (dbLogs.size() < blockSize) {
                         hasMoreBlocks = false;
+                    } else {
+                        blockStart += blockSize;
                     }
                 }
 
-                long estimatedTotalCount = cachedLogs.size() + totalDBLogs;
+                long estimatedTotalCount = Math.max(cachedLogs.size() + totalDBLogs, (long) result.size());
 
                 return new CallbackLookup<>(result, estimatedTotalCount);
             }
@@ -467,10 +459,15 @@ public class LoggerRepositorySQL implements LoggerRepository {
                         })
                 );
 
-                return new CallbackLookup<>(groupedResults, dbLookup.getTotal());
+                long totalCount = Math.max(dbLookup.getTotal(), (long) cachedLogs.size());
+                int displayedCount = groupedResults.values().stream().mapToInt(Set::size).sum();
+                totalCount = Math.max(totalCount, (long) (skip + displayedCount));
+                return new CallbackLookup<>(groupedResults, totalCount);
             }
 
-            long total = countLogs(databaseFilters);
+            long total = Math.max(countLogs(databaseFilters), (long) cachedLogs.size());
+            int displayedCount = groupedResults.values().stream().mapToInt(Set::size).sum();
+            total = Math.max(total, (long) (skip + displayedCount));
 
             return new CallbackLookup<>(groupedResults, total);
         }, stellarProtect.getLookupExecutor());
@@ -882,8 +879,8 @@ public class LoggerRepositorySQL implements LoggerRepository {
         public QueryBuilder addChunkFilter(Integer chunkX, Integer chunkZ) {
             if (chunkX != null && chunkZ != null) {
                 whereConditions.add("ple.chunk_key = ?");
-                long hi = ((long) chunkX & 0xFFFF) << 16 | (chunkZ & 0xFFFF);
-                parameters.add(hi);
+                long chunkKey = ((long) chunkX << 32) | (chunkZ & 0xFFFFFFFFL);
+                parameters.add(chunkKey);
             }
             return this;
         }
