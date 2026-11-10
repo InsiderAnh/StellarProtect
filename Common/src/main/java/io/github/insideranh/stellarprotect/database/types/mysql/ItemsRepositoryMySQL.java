@@ -79,9 +79,9 @@ public class ItemsRepositoryMySQL implements ItemsRepository {
         );
 
         executor.execute(() -> {
-            String sql = "SELECT id, base64, s, access_count, last_accessed, total_quantity_used, created_at " +
+            String sql = "SELECT id, base64, s, access_count, last_accessed, total_used, created_at " +
                     "FROM " + stellarProtect.getConfigManager().getTablesItemTemplates() + " " +
-                    "ORDER BY access_count DESC, total_quantity_used DESC";
+                    "ORDER BY access_count DESC, total_used DESC";
 
             try (Connection connection = dataSource.getConnection();
                  PreparedStatement statement = connection.prepareStatement(sql);

@@ -77,7 +77,7 @@ public class BlocksRepositorySQL implements BlocksRepository {
                 stellarProtect.getBlocksManager().getCurrentId().set(count + 1);
                 stellarProtect.getLogger().info("Loaded " + count + " block templates.");
             } catch (Exception e) {
-                stellarProtect.getLogger().info("Error en loadMostUsedItems: " + e.getMessage());
+                stellarProtect.getLogger().info("Error en loadMostUsedBlocks: " + e.getMessage());
             }
         });
     }

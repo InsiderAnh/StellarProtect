@@ -81,7 +81,7 @@ public class BlocksRepositoryMySQL implements BlocksRepository {
                 stellarProtect.getBlocksManager().getCurrentId().set(count + 1);
                 stellarProtect.getLogger().info("Loaded " + count + " block templates from MySQL.");
             } catch (Exception e) {
-                stellarProtect.getLogger().info("Error en loadBlockDatas MySQL: " + e.getMessage());
+                stellarProtect.getLogger().info("Error en loadMostUsedBlocks: " + e.getMessage());
             }
         });
     }
