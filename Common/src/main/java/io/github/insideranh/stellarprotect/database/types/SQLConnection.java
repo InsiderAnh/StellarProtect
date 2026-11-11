@@ -292,6 +292,22 @@ public class SQLConnection implements DatabaseConnection {
         } catch (SQLException ignored) {
         }
         try (Statement stmt = connection.createStatement()) {
+            stmt.execute("ALTER TABLE " + itemTemplates + " ADD COLUMN access_count INTEGER DEFAULT 0;");
+        } catch (SQLException ignored) {
+        }
+        try (Statement stmt = connection.createStatement()) {
+            stmt.execute("ALTER TABLE " + itemTemplates + " ADD COLUMN last_accessed TIMESTAMP DEFAULT CURRENT_TIMESTAMP;");
+        } catch (SQLException ignored) {
+        }
+        try (Statement stmt = connection.createStatement()) {
+            stmt.execute("ALTER TABLE " + itemTemplates + " ADD COLUMN total_quantity_used INTEGER DEFAULT 0;");
+        } catch (SQLException ignored) {
+        }
+        try (Statement stmt = connection.createStatement()) {
+            stmt.execute("ALTER TABLE " + itemTemplates + " ADD COLUMN created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP;");
+        } catch (SQLException ignored) {
+        }
+        try (Statement stmt = connection.createStatement()) {
             stmt.execute("ALTER TABLE " + logEntries + " ADD COLUMN restored TINYINT DEFAULT 0;");
         } catch (SQLException ignored) {
         }

@@ -3,6 +3,7 @@ package io.github.insideranh.stellarprotect.database.entries.players;
 import com.google.gson.JsonObject;
 import io.github.insideranh.stellarprotect.database.entries.LogEntry;
 import io.github.insideranh.stellarprotect.enums.ActionType;
+import io.github.insideranh.stellarprotect.utils.InventorySerializable;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import org.bukkit.Location;
@@ -21,13 +22,13 @@ public class PlayerInventorySnapshotEntry extends LogEntry {
         super(resultSet);
         String raw = jsonObject.has("d") ? jsonObject.get("d").getAsString() : "";
         this.rawBase64 = raw;
-        this.contents = raw.isEmpty() ? new ItemStack[0] : io.github.insideranh.stellarprotect.utils.InventorySerializable.itemStackArrayFromBase64(raw);
+        this.contents = raw.isEmpty() ? new ItemStack[0] : InventorySerializable.itemStackArrayFromBase64(raw);
     }
 
     public PlayerInventorySnapshotEntry(long playerId, ItemStack[] contents, Location location, ActionType actionType) {
         super(playerId, actionType.getId(), location, System.currentTimeMillis());
         this.contents = contents == null ? new ItemStack[0] : contents;
-        this.rawBase64 = io.github.insideranh.stellarprotect.utils.InventorySerializable.itemStackArrayToBase64(this.contents);
+        this.rawBase64 = InventorySerializable.itemStackArrayToBase64(this.contents);
         setAmount(this.contents.length);
     }
 

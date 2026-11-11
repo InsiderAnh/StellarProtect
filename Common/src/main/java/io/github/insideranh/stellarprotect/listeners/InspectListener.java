@@ -14,6 +14,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import io.github.insideranh.stellarprotect.trackers.ChestTransactionTracker;
 
 public class InspectListener implements Listener {
@@ -29,7 +30,7 @@ public class InspectListener implements Listener {
         Action action = event.getAction();
 
         try {
-            if (event.getHand() == org.bukkit.inventory.EquipmentSlot.OFF_HAND) {
+            if (event.getHand() == EquipmentSlot.OFF_HAND) {
                 return;
             }
         } catch (Throwable ignored) {

@@ -55,11 +55,13 @@ import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.Constructor;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -349,7 +351,7 @@ public class StellarProtect extends JavaPlugin {
             } catch (ClassNotFoundException | NoSuchMethodException ignored) {
             }
         }
-        return io.github.insideranh.stellarprotect.restore.BlockRestore.fromData(data);
+        return BlockRestore.fromData(data);
     }
 
     @SneakyThrows
@@ -361,22 +363,22 @@ public class StellarProtect extends JavaPlugin {
             } catch (ClassNotFoundException | NoSuchMethodException ignored) {
             }
         }
-        return io.github.insideranh.stellarprotect.restore.BlockRestore.fromData(data, extraType, extraData);
+        return BlockRestore.fromData(data, extraType, extraData);
     }
 
     @SneakyThrows
     public BlockRestore getBlockRestore(String data, byte extraType, String extraData, boolean isPlace, String oldData, String blockEntityNbt, String oldBlockEntityNbt) {
         try {
             Class<?> cls = Class.forName("io.github.insideranh.stellarprotect.nms." + completer + ".BlockRestore_" + completer);
-            for (java.lang.reflect.Constructor<?> c : cls.getConstructors()) {
+            for (Constructor<?> c : cls.getConstructors()) {
                 Class<?>[] params = c.getParameterTypes();
                 if (params.length == 7) {
-                    return (io.github.insideranh.stellarprotect.restore.BlockRestore) c.newInstance(data, extraType, extraData, isPlace, oldData, blockEntityNbt, oldBlockEntityNbt);
+                    return (BlockRestore) c.newInstance(data, extraType, extraData, isPlace, oldData, blockEntityNbt, oldBlockEntityNbt);
                 }
             }
         } catch (ClassNotFoundException ignored) {
         }
-        return io.github.insideranh.stellarprotect.restore.BlockRestore.fromData(data, extraType, extraData, isPlace, oldData, blockEntityNbt, oldBlockEntityNbt);
+        return BlockRestore.fromData(data, extraType, extraData, isPlace, oldData, blockEntityNbt, oldBlockEntityNbt);
     }
 
     @SneakyThrows
@@ -389,8 +391,8 @@ public class StellarProtect extends JavaPlugin {
             }
         }
         try {
-            return new io.github.insideranh.stellarprotect.blocks.DataBlock() {
-                final org.bukkit.block.data.BlockData bd = block.getBlockData();
+            return new DataBlock() {
+                final BlockData bd = block.getBlockData();
                 final String s = bd.getAsString();
 
                 @Override
@@ -431,7 +433,7 @@ public class StellarProtect extends JavaPlugin {
         }
         final String s = blockDataString;
         final String mat = blockDataString.contains(":") ? blockDataString.substring(0, blockDataString.indexOf("[")) : blockDataString;
-        return new io.github.insideranh.stellarprotect.blocks.DataBlock() {
+        return new DataBlock() {
             @Override
             public String getBlockDataString() {
                 return s;
@@ -453,8 +455,8 @@ public class StellarProtect extends JavaPlugin {
             } catch (ClassNotFoundException | NoSuchMethodException ignored) {
             }
         }
-        return new io.github.insideranh.stellarprotect.entities.DataEntity() {
-            final java.util.HashMap<String, Object> data = new java.util.HashMap<>();
+        return new DataEntity() {
+            final HashMap<String, Object> data = new HashMap<>();
 
             {
                 data.put("ENTITY_TYPE", entity.getType().name());
@@ -467,7 +469,7 @@ public class StellarProtect extends JavaPlugin {
             }
 
             @Override
-            public java.util.HashMap<String, Object> getData() {
+            public HashMap<String, Object> getData() {
                 return data;
             }
 
@@ -485,10 +487,10 @@ public class StellarProtect extends JavaPlugin {
             } catch (ClassNotFoundException | NoSuchMethodException ignored) {
             }
         }
-        final java.util.HashMap<String, Object> data = new java.util.HashMap<>(map);
-        return new io.github.insideranh.stellarprotect.entities.DataEntity() {
+        final HashMap<String, Object> data = new HashMap<>(map);
+        return new DataEntity() {
             @Override
-            public java.util.HashMap<String, Object> getData() {
+            public HashMap<String, Object> getData() {
                 return data;
             }
 

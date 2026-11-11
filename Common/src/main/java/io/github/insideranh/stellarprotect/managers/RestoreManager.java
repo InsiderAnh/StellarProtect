@@ -7,6 +7,7 @@ import io.github.insideranh.stellarprotect.database.entries.LogEntry;
 import io.github.insideranh.stellarprotect.database.entries.players.PlayerBlockLogEntry;
 import io.github.insideranh.stellarprotect.database.entries.players.PlayerBlockStateLogEntry;
 import io.github.insideranh.stellarprotect.database.entries.players.PlayerKillLogEntry;
+import io.github.insideranh.stellarprotect.entities.DataEntity;
 import io.github.insideranh.stellarprotect.enums.ActionType;
 import io.github.insideranh.stellarprotect.restore.BlockRestore;
 import io.github.insideranh.stellarprotect.utils.PlayerUtils;
@@ -185,7 +186,7 @@ public class RestoreManager {
                 }
                 Entity entity = location.getWorld().spawnEntity(location, entityType);
                 try {
-                    io.github.insideranh.stellarprotect.entities.DataEntity dataEntity = plugin
+                    DataEntity dataEntity = plugin
                             .getDataEntity(playerKillLogEntry.getEntityData().getEntityData());
                     dataEntity.applyToEntity(entity);
                 } catch (Exception exception) {

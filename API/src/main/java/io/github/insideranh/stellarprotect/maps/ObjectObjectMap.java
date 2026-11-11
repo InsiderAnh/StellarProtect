@@ -1,6 +1,8 @@
 package io.github.insideranh.stellarprotect.maps;
 
+import java.util.AbstractCollection;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.Objects;
 
 public final class ObjectObjectMap<K, V> {
@@ -133,9 +135,9 @@ public final class ObjectObjectMap<K, V> {
     }
 
     public Collection<V> values() {
-        return new java.util.AbstractCollection<V>() {
-            public java.util.Iterator<V> iterator() {
-                return new java.util.Iterator<V>() {
+        return new AbstractCollection<V>() {
+            public Iterator<V> iterator() {
+                return new Iterator<V>() {
                     private int index = 0;
                     private int returned = 0;
 

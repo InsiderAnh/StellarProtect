@@ -1,9 +1,11 @@
 package io.github.insideranh.stellarprotect.api.events;
 
+import org.bukkit.Raid;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.HumanEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nullable;
@@ -27,11 +29,11 @@ public interface EventLogicHandler {
 
     void onUnleash(HumanEntity player, Entity entity);
 
-    void onRaidTrigger(org.bukkit.entity.Player player, org.bukkit.Raid raid);
+    void onRaidTrigger(Player player, Raid raid);
 
-    void onRaidSpawn(org.bukkit.Raid raid);
+    void onRaidSpawn(Raid raid);
 
-    void onRaidFinish(org.bukkit.Raid raid);
+    void onRaidFinish(Raid raid);
 
     void onBlockFade(BlockState oldState, BlockState newState);
 

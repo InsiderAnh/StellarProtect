@@ -128,7 +128,7 @@ public class BlockListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
-    public void onBlockFade(org.bukkit.event.block.BlockFadeEvent event) {
+    public void onBlockFade(BlockFadeEvent event) {
         if (event.isCancelled()) return;
 
         Block block = event.getBlock();

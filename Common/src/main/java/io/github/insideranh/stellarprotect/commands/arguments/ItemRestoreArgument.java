@@ -2,6 +2,7 @@ package io.github.insideranh.stellarprotect.commands.arguments;
 
 import io.github.insideranh.stellarprotect.StellarProtect;
 import io.github.insideranh.stellarprotect.arguments.*;
+import io.github.insideranh.stellarprotect.cache.ItemsCache.FieldType;
 import io.github.insideranh.stellarprotect.cache.keys.LocationCache;
 import io.github.insideranh.stellarprotect.commands.StellarArgument;
 import io.github.insideranh.stellarprotect.data.PlayerProtect;
@@ -9,6 +10,7 @@ import io.github.insideranh.stellarprotect.database.entries.LogEntry;
 import io.github.insideranh.stellarprotect.database.entries.players.PlayerItemLogEntry;
 import io.github.insideranh.stellarprotect.enums.ActionType;
 import org.bukkit.Location;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -22,7 +24,7 @@ public class ItemRestoreArgument extends StellarArgument {
     private final StellarProtect plugin = StellarProtect.getInstance();
 
     @Override
-    public void onCommand(@NotNull org.bukkit.command.CommandSender sender, String[] arguments) {
+    public void onCommand(@NotNull CommandSender sender, String[] arguments) {
         if (!(sender instanceof Player)) {
             plugin.getLangManager().sendMessage(sender, "messages.onlyPlayer");
             return;
@@ -50,8 +52,8 @@ public class ItemRestoreArgument extends StellarArgument {
             filters.setRadiusFilter(finalRadiusArg);
             filters.setActionTypesFilter(actionTypes.stream().map(ActionType::getId).collect(Collectors.toCollection(ArrayList::new)));
             filters.setUserFilters(usersArg);
-            filters.setIncludeMaterialFilters(plugin.getItemsManager().getItemCache().findIdsByTypeNameContains(includesArg, io.github.insideranh.stellarprotect.cache.ItemsCache.FieldType.LOWER_TYPE_NAME));
-            filters.setExcludeMaterialFilters(plugin.getItemsManager().getItemCache().findIdsByTypeNameContains(excludesArg, io.github.insideranh.stellarprotect.cache.ItemsCache.FieldType.LOWER_TYPE_NAME));
+            filters.setIncludeMaterialFilters(plugin.getItemsManager().getItemCache().findIdsByTypeNameContains(includesArg, FieldType.LOWER_TYPE_NAME));
+            filters.setExcludeMaterialFilters(plugin.getItemsManager().getItemCache().findIdsByTypeNameContains(excludesArg, FieldType.LOWER_TYPE_NAME));
             filters.setMinAmount(ArgumentsParser.parseMinAmount(arguments));
             filters.setMaxAmount(ArgumentsParser.parseMaxAmount(arguments));
 
@@ -101,8 +103,8 @@ public class ItemRestoreArgument extends StellarArgument {
     }
 
     @Override
-    public List<String> onTabComplete(@NotNull org.bukkit.command.CommandSender sender, String[] arguments) {
-        return java.util.Arrays.asList("t:1h", "t:1d", "t:30m", "r:10", "i:diamond", "e:stone", "b:64", "u:player", "#undo");
+    public List<String> onTabComplete(@NotNull CommandSender sender, String[] arguments) {
+        return Arrays.asList("t:1h", "t:1d", "t:30m", "r:10", "i:diamond", "e:stone", "b:64", "u:player", "#undo");
     }
 
 }

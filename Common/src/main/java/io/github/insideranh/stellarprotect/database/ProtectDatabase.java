@@ -1,5 +1,7 @@
 package io.github.insideranh.stellarprotect.database;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import io.github.insideranh.stellarprotect.StellarProtect;
 import io.github.insideranh.stellarprotect.arguments.DatabaseFilters;
 import io.github.insideranh.stellarprotect.blocks.BlockTemplate;
@@ -19,6 +21,7 @@ import lombok.NonNull;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -137,7 +140,7 @@ public class ProtectDatabase {
 
                 Debugger.debugSave("Processing " + queuedLogs.size() + " logs from queue...");
 
-                List<LogEntry> logEntries = new java.util.ArrayList<>();
+                List<LogEntry> logEntries = new ArrayList<>();
                 for (QueuedLog queuedLog : queuedLogs) {
                     LogEntry logEntry = new LogEntry(
                             queuedLog.getPlayerId(),
@@ -153,7 +156,7 @@ public class ProtectDatabase {
                         String extra = queuedLog.getExtraJson();
                         logEntry.setForcedJson(extra);
                         try {
-                            com.google.gson.JsonObject json = new com.google.gson.JsonParser().parse(extra).getAsJsonObject();
+                            JsonObject json = new JsonParser().parse(extra).getAsJsonObject();
                             if (json.has("b")) logEntry.setBlockId(json.get("b").getAsInt());
                             if (json.has("ob")) logEntry.setOldBlockId(json.get("ob").getAsInt());
                             if (json.has("id")) logEntry.setItemId(json.get("id").getAsLong());

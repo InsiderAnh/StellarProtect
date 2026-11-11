@@ -117,8 +117,8 @@ public class MySQLConnection implements DatabaseConnection {
                         ")");
 
                     statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + idCounterTable + " (" +
-                        "id VARCHAR(36) PRIMARY KEY," +
-                        "count BIGINT NOT NULL" +
+                        "table_name VARCHAR(64) PRIMARY KEY," +
+                        "current_id BIGINT NOT NULL" +
                         ")");
 
                     statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + itemTemplatesTable + " (" +
@@ -128,7 +128,8 @@ public class MySQLConnection implements DatabaseConnection {
                         "s TINYINT," +
                         "access_count INTEGER DEFAULT 0," +
                         "last_accessed TIMESTAMP DEFAULT CURRENT_TIMESTAMP," +
-                        "total_used INTEGER DEFAULT 0" +
+                        "total_quantity_used INTEGER DEFAULT 0," +
+                        "created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP" +
                         ")");
 
                     statement.executeUpdate("CREATE TABLE IF NOT EXISTS " + blockTemplatesTable + " (" +
@@ -159,7 +160,7 @@ public class MySQLConnection implements DatabaseConnection {
                     statement.execute("SET SESSION foreign_key_checks = 0");
                     statement.execute("SET SESSION unique_checks = 0");
                 }
-                migrateTables(connection, playersTable, itemTemplatesTable, logEntriesTable);
+                migrateTables(connection, playersTable, itemTemplatesTable, logEntriesTable, idCounterTable);
             }
 
             this.playerRepository = new PlayerRepositoryMySQL(dataSource);
@@ -197,6 +198,7 @@ public class MySQLConnection implements DatabaseConnection {
                 executeIndexSql(stmt, "DROP INDEX idx_item_access_count ON " + itemTemplates + ";");
                 executeIndexSql(stmt, "DROP INDEX idx_item_last_accessed ON " + itemTemplates + ";");
                 executeIndexSql(stmt, "DROP INDEX idx_item_total_used ON " + itemTemplates + ";");
+                executeIndexSql(stmt, "DROP INDEX idx_item_total_quantity_used ON " + itemTemplates + ";");
 
                 executeIndexSql(stmt, "CREATE INDEX idx_block_time ON " + logEntries + " (block_id, created_at)");
                 executeIndexSql(stmt, "CREATE INDEX idx_oldblock_time ON " + logEntries + " (old_block_id, created_at)");
@@ -231,19 +233,59 @@ public class MySQLConnection implements DatabaseConnection {
         try (Connection connection = dataSource.getConnection()) {
             migrateTables(connection, stellarProtect.getConfigManager().getTablesPlayers(),
                 stellarProtect.getConfigManager().getTablesItemTemplates(),
-                stellarProtect.getConfigManager().getTablesLogEntries());
+                stellarProtect.getConfigManager().getTablesLogEntries(),
+                stellarProtect.getConfigManager().getTablesIdCounter());
         } catch (SQLException exception) {
             throw new IllegalStateException("MySQL schema migration failed", exception);
         }
     }
 
-    private void migrateTables(Connection connection, String players, String itemTemplates, String logEntries) throws SQLException {
+    private void migrateTables(Connection connection, String players, String itemTemplates, String logEntries, String idCounter) throws SQLException {
         ensureColumns(connection, players, new String[][]{
             {"realname", "VARCHAR(36)"}
         });
-        ensureColumns(connection, itemTemplates, new String[][]{
-            {"hash", "BIGINT"}
+
+        // Migrate id_counter legacy columns if needed (id -> table_name, count -> current_id)
+        Set<String> idCounterCols = getExistingColumns(connection, idCounter);
+        if (idCounterCols.contains("id") && !idCounterCols.contains("table_name")) {
+            try (Statement statement = connection.createStatement()) {
+                statement.executeUpdate("ALTER TABLE " + idCounter + " CHANGE COLUMN id table_name VARCHAR(64) NOT NULL");
+                stellarProtect.getLogger().info("MySQL column id renamed to table_name in " + idCounter);
+            } catch (SQLException e) {
+                stellarProtect.getLogger().warning("Could not rename id column in " + idCounter + ": " + e.getMessage());
+            }
+        }
+        if (idCounterCols.contains("count") && !idCounterCols.contains("current_id")) {
+            try (Statement statement = connection.createStatement()) {
+                statement.executeUpdate("ALTER TABLE " + idCounter + " CHANGE COLUMN count current_id BIGINT NOT NULL");
+                stellarProtect.getLogger().info("MySQL column count renamed to current_id in " + idCounter);
+            } catch (SQLException e) {
+                stellarProtect.getLogger().warning("Could not rename count column in " + idCounter + ": " + e.getMessage());
+            }
+        }
+        ensureColumns(connection, idCounter, new String[][]{
+            {"table_name", "VARCHAR(64)"},
+            {"current_id", "BIGINT NOT NULL"}
         });
+
+        // Migrate item_templates legacy total_used to total_quantity_used
+        Set<String> itemCols = getExistingColumns(connection, itemTemplates);
+        if (itemCols.contains("total_used") && !itemCols.contains("total_quantity_used")) {
+            try (Statement statement = connection.createStatement()) {
+                statement.executeUpdate("ALTER TABLE " + itemTemplates + " CHANGE COLUMN total_used total_quantity_used INTEGER DEFAULT 0");
+                stellarProtect.getLogger().info("MySQL column total_used renamed to total_quantity_used in " + itemTemplates);
+            } catch (SQLException e) {
+                stellarProtect.getLogger().warning("Could not rename total_used in " + itemTemplates + ": " + e.getMessage());
+            }
+        }
+        ensureColumns(connection, itemTemplates, new String[][]{
+            {"hash", "BIGINT"},
+            {"access_count", "INTEGER DEFAULT 0"},
+            {"last_accessed", "TIMESTAMP DEFAULT CURRENT_TIMESTAMP"},
+            {"total_quantity_used", "INTEGER DEFAULT 0"},
+            {"created_at", "TIMESTAMP DEFAULT CURRENT_TIMESTAMP"}
+        });
+
         ensureColumns(connection, logEntries, new String[][]{
             {"restored", "TINYINT DEFAULT 0"},
             {"block_id", "INT DEFAULT NULL"},
@@ -255,16 +297,21 @@ public class MySQLConnection implements DatabaseConnection {
         });
     }
 
+    private Set<String> getExistingColumns(Connection connection, String table) throws SQLException {
+        Set<String> existing = new HashSet<>();
+        try (Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery("SELECT * FROM " + table + " WHERE 1=0")) {
+            ResultSetMetaData metadata = resultSet.getMetaData();
+            for (int index = 1; index <= metadata.getColumnCount(); index++) {
+                existing.add(metadata.getColumnName(index).toLowerCase(Locale.ROOT));
+            }
+        }
+        return existing;
+    }
+
     private void ensureColumns(Connection connection, String table, String[][] columns) throws SQLException {
         for (int attempt = 0; attempt < 3; attempt++) {
-            Set<String> existing = new HashSet<>();
-            try (Statement statement = connection.createStatement();
-                 ResultSet resultSet = statement.executeQuery("SELECT * FROM " + table + " WHERE 1=0")) {
-                ResultSetMetaData metadata = resultSet.getMetaData();
-                for (int index = 1; index <= metadata.getColumnCount(); index++) {
-                    existing.add(metadata.getColumnName(index).toLowerCase(Locale.ROOT));
-                }
-            }
+            Set<String> existing = getExistingColumns(connection, table);
 
             StringBuilder additions = new StringBuilder();
             for (String[] column : columns) {

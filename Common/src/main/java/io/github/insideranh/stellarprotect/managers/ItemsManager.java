@@ -1,5 +1,6 @@
 package io.github.insideranh.stellarprotect.managers;
 
+import com.google.common.collect.Sets;
 import io.github.insideranh.stellarprotect.StellarProtect;
 import io.github.insideranh.stellarprotect.cache.ItemsCache;
 import io.github.insideranh.stellarprotect.items.ItemReference;
@@ -26,7 +27,7 @@ public class ItemsManager {
     private final ConcurrentHashMap<String, Long> itemHashToId = new ConcurrentHashMap<>(1000);
     private final ConcurrentHashMap<Long, ItemTemplate> idToItemTemplate = new ConcurrentHashMap<>(1000);
     private final ItemsCache itemCache = new ItemsCache();
-    private final Set<Long> unsavedTemplates = com.google.common.collect.Sets.newConcurrentHashSet();
+    private final Set<Long> unsavedTemplates = Sets.newConcurrentHashSet();
     private final StellarProtect plugin = StellarProtect.getInstance();
     private final AtomicLong currentId = new AtomicLong(0);
 

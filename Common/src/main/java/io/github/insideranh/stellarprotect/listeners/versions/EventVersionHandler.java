@@ -2,6 +2,7 @@ package io.github.insideranh.stellarprotect.listeners.versions;
 
 import io.github.insideranh.stellarprotect.StellarProtect;
 import io.github.insideranh.stellarprotect.api.events.EventLogicHandler;
+import io.github.insideranh.stellarprotect.cache.BlockSourceCache;
 import io.github.insideranh.stellarprotect.cache.LoggerCache;
 import io.github.insideranh.stellarprotect.data.PlayerProtect;
 import io.github.insideranh.stellarprotect.database.entries.entity.EntityResurrectEntry;
@@ -109,7 +110,7 @@ public class EventVersionHandler implements EventLogicHandler {
     @Override
     public void onRaidTrigger(Player player, Raid raid) {
         if (player == null || raid == null) return;
-        long playerId = io.github.insideranh.stellarprotect.utils.PlayerUtils.getPlayerOrEntityId(player.getName());
+        long playerId = PlayerUtils.getPlayerOrEntityId(player.getName());
         LoggerCache.addLog(new RaidLogEntry(playerId, raid.getLocation(), RaidLogEntry.RaidPhase.TRIGGER));
     }
 
@@ -137,7 +138,7 @@ public class EventVersionHandler implements EventLogicHandler {
     public void onBlockBurn(Block block) {
         if (block == null) return;
         if (ActionType.BLOCK_BURN.shouldSkipLog(block.getWorld().getName(), block.getType().name())) return;
-        Long cachedPlayerId = io.github.insideranh.stellarprotect.cache.BlockSourceCache.getPlayerId(block.getLocation());
+        Long cachedPlayerId = BlockSourceCache.getPlayerId(block.getLocation());
         long playerId = cachedPlayerId != null ? cachedPlayerId : PlayerUtils.getEntityByDirectId("=fire");
         LoggerCache.addLog(new PlayerBlockLogEntry(playerId, block, ActionType.BLOCK_BURN));
     }

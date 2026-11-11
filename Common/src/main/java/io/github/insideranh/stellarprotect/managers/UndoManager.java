@@ -18,6 +18,8 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.persistence.PersistentDataType;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 
@@ -44,8 +46,8 @@ public class UndoManager {
                                 " §7material: §f" + blockLogEntry.getDataString() +
                                 " §7by §f" + PlayerUtils.getNameOfEntity(blockLogEntry.getPlayerId()) +
                                 " §7(ID: " + blockLogEntry.getPlayerId() + ") §7at §f" +
-                                new java.text.SimpleDateFormat("HH:mm:ss dd/MM/yyyy")
-                                        .format(new java.util.Date(blockLogEntry.getCreatedAt())));
+                                new SimpleDateFormat("HH:mm:ss dd/MM/yyyy")
+                                        .format(new Date(blockLogEntry.getCreatedAt())));
                     }
 
                     boolean isPlace = blockLogEntry.usesOldState();
@@ -70,8 +72,8 @@ public class UndoManager {
                                 " §7material: §f" + blockStateLogEntry.getDataString() +
                                 " §7by §f" + PlayerUtils.getNameOfEntity(logEntry.getPlayerId()) +
                                 " §7(ID: " + blockStateLogEntry.getPlayerId() + ") §7at §f" +
-                                new java.text.SimpleDateFormat("HH:mm:ss dd/MM/yyyy")
-                                        .format(new java.util.Date(blockStateLogEntry.getCreatedAt())));
+                                new SimpleDateFormat("HH:mm:ss dd/MM/yyyy")
+                                        .format(new Date(blockStateLogEntry.getCreatedAt())));
                     }
 
                     if (!silentCheck(sender)) {

@@ -9,6 +9,7 @@ import io.github.insideranh.stellarprotect.enums.ActionType;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -88,7 +89,7 @@ public class BucketListener implements Listener {
         if (block != null) states.computeIfAbsent(block.getLocation(), location -> block.getState());
     }
 
-    private void captureBucket(Player player, PlayerProtect playerProtect, Block clicked, org.bukkit.block.BlockFace face, Block eventBlock, Material bucket, ActionType action) {
+    private void captureBucket(Player player, PlayerProtect playerProtect, Block clicked, BlockFace face, Block eventBlock, Material bucket, ActionType action) {
         if (clicked == null) return;
         Map<Location, BlockState> states = new LinkedHashMap<>();
         capture(states, eventBlock);

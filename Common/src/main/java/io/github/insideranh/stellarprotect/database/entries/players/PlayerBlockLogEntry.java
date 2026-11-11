@@ -7,11 +7,13 @@ import io.github.insideranh.stellarprotect.database.entries.LogEntry;
 import io.github.insideranh.stellarprotect.enums.ActionType;
 import io.github.insideranh.stellarprotect.enums.ExtraDataType;
 import io.github.insideranh.stellarprotect.managers.BlocksManager;
+import io.github.insideranh.stellarprotect.utils.NbtUtils;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
+import org.bukkit.block.TileState;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 
@@ -122,13 +124,13 @@ public class PlayerBlockLogEntry extends LogEntry {
 
     private void captureNbt(BlockState oldState, BlockState newState) {
         try {
-            if (newState instanceof org.bukkit.block.TileState) {
-                org.bukkit.block.TileState ts = (org.bukkit.block.TileState) newState;
-                io.github.insideranh.stellarprotect.utils.NbtUtils.writeBlockEntity(ts, json -> this.blockEntityNbt = json);
+            if (newState instanceof TileState) {
+                TileState ts = (TileState) newState;
+                NbtUtils.writeBlockEntity(ts, json -> this.blockEntityNbt = json);
             }
-            if (oldState instanceof org.bukkit.block.TileState) {
-                org.bukkit.block.TileState ts = (org.bukkit.block.TileState) oldState;
-                io.github.insideranh.stellarprotect.utils.NbtUtils.writeBlockEntity(ts, json -> this.oldBlockEntityNbt = json);
+            if (oldState instanceof TileState) {
+                TileState ts = (TileState) oldState;
+                NbtUtils.writeBlockEntity(ts, json -> this.oldBlockEntityNbt = json);
             }
         } catch (Throwable ignored) {
         }

@@ -8,7 +8,9 @@ import io.github.insideranh.stellarprotect.arguments.TimeArg;
 import io.github.insideranh.stellarprotect.commands.StellarArgument;
 import io.github.insideranh.stellarprotect.database.entries.LogEntry;
 import io.github.insideranh.stellarprotect.enums.ActionType;
+import io.github.insideranh.stellarprotect.utils.PlayerUtils;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -21,7 +23,7 @@ public class StatsArgument extends StellarArgument {
     @Override
     public void onCommand(@NotNull CommandSender sender, String[] arguments) {
         TimeArg timeArg = ArgumentsParser.parseTime(arguments);
-        RadiusArg radiusArg = ArgumentsParser.parseRadiusOrNull(sender instanceof org.bukkit.entity.Player ? (org.bukkit.entity.Player) sender : null, arguments, sender instanceof org.bukkit.entity.Player ? ((org.bukkit.entity.Player) sender).getLocation() : null);
+        RadiusArg radiusArg = ArgumentsParser.parseRadiusOrNull(sender instanceof Player ? (Player) sender : null, arguments, sender instanceof Player ? ((Player) sender).getLocation() : null);
         List<ActionType> actionTypesArg = ArgumentsParser.parseActionTypes(arguments);
 
         DatabaseFilters filters = new DatabaseFilters();
@@ -53,7 +55,7 @@ public class StatsArgument extends StellarArgument {
             playerCount.entrySet().stream()
                     .sorted(Map.Entry.<Long, Integer>comparingByValue().reversed())
                     .limit(5)
-                    .forEach(e -> sender.sendMessage("  §7- §f" + io.github.insideranh.stellarprotect.utils.PlayerUtils.getNameOfEntity(e.getKey()) + " §7: " + e.getValue()));
+                    .forEach(e -> sender.sendMessage("  §7- §f" + PlayerUtils.getNameOfEntity(e.getKey()) + " §7: " + e.getValue()));
 
             sender.sendMessage("§eTop 5 acciones:");
             actionCount.entrySet().stream()

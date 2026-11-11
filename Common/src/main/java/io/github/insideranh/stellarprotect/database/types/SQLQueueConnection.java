@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Getter
@@ -241,7 +242,7 @@ public class SQLQueueConnection {
     public void close() {
         try {
             singleThreadExecutor.shutdown();
-            if (!singleThreadExecutor.awaitTermination(10, java.util.concurrent.TimeUnit.SECONDS)) {
+            if (!singleThreadExecutor.awaitTermination(10, TimeUnit.SECONDS)) {
                 stellarProtect.getLogger().warning("Executor did not terminate in time, forcing shutdown...");
                 singleThreadExecutor.shutdownNow();
             }

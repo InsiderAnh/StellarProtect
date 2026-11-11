@@ -48,7 +48,7 @@ public class BlockRestore {
         this.oldBlockEntityNbt = oldBlockEntityNbt;
     }
 
-    private static org.bukkit.block.data.BlockData createBlockDataSafe(String s) {
+    private static BlockData createBlockDataSafe(String s) {
         if (s == null || s.trim().isEmpty()) {
             return Material.AIR.createBlockData();
         }
