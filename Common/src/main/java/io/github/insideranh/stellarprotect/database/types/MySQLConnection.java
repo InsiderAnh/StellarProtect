@@ -55,6 +55,7 @@ public class MySQLConnection implements DatabaseConnection {
             config.addDataSourceProperty("cacheServerConfiguration", true);
             config.addDataSourceProperty("elideSetAutoCommits", true);
             config.addDataSourceProperty("maintainTimeStats", false);
+            config.addDataSourceProperty("allowPublicKeyRetrieval", true);
             config.addDataSourceProperty("characterEncoding", "utf8");
             config.addDataSourceProperty("encoding", "UTF-8");
             config.addDataSourceProperty("useUnicode", "true");
