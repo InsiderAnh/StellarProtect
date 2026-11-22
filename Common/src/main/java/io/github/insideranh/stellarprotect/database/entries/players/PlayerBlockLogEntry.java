@@ -25,7 +25,7 @@ public class PlayerBlockLogEntry extends LogEntry {
     private static final BlocksManager blocksManager = StellarProtect.getInstance().getBlocksManager();
     private final Integer blockId;
     private Integer oldBlockId;
-    private String nexoBlockId;
+    private String customBlockId;
     private byte extraType;
     private String extraData;
     private String oldBlockData;
@@ -38,7 +38,7 @@ public class PlayerBlockLogEntry extends LogEntry {
         this.blockId = getBlockId(jsonObject);
         this.oldBlockId = getOldBlockId(jsonObject);
         if (jsonObject.has("nbId")) {
-            this.nexoBlockId = jsonObject.get("nbId").getAsString();
+            this.customBlockId = jsonObject.get("nbId").getAsString();
         }
         if (jsonObject.has("xt")) {
             this.extraType = jsonObject.get("xt").getAsByte();
@@ -114,12 +114,12 @@ public class PlayerBlockLogEntry extends LogEntry {
         }
     }
 
-    public PlayerBlockLogEntry(long playerId, Block block, ActionType actionType, String nexoBlockId) {
+    public PlayerBlockLogEntry(long playerId, Block block, ActionType actionType, String customBlockId, String hookId) {
         super(playerId, actionType.getId(), block.getLocation(), System.currentTimeMillis());
         BlockTemplate blockTemplate = blocksManager.getBlockTemplate(block);
         this.blockId = blockTemplate.getId();
         setBlockId(this.blockId);
-        this.nexoBlockId = "nexo:" + nexoBlockId;
+        this.customBlockId = hookId + customBlockId;
     }
 
     private void captureNbt(BlockState oldState, BlockState newState) {
@@ -156,8 +156,8 @@ public class PlayerBlockLogEntry extends LogEntry {
 
     @Override
     public String getDataString() {
-        if (nexoBlockId != null) {
-            return nexoBlockId;
+        if (customBlockId != null) {
+            return customBlockId;
         }
         if (blockId == null || blockId <= 0) return "minecraft:air";
         BlockTemplate blockTemplate = blocksManager.getBlockTemplate(blockId);
@@ -185,8 +185,8 @@ public class PlayerBlockLogEntry extends LogEntry {
         if (oldBlockData != null) {
             jsonObject.addProperty("od", oldBlockData);
         }
-        if (nexoBlockId != null) {
-            jsonObject.addProperty("nbId", nexoBlockId);
+        if (customBlockId != null) {
+            jsonObject.addProperty("nbId", customBlockId);
         }
         if (extraType != 0) {
             jsonObject.addProperty("xt", extraType);

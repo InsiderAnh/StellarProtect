@@ -59,9 +59,18 @@ public class StringCleanerUtils {
     private static String cleanMinecraftName(String name) {
         if (name == null || name.length() < 2) return name;
 
+
+        boolean isCraftEngine = name.startsWith("craftengine:");
+        if (isCraftEngine) {
+            name = name.substring(12);
+        }
         boolean isNexo = name.startsWith("nexo:");
         if (isNexo) {
             name = name.substring(5);
+        }
+        boolean isItemsAdder = name.startsWith("itemsadder:");
+        if (isItemsAdder) {
+            name = name.substring(11);
         }
         String cleanedData = cleanMinecraft(name);
 
@@ -86,8 +95,14 @@ public class StringCleanerUtils {
             }
         }
 
+        if (isCraftEngine) {
+            return "craftengine:" + builder.toString().trim();
+        }
         if (isNexo) {
             return "nexo:" + builder.toString().trim();
+        }
+        if (isItemsAdder) {
+            return "itemsadder:" + builder.toString().trim();
         }
         return builder.toString().trim();
     }

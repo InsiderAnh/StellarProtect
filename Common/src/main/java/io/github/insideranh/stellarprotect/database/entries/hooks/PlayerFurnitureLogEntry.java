@@ -12,29 +12,29 @@ import java.sql.ResultSet;
 @Getter
 public class PlayerFurnitureLogEntry extends LogEntry {
 
-    private final String nexoBlockId;
+    private final String customBlockId;
 
     @SneakyThrows
     public PlayerFurnitureLogEntry(ResultSet resultSet, JsonObject jsonObject) {
         super(resultSet);
 
-        this.nexoBlockId = jsonObject.get("nbId").getAsString();
+        this.customBlockId = jsonObject.get("nbId").getAsString();
     }
 
-    public PlayerFurnitureLogEntry(long playerId, Location location, ActionType actionType, String nexoBlockId) {
+    public PlayerFurnitureLogEntry(long playerId, Location location, ActionType actionType, String customBlockId, String hookId) {
         super(playerId, actionType.getId(), location, System.currentTimeMillis());
-        this.nexoBlockId = "nexo:" + nexoBlockId;
+        this.customBlockId = hookId + customBlockId;
     }
 
     @Override
     public String getDataString() {
-        return nexoBlockId;
+        return customBlockId;
     }
 
     @Override
     public String toSaveJson() {
         JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("nbId", nexoBlockId);
+        jsonObject.addProperty("nbId", customBlockId);
         return jsonObject.toString();
     }
 

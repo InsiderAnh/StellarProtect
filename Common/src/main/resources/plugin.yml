@@ -6,6 +6,7 @@ folia-supported: true
 api-version: 1.13
 softdepend:
   - ShopGUIPlus
+  - CraftEngine
   - Nexo
   - ItemsAdder
   - XPlayerKits

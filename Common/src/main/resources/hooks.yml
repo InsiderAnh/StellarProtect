@@ -1,6 +1,8 @@
 hooks:
   shop_gui:
     enabled: true
+  craft_engine:
+    enabled: true
   nexo:
     enabled: true
   xplayerkits:

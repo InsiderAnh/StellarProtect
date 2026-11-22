@@ -45,6 +45,9 @@ public class BlockListener implements Listener {
 
         long playerId = getPlayerId(player, defaultId);
 
+        if (plugin.getCraftEngineHook() != null && plugin.getCraftEngineHook().isCraftEngineBlock(block)) {
+            return;
+        }
         if (plugin.getNexoHook() != null && plugin.getNexoHook().isNexoBlock(block)) {
             return;
         }
@@ -357,6 +360,9 @@ public class BlockListener implements Listener {
 
         long playerId = getPlayerId(player, defaultId);
 
+        if (plugin.getCraftEngineHook() != null && player != null && plugin.getCraftEngineHook().isCraftEngineListener(block, plugin.getProtectNMS().getItemInHand(player))) {
+            return;
+        }
         if (plugin.getNexoHook() != null && player != null && plugin.getNexoHook().isNexoListener(block, plugin.getProtectNMS().getItemInHand(player))) {
             return;
         }
@@ -374,6 +380,12 @@ public class BlockListener implements Listener {
         }
 
         long playerId = getPlayerId(player, defaultId);
+
+        if (plugin.getCraftEngineHook() != null
+            && player != null
+            && plugin.getCraftEngineHook().isCraftEngineListener(block, plugin.getProtectNMS().getItemInHand(player))) {
+            return;
+        }
 
         if (plugin.getNexoHook() != null
             && player != null

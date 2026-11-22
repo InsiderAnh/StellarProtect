@@ -76,8 +76,8 @@ public class InspectHandler {
 
         String messageKey = transaction.isAdded() ? "messages.actions.added_item" : "messages.actions.removed_item";
 
-        String materialOrNexoId = getMaterialOrNexoId(item);
-        MinecraftItem minecraftItem = StringCleanerUtils.parseMinecraftData(materialOrNexoId);
+        String materialOrCustomId = getMaterialOrCustomId(item);
+        MinecraftItem minecraftItem = StringCleanerUtils.parseMinecraftData(materialOrCustomId);
 
         plugin.getLangManager().sendMessage(player, messageKey,
                 text -> text
@@ -135,12 +135,15 @@ public class InspectHandler {
         );
     }
 
-    private String getMaterialOrNexoId(ItemStack itemStack) {
+    private String getMaterialOrCustomId(ItemStack itemStack) {
+        if (plugin.getCraftEngineHook() != null) {
+            return "craftengine:" + plugin.getCraftEngineHook().getCraftEngineItemStackId(itemStack);
+        }
         if (plugin.getNexoHook() != null) {
-            return plugin.getNexoHook().getNexoItemStackId(itemStack);
+            return "nexo:" + plugin.getNexoHook().getNexoItemStackId(itemStack);
         }
         if (plugin.getItemsAdderHook() != null) {
-            return plugin.getItemsAdderHook().getItemsAdderItemStackId(itemStack);
+            return "itemsadder:" + plugin.getItemsAdderHook().getItemsAdderItemStackId(itemStack);
         }
         return itemStack.getType().name();
     }
@@ -200,7 +203,7 @@ public class InspectHandler {
                     text -> text
                             .replace("<time>", TimeUtils.formatMillisAsAgo(logEntry.getCreatedAt()))
                             .replace("<player>", PlayerUtils.getNameOfEntity(logEntry.getPlayerId()))
-                            .replace("<data>", furnitureEntry.getNexoBlockId())
+                            .replace("<data>", furnitureEntry.getCustomBlockId())
             );
         }
 

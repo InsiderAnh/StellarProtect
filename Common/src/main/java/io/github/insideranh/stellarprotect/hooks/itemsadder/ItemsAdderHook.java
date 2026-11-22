@@ -21,7 +21,7 @@ public class ItemsAdderHook extends ItemsAdderDefaultHook {
     public String getItemsAdderItemStackId(ItemStack itemStack) {
         CustomStack customStack = CustomStack.byItemStack(itemStack);
         if (customStack != null) {
-            return customStack.getNamespacedID();
+            return "itemsadder:" + customStack.getNamespacedID();
         }
         return itemStack.getType().name();
     }

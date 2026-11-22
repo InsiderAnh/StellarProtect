@@ -51,7 +51,7 @@ public class NexoHookListener implements Listener {
 
         String nexoBlockId = event.getMechanic().getItemID();
 
-        LoggerCache.addLog(new PlayerBlockLogEntry(playerProtect.getPlayerId(), block, ActionType.BLOCK_BREAK, nexoBlockId));
+        LoggerCache.addLog(new PlayerBlockLogEntry(playerProtect.getPlayerId(), block, ActionType.BLOCK_BREAK, nexoBlockId, "nexo:"));
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
@@ -66,7 +66,7 @@ public class NexoHookListener implements Listener {
 
         String nexoBlockId = event.getMechanic().getItemID();
 
-        LoggerCache.addLog(new PlayerBlockLogEntry(playerProtect.getPlayerId(), block, ActionType.BLOCK_PLACE, nexoBlockId));
+        LoggerCache.addLog(new PlayerBlockLogEntry(playerProtect.getPlayerId(), block, ActionType.BLOCK_PLACE, nexoBlockId, "nexo:"));
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
@@ -82,7 +82,7 @@ public class NexoHookListener implements Listener {
         if (playerProtect == null) return;
         Location blockLocation = event.getBaseEntity().getLocation().getBlock().getLocation();
 
-        LoggerCache.addLog(new PlayerFurnitureLogEntry(playerProtect.getPlayerId(), blockLocation, ActionType.FURNITURE_BREAK, nexoBlockId));
+        LoggerCache.addLog(new PlayerFurnitureLogEntry(playerProtect.getPlayerId(), blockLocation, ActionType.FURNITURE_BREAK, nexoBlockId, "nexo:"));
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
@@ -97,7 +97,7 @@ public class NexoHookListener implements Listener {
         PlayerProtect playerProtect = PlayerProtect.getPlayer(event.getPlayer());
         if (playerProtect == null) return;
 
-        LoggerCache.addLog(new PlayerFurnitureLogEntry(playerProtect.getPlayerId(), block.getLocation(), ActionType.FURNITURE_PLACE, nexoBlockId));
+        LoggerCache.addLog(new PlayerFurnitureLogEntry(playerProtect.getPlayerId(), block.getLocation(), ActionType.FURNITURE_PLACE, nexoBlockId, "nexo:"));
     }
 
 }

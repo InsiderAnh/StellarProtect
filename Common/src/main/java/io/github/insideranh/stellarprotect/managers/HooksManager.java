@@ -11,6 +11,7 @@ public class HooksManager {
     private InsiderConfig config;
 
     private boolean shopGuiHook;
+    private boolean craftEngineHook;
     private boolean nexoHook;
     private boolean itemsAdderHook;
     private boolean xPlayerKitsHook;
@@ -26,6 +27,7 @@ public class HooksManager {
         }
 
         this.shopGuiHook = config.getBoolean("hooks.shop_gui.enabled");
+        this.craftEngineHook = config.getBoolean("hooks.craft_engine.enabled");
         this.nexoHook = config.getBoolean("hooks.nexo.enabled");
         this.itemsAdderHook = config.getBoolean("hooks.itemsAdder.enabled");
         this.xPlayerKitsHook = config.getBoolean("hooks.xplayerkits.enabled");
