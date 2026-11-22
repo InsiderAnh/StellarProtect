@@ -21,7 +21,7 @@ public class CraftEngineHook extends CraftEngineDefaultHook {
     public String getCraftEngineItemStackId(ItemStack itemStack) {
         Key itemKey = CraftEngineItems.getCustomItemId(itemStack);
         if (itemKey != null) {
-            return itemKey.asString();
+            return "craftengine:" + itemKey.asString();
         }
         return itemStack.getType().name();
     }

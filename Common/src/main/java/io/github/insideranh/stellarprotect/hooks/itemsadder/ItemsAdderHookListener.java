@@ -51,7 +51,7 @@ public class ItemsAdderHookListener implements Listener {
 
         String namespacedID = event.getNamespacedID();
 
-        LoggerCache.addLog(new PlayerBlockLogEntry(playerProtect.getPlayerId(), block, ActionType.BLOCK_BREAK, namespacedID));
+        LoggerCache.addLog(new PlayerBlockLogEntry(playerProtect.getPlayerId(), block, ActionType.BLOCK_BREAK, namespacedID, "itemsadder:"));
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
@@ -66,7 +66,7 @@ public class ItemsAdderHookListener implements Listener {
 
         String namespacedID = event.getNamespacedID();
 
-        LoggerCache.addLog(new PlayerBlockLogEntry(playerProtect.getPlayerId(), block, ActionType.BLOCK_PLACE, namespacedID));
+        LoggerCache.addLog(new PlayerBlockLogEntry(playerProtect.getPlayerId(), block, ActionType.BLOCK_PLACE, namespacedID, "itemsadder:"));
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
@@ -82,7 +82,7 @@ public class ItemsAdderHookListener implements Listener {
         if (playerProtect == null) return;
         Location blockLocation = event.getBukkitEntity().getLocation();
 
-        LoggerCache.addLog(new PlayerFurnitureLogEntry(playerProtect.getPlayerId(), blockLocation, ActionType.FURNITURE_BREAK, namespacedID));
+        LoggerCache.addLog(new PlayerFurnitureLogEntry(playerProtect.getPlayerId(), blockLocation, ActionType.FURNITURE_BREAK, namespacedID, "itemsadder:"));
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
@@ -96,7 +96,7 @@ public class ItemsAdderHookListener implements Listener {
         PlayerProtect playerProtect = PlayerProtect.getPlayer(event.getPlayer());
         if (playerProtect == null) return;
 
-        LoggerCache.addLog(new PlayerFurnitureLogEntry(playerProtect.getPlayerId(), block.getLocation(), ActionType.FURNITURE_PLACE, namespacedID));
+        LoggerCache.addLog(new PlayerFurnitureLogEntry(playerProtect.getPlayerId(), block.getLocation(), ActionType.FURNITURE_PLACE, namespacedID, "itemsadder:"));
     }
 
 }

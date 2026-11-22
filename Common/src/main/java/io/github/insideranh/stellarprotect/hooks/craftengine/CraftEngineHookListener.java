@@ -54,7 +54,7 @@ public class CraftEngineHookListener implements Listener {
 
         String namespacedID = block.id().asString();
 
-        LoggerCache.addLog(new PlayerBlockLogEntry(playerProtect.getPlayerId(), bukkitBlock, ActionType.BLOCK_BREAK, namespacedID));
+        LoggerCache.addLog(new PlayerBlockLogEntry(playerProtect.getPlayerId(), bukkitBlock, ActionType.BLOCK_BREAK, namespacedID, "craftengine:"));
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
@@ -70,7 +70,7 @@ public class CraftEngineHookListener implements Listener {
 
         String namespacedID = event.customBlock().id().asString();
 
-        LoggerCache.addLog(new PlayerBlockLogEntry(playerProtect.getPlayerId(), bukkitBlock, ActionType.BLOCK_PLACE, namespacedID));
+        LoggerCache.addLog(new PlayerBlockLogEntry(playerProtect.getPlayerId(), bukkitBlock, ActionType.BLOCK_PLACE, namespacedID, "craftengine:"));
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
@@ -86,7 +86,7 @@ public class CraftEngineHookListener implements Listener {
         if (playerProtect == null) return;
         Location blockLocation = event.location();
 
-        LoggerCache.addLog(new PlayerFurnitureLogEntry(playerProtect.getPlayerId(), blockLocation, ActionType.FURNITURE_BREAK, namespacedID));
+        LoggerCache.addLog(new PlayerFurnitureLogEntry(playerProtect.getPlayerId(), blockLocation, ActionType.FURNITURE_BREAK, namespacedID, "craftengine:"));
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
@@ -100,6 +100,6 @@ public class CraftEngineHookListener implements Listener {
         PlayerProtect playerProtect = PlayerProtect.getPlayer(event.player());
         if (playerProtect == null) return;
 
-        LoggerCache.addLog(new PlayerFurnitureLogEntry(playerProtect.getPlayerId(), location, ActionType.FURNITURE_PLACE, namespacedID));
+        LoggerCache.addLog(new PlayerFurnitureLogEntry(playerProtect.getPlayerId(), location, ActionType.FURNITURE_PLACE, namespacedID, "craftengine:"));
     }
 }
