@@ -30,6 +30,10 @@
             <url>https://repo.alessiodp.com/releases/</url>
         </repository>
         <repository>
+            <id>momirealms-repo</id>
+            <url>https://repo.momirealms.net/releases/</url>
+        </repository>
+        <repository>
             <id>nexomc-repo</id>
             <url>https://repo.nexomc.com/releases</url>
         </repository>
@@ -94,6 +98,18 @@
                     <artifactId>FastAsyncWorldEdit-Core</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>net.momirealms</groupId>
+            <artifactId>craft-engine-core</artifactId>
+            <version>26.9.1</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.momirealms</groupId>
+            <artifactId>craft-engine-bukkit</artifactId>
+            <version>26.9.1</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>beer.devs</groupId>

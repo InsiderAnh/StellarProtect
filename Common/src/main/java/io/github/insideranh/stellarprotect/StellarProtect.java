@@ -18,6 +18,9 @@ import io.github.insideranh.stellarprotect.database.ProtectDatabase;
 import io.github.insideranh.stellarprotect.entities.DataEntity;
 import io.github.insideranh.stellarprotect.enums.MinecraftVersion;
 import io.github.insideranh.stellarprotect.hooks.*;
+import io.github.insideranh.stellarprotect.hooks.craftengine.CraftEngineDefaultHook;
+import io.github.insideranh.stellarprotect.hooks.craftengine.CraftEngineHook;
+import io.github.insideranh.stellarprotect.hooks.craftengine.CraftEngineHookListener;
 import io.github.insideranh.stellarprotect.hooks.itemsadder.ItemsAdderHook;
 import io.github.insideranh.stellarprotect.hooks.itemsadder.ItemsAdderHookListener;
 import io.github.insideranh.stellarprotect.hooks.nexo.NexoDefaultHook;
@@ -90,6 +93,8 @@ public class StellarProtect extends JavaPlugin {
     private final InspectHandler inspectHandler;
     private final EventLogicHandler eventLogicHandler;
     private final DecorativeLogicHandler decorativeLogicHandler;
+    @Nullable
+    private CraftEngineDefaultHook craftEngineHook;
     @Nullable
     private NexoDefaultHook nexoHook;
     @Nullable
@@ -211,6 +216,11 @@ public class StellarProtect extends JavaPlugin {
             if (hooksManager.isShopGuiHook() && getServer().getPluginManager().isPluginEnabled("ShopGUIPlus")) {
                 Bukkit.getPluginManager().registerEvents(new ShopGUIHookListener(), this);
                 getLogger().info("ShopGUIPlus detected, enabling ShopGUIPlus hook...");
+            }
+            if (hooksManager.isCraftEngineHook() && getServer().getPluginManager().isPluginEnabled("CraftEngine")) {
+                this.craftEngineHook = new CraftEngineHook();
+                Bukkit.getPluginManager().registerEvents(new CraftEngineHookListener(), this);
+                getLogger().info("CraftEngineHook detected, enabling CraftEngine hook...");
             }
             if (hooksManager.isNexoHook() && getServer().getPluginManager().isPluginEnabled("Nexo")) {
                 this.nexoHook = new NexoHook();

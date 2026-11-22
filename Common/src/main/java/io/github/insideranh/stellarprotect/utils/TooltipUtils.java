@@ -84,6 +84,9 @@ public class TooltipUtils {
     }
 
     private static String getMaterialOrNexoId(ItemStack itemStack) {
+        if (plugin.getCraftEngineHook() != null) {
+            return plugin.getCraftEngineHook().getCraftEngineItemStackId(itemStack);
+        }
         if (plugin.getNexoHook() != null) {
             return plugin.getNexoHook().getNexoItemStackId(itemStack);
         }
