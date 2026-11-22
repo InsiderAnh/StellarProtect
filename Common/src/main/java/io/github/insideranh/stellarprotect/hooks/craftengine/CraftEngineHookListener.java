@@ -28,7 +28,6 @@ public class CraftEngineHookListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     public void onBlockBreak(CustomBlockBreakEvent event) {
         if (event.isCancelled()) return;
-        // TODO
 
         BlockDefinition block = event.customBlock();
         Block bukkitBlock = event.bukkitBlock();
