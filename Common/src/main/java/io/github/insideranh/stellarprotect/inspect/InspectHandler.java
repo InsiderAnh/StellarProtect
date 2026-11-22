@@ -43,6 +43,7 @@ public class InspectHandler {
             logs.forEach(transaction -> processItemTransaction(player, transaction));
             sendPaginationInfo(player, page, limit, maxPage);
         }).exceptionally(ex -> {
+            plugin.getLogger().log(java.util.logging.Level.SEVERE, "Error in handleChestInspection at " + blockLocation, ex);
             sendNoLogsMessage(player, blockLocation);
             return null;
         });

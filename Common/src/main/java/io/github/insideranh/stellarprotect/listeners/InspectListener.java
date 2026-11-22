@@ -45,17 +45,24 @@ public class InspectListener implements Listener {
             return;
 
         Block block = event.getClickedBlock();
-        Location blockLocation = WorldUtils.isValidChestBlock(block.getType())
+        boolean isChest = WorldUtils.isValidChestBlock(block.getType());
+        boolean isRightClick = action.equals(Action.RIGHT_CLICK_BLOCK);
+        boolean isChestInspection = isChest && isRightClick;
+
+        Location blockLocation = isChest
                 ? ChestTransactionTracker.getCanonicalChestLocation(block)
                 : block.getLocation();
-        playerProtect.setInspectSession(
-                new InspectSession(blockLocation, 0, 10, WorldUtils.isValidChestBlock(block.getType())));
 
-        if (WorldUtils.isValidChestBlock(block.getType()) && action.equals(Action.RIGHT_CLICK_BLOCK)) {
+        playerProtect.setLookupSession(null);
+        playerProtect.setInspectSession(
+                new InspectSession(blockLocation, 0, 10, isChestInspection));
+
+        if (isChestInspection) {
             plugin.getInspectHandler().handleChestInspection(player, blockLocation, 1, 0, 10);
         } else {
             if (event.hasItem() && event.getItem().getType().isBlock()) {
                 Block blockFace = block.getRelative(event.getBlockFace());
+                playerProtect.setInspectSession(new InspectSession(blockFace.getLocation(), 0, 10, false));
                 plugin.getInspectHandler().handleBlockInspection(player, blockFace.getLocation(), 1, 0, 10);
             } else {
                 plugin.getInspectHandler().handleBlockInspection(player, blockLocation, 1, 0, 10);

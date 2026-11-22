@@ -49,7 +49,8 @@ public class ChestTransactionTracker implements Listener {
     private final StellarProtect plugin = StellarProtect.getInstance();
 
     public static Location getCanonicalChestLocation(Block block) {
-        if (block == null) return null;
+        if (block == null)
+            return null;
         BlockState state = block.getState();
         if (state instanceof Chest) {
             Chest chest = (Chest) state;
@@ -66,7 +67,8 @@ public class ChestTransactionTracker implements Listener {
     }
 
     public static List<Location> getChestLocations(Block block) {
-        if (block == null) return Collections.emptyList();
+        if (block == null)
+            return Collections.emptyList();
         BlockState state = block.getState();
         if (state instanceof Chest) {
             Chest chest = (Chest) state;
@@ -80,7 +82,8 @@ public class ChestTransactionTracker implements Listener {
                 if (dc.getRightSide() instanceof Chest) {
                     locs.add(((Chest) dc.getRightSide()).getLocation());
                 }
-                if (!locs.isEmpty()) return locs;
+                if (!locs.isEmpty())
+                    return locs;
             }
         }
         return Collections.singletonList(block.getLocation());
@@ -88,10 +91,12 @@ public class ChestTransactionTracker implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerInteract(PlayerInteractEvent event) {
-        if (event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
+        if (event.getAction() != Action.RIGHT_CLICK_BLOCK)
+            return;
 
         Block block = event.getClickedBlock();
-        if (block == null || !WorldUtils.isValidChestBlock(block.getType())) return;
+        if (block == null || !WorldUtils.isValidChestBlock(block.getType()))
+            return;
 
         Player player = event.getPlayer();
         Location chestLocation = getCanonicalChestLocation(block);
@@ -112,14 +117,17 @@ public class ChestTransactionTracker implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onInventoryClick(InventoryClickEvent event) {
-        if (!(event.getWhoClicked() instanceof Player)) return;
+        if (!(event.getWhoClicked() instanceof Player))
+            return;
 
         Player player = (Player) event.getWhoClicked();
-        if (!isValidChestInventory(event.getInventory())) return;
+        if (!isValidChestInventory(event.getInventory()))
+            return;
 
         String playerName = player.getName();
         Location chestLocation = playerChestLocations.get(playerName);
-        if (chestLocation == null || !activeEditing.get(playerName)) return;
+        if (chestLocation == null || !activeEditing.get(playerName))
+            return;
 
         String inventoryId = getInventoryId(playerName, chestLocation);
         lastActivity.put(inventoryId, System.currentTimeMillis());
@@ -127,14 +135,17 @@ public class ChestTransactionTracker implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onInventoryDrag(InventoryDragEvent event) {
-        if (!(event.getWhoClicked() instanceof Player)) return;
+        if (!(event.getWhoClicked() instanceof Player))
+            return;
 
         Player player = (Player) event.getWhoClicked();
-        if (!isValidChestInventory(event.getInventory())) return;
+        if (!isValidChestInventory(event.getInventory()))
+            return;
 
         String playerName = player.getName();
         Location chestLocation = playerChestLocations.get(playerName);
-        if (chestLocation == null || !activeEditing.get(playerName)) return;
+        if (chestLocation == null || !activeEditing.get(playerName))
+            return;
 
         String inventoryId = getInventoryId(playerName, chestLocation);
         lastActivity.put(inventoryId, System.currentTimeMillis());
@@ -142,11 +153,12 @@ public class ChestTransactionTracker implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onInventoryClose(InventoryCloseEvent event) {
-        if (!(event.getPlayer() instanceof Player)) return;
+        if (!(event.getPlayer() instanceof Player))
+            return;
 
         Player player = (Player) event.getPlayer();
         if (activeEditing.get(player.getName())) {
-            finishChestEditing(player);
+            finishChestEditing(player, event.getInventory());
         }
     }
 
@@ -161,7 +173,8 @@ public class ChestTransactionTracker implements Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onBlockBreak(BlockBreakEvent event) {
         Block block = event.getBlock();
-        if (!WorldUtils.isValidChestBlock(block.getType())) return;
+        if (!WorldUtils.isValidChestBlock(block.getType()))
+            return;
 
         Location chestLocation = getCanonicalChestLocation(block);
         for (Map.Entry<String, Location> entry : playerChestLocations.entrySet()) {
@@ -177,13 +190,20 @@ public class ChestTransactionTracker implements Listener {
 
     private void captureInitialState(Player player, Location chestLocation) {
         Block block = chestLocation.getBlock();
-        if (!WorldUtils.isValidChestBlock(block.getType())) return;
+        if (!WorldUtils.isValidChestBlock(block.getType()))
+            return;
 
         BlockState state = block.getState();
-        if (!(state instanceof InventoryHolder)) return;
+        if (!(state instanceof InventoryHolder))
+            return;
 
-        InventoryHolder holder = (InventoryHolder) state;
-        Inventory inventory = holder.getInventory();
+        Inventory inventory = ((InventoryHolder) state).getInventory();
+        if (state instanceof Chest) {
+            InventoryHolder invHolder = ((Chest) state).getInventory().getHolder();
+            if (invHolder instanceof DoubleChest) {
+                inventory = ((DoubleChest) invHolder).getInventory();
+            }
+        }
 
         String inventoryId = getInventoryId(player.getName(), chestLocation);
         List<ItemCount> snapshot = captureInventorySnapshot(inventory.getContents());
@@ -191,30 +211,50 @@ public class ChestTransactionTracker implements Listener {
     }
 
     private void finishChestEditing(Player player) {
+        finishChestEditing(player, null);
+    }
+
+    private void finishChestEditing(Player player, Inventory closedInventory) {
         String playerName = player.getName();
         Location chestLocation = playerChestLocations.get(playerName);
-        if (chestLocation == null) return;
+        if (chestLocation == null)
+            return;
 
         String inventoryId = getInventoryId(playerName, chestLocation);
         List<ItemCount> initialSnapshot = initialInventoryStates.get(inventoryId);
 
         if (initialSnapshot != null) {
-            Block block = chestLocation.getBlock();
-            if (WorldUtils.isValidChestBlock(block.getType())) {
-                BlockState state = block.getState();
-                if (state instanceof InventoryHolder) {
-                    InventoryHolder holder = (InventoryHolder) state;
-                    Inventory inventory = holder.getInventory();
-                    List<ItemCount> currentSnapshot = captureInventorySnapshot(inventory.getContents());
-
-                    plugin.getExecutor().execute(() -> {
-                        TransactionResult result = compareSnapshots(playerName, chestLocation, initialSnapshot, currentSnapshot);
-
-                        if (!result.itemsAdded.isEmpty() || !result.itemsRemoved.isEmpty()) {
-                            handleTransaction(player, result);
+            ItemStack[] contents = null;
+            if (closedInventory != null && isValidChestInventory(closedInventory)) {
+                contents = closedInventory.getContents();
+            }
+            if (contents == null) {
+                Block block = chestLocation.getBlock();
+                if (WorldUtils.isValidChestBlock(block.getType())) {
+                    BlockState state = block.getState();
+                    if (state instanceof InventoryHolder) {
+                        Inventory inventory = ((InventoryHolder) state).getInventory();
+                        if (state instanceof Chest) {
+                            InventoryHolder invHolder = ((Chest) state).getInventory().getHolder();
+                            if (invHolder instanceof DoubleChest) {
+                                inventory = ((DoubleChest) invHolder).getInventory();
+                            }
                         }
-                    });
+                        contents = inventory.getContents();
+                    }
                 }
+            }
+
+            if (contents != null) {
+                List<ItemCount> currentSnapshot = captureInventorySnapshot(contents);
+                plugin.getExecutor().execute(() -> {
+                    TransactionResult result = compareSnapshots(playerName, chestLocation, initialSnapshot,
+                            currentSnapshot);
+
+                    if (!result.itemsAdded.isEmpty() || !result.itemsRemoved.isEmpty()) {
+                        handleTransaction(player, result);
+                    }
+                });
             }
         }
 
@@ -242,11 +282,13 @@ public class ChestTransactionTracker implements Listener {
     }
 
     private List<ItemCount> captureInventorySnapshot(ItemStack[] contents) {
-        if (contents == null || contents.length == 0) return Collections.emptyList();
+        if (contents == null || contents.length == 0)
+            return Collections.emptyList();
 
         List<ItemCount> snapshot = new ArrayList<>();
         for (ItemStack item : contents) {
-            if (item == null || item.getType() == Material.AIR) continue;
+            if (item == null || item.getType() == Material.AIR)
+                continue;
 
             boolean merged = false;
             for (ItemCount ic : snapshot) {
@@ -267,12 +309,15 @@ public class ChestTransactionTracker implements Listener {
         return snapshot;
     }
 
-    private TransactionResult compareSnapshots(String playerName, Location location, List<ItemCount> initial, List<ItemCount> current) {
+    private TransactionResult compareSnapshots(String playerName, Location location, List<ItemCount> initial,
+            List<ItemCount> current) {
         Map<ItemStack, Integer> added = new HashMap<>();
         Map<ItemStack, Integer> removed = new HashMap<>();
 
-        if (initial == null) initial = Collections.emptyList();
-        if (current == null) current = Collections.emptyList();
+        if (initial == null)
+            initial = Collections.emptyList();
+        if (current == null)
+            current = Collections.emptyList();
 
         List<ItemCount> remainingInitial = new ArrayList<>(initial.size());
         for (ItemCount ic : initial) {
@@ -316,20 +361,36 @@ public class ChestTransactionTracker implements Listener {
 
     private void handleTransaction(Player player, TransactionResult result) {
         PlayerProtect playerProtect = PlayerProtect.getPlayer(player);
-        if (playerProtect == null) return;
+        long playerId;
+        if (playerProtect != null) {
+            playerId = playerProtect.getPlayerId();
+        } else {
+            playerId = PlayerProtect.getPlayerId(result.playerName);
+            if (playerId <= 0) {
+                List<Long> ids = plugin.getProtectDatabase()
+                        .getIdsByNames(Collections.singletonList(result.playerName));
+                if (!ids.isEmpty()) {
+                    playerId = ids.get(0);
+                } else {
+                    return;
+                }
+            }
+        }
 
         Map<Long, Integer> itemsAdded = new HashMap<>();
         Map<Long, Integer> itemsRemoved = new HashMap<>();
 
         for (Map.Entry<ItemStack, Integer> entry : result.itemsAdded.entrySet()) {
-            if (entry.getKey() == null || entry.getKey().getType() == Material.AIR) continue;
+            if (entry.getKey() == null || entry.getKey().getType() == Material.AIR)
+                continue;
             ItemReference itemReference = plugin.getItemsManager().getItemReference(entry.getKey(), entry.getValue());
             if (itemReference != null && itemReference.getTemplateId() > 0) {
                 itemsAdded.put(itemReference.getTemplateId(), entry.getValue());
             }
         }
         for (Map.Entry<ItemStack, Integer> entry : result.itemsRemoved.entrySet()) {
-            if (entry.getKey() == null || entry.getKey().getType() == Material.AIR) continue;
+            if (entry.getKey() == null || entry.getKey().getType() == Material.AIR)
+                continue;
             ItemReference itemReference = plugin.getItemsManager().getItemReference(entry.getKey(), entry.getValue());
             if (itemReference != null && itemReference.getTemplateId() > 0) {
                 itemsRemoved.put(itemReference.getTemplateId(), entry.getValue());
@@ -337,7 +398,8 @@ public class ChestTransactionTracker implements Listener {
         }
 
         if (!itemsAdded.isEmpty() || !itemsRemoved.isEmpty()) {
-            LoggerCache.addLog(new PlayerTransactionEntry(playerProtect.getPlayerId(), itemsAdded, itemsRemoved, result.chestLocation, ActionType.INVENTORY_TRANSACTION));
+            LoggerCache.addLog(new PlayerTransactionEntry(playerId, itemsAdded, itemsRemoved, result.chestLocation,
+                    ActionType.INVENTORY_TRANSACTION));
         }
     }
 
@@ -388,19 +450,25 @@ public class ChestTransactionTracker implements Listener {
             activeEditing.remove(playerName);
         }
 
-        Debugger.debugExtras("Limpieza completada. Eliminados " + keysToRemove.size() + " estados antiguos y " + playersToRemove.size() + " jugadores desconectados.");
+        Debugger.debugExtras("Limpieza completada. Eliminados " + keysToRemove.size() + " estados antiguos y "
+                + playersToRemove.size() + " jugadores desconectados.");
     }
 
     public static boolean itemsEqual(ItemStack a, ItemStack b) {
-        if (a == b) return true;
-        if (a == null || b == null) return false;
-        if (a.getType() != b.getType()) return false;
+        if (a == b)
+            return true;
+        if (a == null || b == null)
+            return false;
+        if (a.getType() != b.getType())
+            return false;
 
         boolean aMeta = a.hasItemMeta();
         boolean bMeta = b.hasItemMeta();
 
-        if (aMeta != bMeta) return false;
-        if (!aMeta) return true;
+        if (aMeta != bMeta)
+            return false;
+        if (!aMeta)
+            return true;
 
         ItemMeta metaA = a.getItemMeta();
         ItemMeta metaB = b.getItemMeta();
@@ -431,7 +499,8 @@ public class ChestTransactionTracker implements Listener {
         public final Map<ItemStack, Integer> itemsRemoved;
         public final long timestamp;
 
-        public TransactionResult(String playerName, Location chestLocation, Map<ItemStack, Integer> itemsAdded, Map<ItemStack, Integer> itemsRemoved) {
+        public TransactionResult(String playerName, Location chestLocation, Map<ItemStack, Integer> itemsAdded,
+                Map<ItemStack, Integer> itemsRemoved) {
             this.playerName = playerName;
             this.chestLocation = chestLocation;
             this.itemsAdded = itemsAdded;

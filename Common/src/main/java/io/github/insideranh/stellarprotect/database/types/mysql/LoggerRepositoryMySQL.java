@@ -369,7 +369,6 @@ public class LoggerRepositoryMySQL implements LoggerRepository {
         return CompletableFuture.supplyAsync(() -> {
             List<ItemLogEntry> cachedLogs = LoggerCache.getChestTransactions(location, 0, Integer.MAX_VALUE)
                     .stream()
-                    .filter(log -> System.currentTimeMillis() - log.getCreatedAt() <= TimeUnit.MINUTES.toMillis(15))
                     .sorted(Comparator.comparingLong(ItemLogEntry::getCreatedAt).reversed())
                     .collect(Collectors.toList());
 

@@ -124,6 +124,10 @@ public class ProtectDatabase {
         this.databaseConnection.getItemsRepository().saveItems(itemTemplates);
     }
 
+    public ItemTemplate getItemTemplate(long id) {
+        return this.databaseConnection.getItemsRepository().getItemTemplate(id);
+    }
+
     public void saveBlocks(List<BlockTemplate> blockTemplates) {
         this.databaseConnection.getBlocksRepository().saveBlocks(blockTemplates);
     }

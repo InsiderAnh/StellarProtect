@@ -17,6 +17,7 @@ import io.github.insideranh.stellarprotect.enums.ActionCategory;
 import io.github.insideranh.stellarprotect.enums.ActionType;
 import io.github.insideranh.stellarprotect.items.ItemTemplate;
 import io.github.insideranh.stellarprotect.utils.Debugger;
+import io.github.insideranh.stellarprotect.utils.WorldUtils;
 import lombok.Getter;
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
@@ -211,45 +212,62 @@ public class LoggerCache {
     }
 
     public static List<ItemLogEntry> getChestTransactions(Location location, int skip, int limit) {
-        List<Location> targetLocations = ChestTransactionTracker.getChestLocations(location.getBlock());
         int initialCap = (limit > 0 && limit <= 5000) ? Math.min(limit * 2, 10000) : 64;
         ArrayList<ItemLogEntry> allItems = new ArrayList<>(initialCap);
 
-        for (Location loc : targetLocations) {
-            LocationCache locationCache = LocationCache.of(loc);
-            LogRingBuffer logs = cachedLogsByCategory[ActionCategory.INVENTORY_ACTIONS.ordinal()].get(locationCache);
-            if (logs == null || logs.isEmpty())
-                continue;
+        int worldId = WorldUtils.getShortId(location.getWorld() != null ? location.getWorld().getName() : "world");
+        int bx = location.getBlockX();
+        int by = location.getBlockY();
+        int bz = location.getBlockZ();
 
-            logs.forEachReverse(log -> {
-                if (!(log instanceof PlayerTransactionEntry))
-                    return;
-                PlayerTransactionEntry transaction = (PlayerTransactionEntry) log;
+        LocationCache[] targetCaches = new LocationCache[] {
+                LocationCache.of(worldId, bx, by, bz),
+                LocationCache.of(worldId, bx + 1, by, bz),
+                LocationCache.of(worldId, bx - 1, by, bz),
+                LocationCache.of(worldId, bx, by, bz + 1),
+                LocationCache.of(worldId, bx, by, bz - 1)
+        };
 
-                transaction.getAdded().forEach((templateId, amount) -> {
-                    if (templateId == null || templateId <= 0)
+        ConcurrentHashMap<LocationCache, LogRingBuffer> catCache = cachedLogsByCategory[ActionCategory.INVENTORY_ACTIONS
+                .ordinal()];
+        if (catCache != null) {
+            for (LocationCache locCache : targetCaches) {
+                LogRingBuffer logs = catCache.get(locCache);
+                if (logs == null || logs.isEmpty())
+                    continue;
+
+                logs.forEachReverse(log -> {
+                    if (!(log instanceof PlayerTransactionEntry))
                         return;
-                    ItemTemplate itemTemplate = plugin.getItemsManager().getItemTemplate(templateId);
-                    if (itemTemplate != null) {
-                        ItemStack item = itemTemplate.getBukkitItem();
-                        if (item != null && item.getType() != org.bukkit.Material.AIR) {
-                            allItems.add(new ItemLogEntry(item, log.getPlayerId(), amount, true, log.getCreatedAt()));
-                        }
-                    }
-                });
+                    PlayerTransactionEntry transaction = (PlayerTransactionEntry) log;
 
-                transaction.getRemoved().forEach((templateId, amount) -> {
-                    if (templateId == null || templateId <= 0)
-                        return;
-                    ItemTemplate itemTemplate = plugin.getItemsManager().getItemTemplate(templateId);
-                    if (itemTemplate != null) {
-                        ItemStack item = itemTemplate.getBukkitItem();
-                        if (item != null && item.getType() != org.bukkit.Material.AIR) {
-                            allItems.add(new ItemLogEntry(item, log.getPlayerId(), amount, false, log.getCreatedAt()));
+                    transaction.getAdded().forEach((templateId, amount) -> {
+                        if (templateId == null || templateId <= 0)
+                            return;
+                        ItemTemplate itemTemplate = plugin.getItemsManager().getItemTemplate(templateId);
+                        if (itemTemplate != null) {
+                            ItemStack item = itemTemplate.getBukkitItem();
+                            if (item != null && item.getType() != org.bukkit.Material.AIR) {
+                                allItems.add(
+                                        new ItemLogEntry(item, log.getPlayerId(), amount, true, log.getCreatedAt()));
+                            }
                         }
-                    }
+                    });
+
+                    transaction.getRemoved().forEach((templateId, amount) -> {
+                        if (templateId == null || templateId <= 0)
+                            return;
+                        ItemTemplate itemTemplate = plugin.getItemsManager().getItemTemplate(templateId);
+                        if (itemTemplate != null) {
+                            ItemStack item = itemTemplate.getBukkitItem();
+                            if (item != null && item.getType() != org.bukkit.Material.AIR) {
+                                allItems.add(
+                                        new ItemLogEntry(item, log.getPlayerId(), amount, false, log.getCreatedAt()));
+                            }
+                        }
+                    });
                 });
-            });
+            }
         }
 
         allItems.sort((a, b) -> Long.compare(b.getCreatedAt(), a.getCreatedAt()));

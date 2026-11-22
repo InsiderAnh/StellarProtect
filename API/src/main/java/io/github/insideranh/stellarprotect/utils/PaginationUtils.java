@@ -114,11 +114,12 @@ public class PaginationUtils {
 
     static String getPage(PlayerProtect playerProtect, int page, int perPage) {
         String pageArgument;
-        if (playerProtect.getLookupSession() != null) {
-            pageArgument = "nl p:" + page + "-" + perPage;
-        } else if (playerProtect.getInspectSession() != null) {
+        if (playerProtect.getInspectSession() != null) {
             InspectSession inspectSession = playerProtect.getInspectSession();
-            pageArgument = "ni l:" + inspectSession.getArgument() + " p:" + page + "-" + perPage;
+            String chestFlag = inspectSession.isInspectChest() ? " c:1" : "";
+            pageArgument = "ni l:" + inspectSession.getArgument() + chestFlag + " p:" + page + "-" + perPage;
+        } else if (playerProtect.getLookupSession() != null) {
+            pageArgument = "nl p:" + page + "-" + perPage;
         } else {
             return "";
         }

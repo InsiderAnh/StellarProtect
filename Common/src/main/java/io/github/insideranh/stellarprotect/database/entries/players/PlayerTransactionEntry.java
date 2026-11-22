@@ -22,7 +22,7 @@ public class PlayerTransactionEntry extends LogEntry {
     @SneakyThrows
     public PlayerTransactionEntry(ResultSet resultSet, JsonObject jsonObject) {
         super(resultSet);
-        if (jsonObject.has("ai")) {
+        if (jsonObject != null && jsonObject.has("ai") && jsonObject.get("ai").isJsonObject()) {
             JsonObject addedItemsObj = jsonObject.get("ai").getAsJsonObject();
             for (Map.Entry<String, JsonElement> entry : addedItemsObj.entrySet()) {
                 String base64Key = entry.getKey();
@@ -31,7 +31,7 @@ public class PlayerTransactionEntry extends LogEntry {
             }
         }
 
-        if (jsonObject.has("ri")) {
+        if (jsonObject != null && jsonObject.has("ri") && jsonObject.get("ri").isJsonObject()) {
             JsonObject removedItemsObj = jsonObject.get("ri").getAsJsonObject();
             for (Map.Entry<String, JsonElement> entry : removedItemsObj.entrySet()) {
                 String base64Key = entry.getKey();

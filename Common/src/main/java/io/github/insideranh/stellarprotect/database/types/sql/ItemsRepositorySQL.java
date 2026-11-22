@@ -104,4 +104,25 @@ public class ItemsRepositorySQL implements ItemsRepository {
         executor.shutdown();
     }
 
+    @Override
+    public ItemTemplate getItemTemplate(long id) {
+        if (id <= 0) return null;
+        String sql = "SELECT id, base64 FROM " + stellarProtect.getConfigManager().getTablesItemTemplates() + " WHERE id = ? LIMIT 1";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setLong(1, id);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    String base64 = resultSet.getString("base64");
+                    ItemStack bukkitItem = InventorySerializable.itemStackFromBase64(base64);
+                    ItemTemplate template = new ItemTemplate(id, bukkitItem, base64);
+                    stellarProtect.getItemsManager().loadItemReference(template, base64);
+                    return template;
+                }
+            }
+        } catch (SQLException e) {
+            Debugger.debugLog("Error loading item template " + id + " from SQLite: " + e.getMessage());
+        }
+        return null;
+    }
+
 }

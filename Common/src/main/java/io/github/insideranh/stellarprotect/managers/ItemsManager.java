@@ -29,7 +29,7 @@ public class ItemsManager {
     private final ItemsCache itemCache = new ItemsCache();
     private final Set<Long> unsavedTemplates = Sets.newConcurrentHashSet();
     private final StellarProtect plugin = StellarProtect.getInstance();
-    private final AtomicLong currentId = new AtomicLong(0);
+    private final AtomicLong currentId = new AtomicLong(1);
 
     public void load() {
         String selectedLang = plugin.getConfigManager().getItemsLang();
@@ -104,7 +104,9 @@ public class ItemsManager {
         if (id <= 0) return null;
         ItemTemplate template = idToItemTemplate.get(id);
         if (template != null) return template;
-        return itemCache.getById(id);
+        ItemTemplate cached = itemCache.getById(id);
+        if (cached != null) return cached;
+        return plugin.getProtectDatabase().getItemTemplate(id);
     }
 
     public long createItemTemplate(ItemStack itemStack, String base64) {
