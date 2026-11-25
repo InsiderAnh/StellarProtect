@@ -107,7 +107,7 @@ public class MySQLConnection implements DatabaseConnection {
                         "z DOUBLE," +
                         "action_type INT," +
                         "restored TINYINT DEFAULT 0," +
-                        "extra_json TEXT," +
+                        "extra_json MEDIUMTEXT," +
                         "created_at BIGINT," +
                         "block_id INT DEFAULT NULL," +
                         "old_block_id INT DEFAULT NULL," +
